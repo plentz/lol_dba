@@ -10,7 +10,11 @@ namespace :db do
     model_classes = []
     model_names.each do |model_name|
       class_name = model_name.sub(/\.rb$/,'').camelize
-      klass = class_name.split('::').inject(Object){ |klass,part| klass.const_get(part) }
+      begin
+        klass = class_name.split('::').inject(Object){ |klass,part| klass.const_get(part) }
+      rescue
+        klass = nil
+      end
       if klass < ActiveRecord::Base && !klass.abstract_class?
         model_classes << klass
       end
