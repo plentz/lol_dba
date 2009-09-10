@@ -20,10 +20,18 @@ namespace :db do
     @indexes_required = Hash.new([])
     
     model_classes.each do |class_name|
-    #  puts "-" * 60
-    #  puts "Inspecting #{class_name.to_s}"
       
       foreign_keys = []
+      
+      # check if this is an STI child instance
+      
+      puts "#{class_name.base_class.name} => #{class_name.name}"
+      if class_name.base_class.name != class_name.name
+        puts "here"
+        # add the inharitance column on the parent table
+        @indexes_required[class_name.base_class.table_name] += [class_name.base_class.inheritance_column]
+      end
+      
       class_name.reflections.each_pair do |reflection_name, reflection_options|
         case reflection_options.macro
         when :belongs_to
