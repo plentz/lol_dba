@@ -3,8 +3,8 @@ namespace :db do
   task :show_me_some_indexes => :environment do
     
     model_names = []
-    Dir.chdir(File.join(Rails.root, "app/models")) do 
-      model_names = Dir["**/*.rb"]
+    Dir.chdir(Rails.root) do 
+      model_names = Dir["**/app/models/*.rb"].collect {|filename| filename.split('/').last }
     end
     
     model_classes = []
@@ -24,10 +24,7 @@ namespace :db do
       foreign_keys = []
       
       # check if this is an STI child instance
-      
-      puts "#{class_name.base_class.name} => #{class_name.name}"
       if class_name.base_class.name != class_name.name
-        puts "here"
         # add the inharitance column on the parent table
         @indexes_required[class_name.base_class.table_name] += [class_name.base_class.inheritance_column]
       end
