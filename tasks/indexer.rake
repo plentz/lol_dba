@@ -116,7 +116,8 @@ def scan_finds
         table_name = model_name.constantize.table_name
         # a simple find has no "by_column_and..."
         if column_names.blank?
-          @indexes_required[table_name] += ["id"] unless @indexes_required[table_name].include?("id")
+          primary_key = model_name.constantize.primary_key
+          @indexes_required[table_name] += [primary_key] unless @indexes_required[table_name].include?(primary_key)
         else
           column_names = column_names.split('_and_')
         
