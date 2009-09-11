@@ -24,11 +24,11 @@ Note that it would probably make more sense running those tasks on production, w
 
 Author:
 Elad Meidar
-http://blog.eizesus.com
+"http://blog.eizesus.com":http://blog.eizesus.com
 
 Thanks:
 Eric Davis,
-http://littlestreamsoftware.com
+"http://littlestreamsoftware.com":http://littlestreamsoftware.com
    
 Released under the same license as Ruby. No Support. No Warranty, no Pain.
 
