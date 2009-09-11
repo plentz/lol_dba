@@ -26,7 +26,7 @@ def check_for_indexes(migration_format = false)
   #  foreign_keys = []
     
     # check if this is an STI child instance
-    if class_name.base_class.name != class_name.name
+    if class_name.base_class.name != class_name.name && class_name.column_names.include?(class_name.base_class.inheritance_column)
       # add the inharitance column on the parent table
       
       if !(migration_format)
@@ -115,6 +115,7 @@ def scan_finds
       
         table_name = model_name.constantize.table_name
         # a simple find has no "by_column_and..."
+      
         if column_names.blank?
           primary_key = model_name.constantize.primary_key
           @indexes_required[table_name] += [primary_key] unless @indexes_required[table_name].include?(primary_key)
@@ -122,7 +123,9 @@ def scan_finds
           column_names = column_names.split('_and_')
         
           # remove find_by_sql references.
-          column_names.delete("sql")
+         # column_names.delete("sql")
+          
+          column_names = model_name.constantize.column_names & column_names
           
           # Check if there were more than 1 column
           if column_names.size == 1
