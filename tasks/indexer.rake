@@ -64,7 +64,7 @@ def check_for_indexes(migration_format = false)
       when :has_and_belongs_to_many
         table_name = reflection_options.options[:join_table] ||= [class_name.table_name, reflection_name.to_s].sort.join('_')
         association_foreign_key = reflection_options.options[:association_foreign_key] ||= "#{reflection_name.to_s.singularize}_id"
-        foreign_key = reflection_options.options[:foreign_key] ||= "#{class_name.name.tableize.signularize}_id"
+        foreign_key = reflection_options.options[:foreign_key] ||= "#{class_name.name.tableize.singularize}_id"
         
         if !(migration_format)
           @indexes_required[table_name.to_s] += [association_foreign_key, foreign_key].sort unless @indexes_required[table_name].include?([association_foreign_key, foreign_key].sort)
