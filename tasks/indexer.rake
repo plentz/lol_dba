@@ -1,7 +1,7 @@
 def check_for_indexes(migration_format = false)
   model_names = []
   Dir.chdir(Rails.root) do 
-    model_names = Dir["**/app/models/*.rb"].collect {|filename| filename.split('/').last }
+    model_names = Dir["**/app/models/*.rb"].collect {|filename| filename.split('/').last }.uniq
   end
   
   model_classes = []
