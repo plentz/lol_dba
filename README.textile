@@ -1,0 +1,41 @@
+h1. Rails Indexes
+
+Rails indexes is a small package of 2 rake tasks that scan your application models and displays a list of columns that _probably_ should be indexed.
+
+note: there should be mode fields depending on your application design and custom queries.
+
+h2. Installation
+
+as a rails plugin:
+<pre>
+script/plugin install git://github.com/eladmeidar/rails_indexes.git
+</pre>
+
+h2. Usage
+
+Display a simple report:
+<pre>
+rake db:show_me_some_indexes
+</pre>
+
+Display a migration for adding/removing all necessary indexes:
+<pre>
+rake db:show_me_a_migration
+</pre>
+
+Note that it would probably make more sense running those tasks on production, where you *actually* need those indexes to be added.
+
+* Add an option to create a migration that adds all the needed indexes.
+* Add an option to scan the application root tree for #find, #find_all_by and #find_by to get some more index-required columns.
+
+Author:
+Elad Meidar
+http://blog.eizesus.com
+
+Thanks:
+Eric Davis,
+http://littlestreamsoftware.com
+   
+Released under the same license as Ruby. No Support. No Warranty, no Pain.
+
+
