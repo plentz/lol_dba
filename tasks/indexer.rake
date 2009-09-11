@@ -33,7 +33,7 @@ def check_for_indexes(migration_format = false)
         @indexes_required[class_name.base_class.table_name] += [class_name.base_class.inheritance_column].sort unless  @indexes_required[class_name.base_class.table_name].include?([class_name.base_class.inheritance_column].sort)
       else
         # index migration for STI should require both the primary key and the inheritance_column in a composite index.
-        @index_migrations[class_name.base_class.table_name] += [[class_name.base_class.inheritance_column, class_name.base_class.primary_key].sort] unless @index_migrations[class_name.base_class.table_name].include?([class_name.base_class.inheritance_column].sort)
+        @index_migrations[class_name.base_class.table_name] += [[class_name.base_class.inheritance_column, class_name.base_class.primary_key]] unless @index_migrations[class_name.base_class.table_name].include?([class_name.base_class.inheritance_column].sort)
       end
     end
     
@@ -93,7 +93,96 @@ def check_for_indexes(migration_format = false)
   end
 end
 
+def scan_finds
+  file_names = []
+  Dir.chdir(Rails.root) do 
+    file_names = Dir["**/app/**/*.rb"].uniq
+  end
+  
+  # ([A-Z]{1}[A-Za-z]+).(find){1}((_all){0,1}(_by_){0,1}([A-Za-z_]+))?\(([0-9A-Za-z:=>. {},]*)\)
+  puts "Found #{file_names.size} files."
+  
+  @indexes_required = Hash.new([])
+  file_names.each do |file_name| 
+    current_file = File.open(File.join(Rails.root, file_name), 'r')
+  
+    current_file.each do |line|
+      find_regexp = Regexp.new(/([A-Z]{1}[A-Za-z]+).(find){1}((_all){0,1}(_by_){0,1}([A-Za-z_]+))?\(([0-9A-Za-z"\':=>. \[\]{},]*)\)/)
+      if matches = find_regexp.match(line)
+
+        model_name, column_names, options = matches[1], matches[6], matches[7]
+      #  puts "Model: #{model_name}, columns: #{column_names}, options: #{options}"
+      
+        table_name = model_name.constantize.table_name
+        # a simple find has no "by_column_and..."
+        if column_names.blank?
+          @indexes_required[table_name] += ["id"] unless @indexes_required[table_name].include?("id")
+        else
+          column_names = column_names.split('_and_')
+        
+          # remove find_by_sql references.
+          column_names.delete("sql")
+          
+          # Check if there were more than 1 column
+          if column_names.size == 1
+            column_name = column_names.first
+            @indexes_required[table_name] += [column_name] unless @indexes_required[table_name].include?(column_name)
+          else
+            @indexes_required[table_name] += [column_names.sort] unless @indexes_required[table_name].include?(column_names.sort)
+          end
+        end
+      end
+    end
+  end
+  @indexes_required
+end
+
 namespace :db do
+  
+  desc "collect indexes based on AR::Base.find calls."
+  task :show_me_ar_find_indexes => :environment do
+    find_indexes = scan_finds
+    
+    unless find_indexes.keys.empty?
+      add = []
+      remove = []
+      find_indexes.each do |table_name, keys_to_add|
+        keys_to_add.each do |key|
+          next if key.blank?
+          if key.is_a?(Array)
+            keys = key.collect {|k| ":#{k}"}
+            add << "add_index :#{table_name}, [#{keys.join(', ')}]"
+            remove << "remove_index :#{table_name}, :column => [#{keys.join(', ')}]"
+          else
+            add << "add_index :#{table_name}, :#{key}"
+            remove << "remove_index :#{table_name}, :#{key}"
+          end
+          
+        end
+      end
+      
+      migration = <<EOM      
+class AddFindsMissingIndexes < ActiveRecord::Migration
+  def self.up
+    
+    # These indexes were found by searching for AR::Base finds on your application, it is
+    # strongly advised that you will go through all of these indexes and check if they are right, there is absolutly no
+    # liablity that this information is right and fits your application.
+    
+    #{add.join("\n    ")}
+  end
+  
+  def self.down
+    #{remove.join("\n    ")}
+  end
+end
+EOM
+
+      puts "## Drop this into a file in db/migrate ##"
+      puts migration
+    end
+  end
+  
   desc "scan for possible required indexes"
   task :show_me_some_indexes => :environment do
     
@@ -124,7 +213,7 @@ namespace :db do
         end
       end
       
-      migration = <<EOM
+      migration = <<EOM  
 class AddMissingIndexes < ActiveRecord::Migration
   def self.up
     #{add.join("\n    ")}
