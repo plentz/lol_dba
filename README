@@ -4,7 +4,7 @@ Rails Indexes
 Scans your models and displays a list of columns that _probably_ should be indexed.
 
 note: there should be mode fields depending on your application design and custom queries.
-# Install: script/plugin install http://github.com/eladmeidar/rails_indexes/tree/master
+# Install: script/plugin install git://github.com/eladmeidar/rails_indexes.git
 # Run it: rake db:show_me_some_indexes
 
 
