@@ -50,7 +50,7 @@ namespace :db do
       end
     end
     
-    @indexes_required.each_pair do |table_name, foreign_keys|
+    @indexes_required.sort.each do |table_name, foreign_keys|
    
       unless foreign_keys.blank?
         existing_indexes = ActiveRecord::Base.connection.indexes(table_name.to_sym).collect(&:columns).flatten
