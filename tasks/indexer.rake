@@ -54,7 +54,11 @@ namespace :db do
    
       unless foreign_keys.blank?
         existing_indexes = ActiveRecord::Base.connection.indexes(table_name.to_sym).collect(&:columns).flatten
-        puts "Table '#{table_name}' => #{(foreign_keys.uniq - existing_indexes).to_sentence}"
+
+        keys_to_add = foreign_keys.uniq - existing_indexes
+        unless keys_to_add.empty?
+          puts "Table '#{table_name}' => #{keys_to_add.to_sentence}"
+        end
       end
     end
   end
