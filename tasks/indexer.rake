@@ -169,6 +169,10 @@ class AddFindsMissingIndexes < ActiveRecord::Migration
     # These indexes were found by searching for AR::Base finds on your application, it is
     # strongly advised that you will go through all of these indexes and check if they are right, there is absolutly no
     # liablity that this information is right and fits your application.
+    #
+    # You should always consult a DB expert if you don't exactly understand what you are doing, adding unnecessary indexes as sometimes
+    # worst than not having any.
+    # If you require some help through this process and other rails issues, check out http://www.railsmentor.com 
     
     #{add.join("\n    ")}
   end
@@ -217,6 +221,15 @@ EOM
       migration = <<EOM  
 class AddMissingIndexes < ActiveRecord::Migration
   def self.up
+    
+    # These indexes were found by scanning associations between your application's models, it is
+    # strongly advised that you will go through all of these indexes and check if they are right, there is absolutly no
+    # liablity that this information is right and fits your application.
+    #
+    # You should always consult a DB expert if you don't exactly understand what you are doing, adding unnecessary indexes as sometimes
+    # worst than not having any.
+    # If you require some help through this process and other rails issues, check out http://www.railsmentor.com
+    
     #{add.join("\n    ")}
   end
   
