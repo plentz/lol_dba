@@ -7,21 +7,15 @@ note: there should be mode fields depending on your application design and custo
 h2. Installation
 
 as a rails plugin:
-<pre>
-script/plugin install git://github.com/eladmeidar/rails_indexes.git
-</pre>
+<pre>script/plugin install git://github.com/eladmeidar/rails_indexes.git</pre>
 
 h2. Usage
 
 Display a simple report:
-<pre>
-rake db:show_me_some_indexes
-</pre>
+<pre>rake db:show_me_some_indexes</pre>
 
 Display a migration for adding/removing all necessary indexes:
-<pre>
-rake db:show_me_a_migration
-</pre>
+<pre>rake db:show_me_a_migration</pre>
 
 Note that it would probably make more sense running those tasks on production, where you *actually* need those indexes to be added.
 
