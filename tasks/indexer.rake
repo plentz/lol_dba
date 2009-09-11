@@ -12,11 +12,11 @@ namespace :db do
       class_name = model_name.sub(/\.rb$/,'').camelize
       begin
         klass = class_name.split('::').inject(Object){ |klass,part| klass.const_get(part) }
+        if klass < ActiveRecord::Base && !klass.abstract_class?
+          model_classes << klass
+        end
       rescue
-        klass = nil
-      end
-      if klass < ActiveRecord::Base && !klass.abstract_class?
-        model_classes << klass
+        # No-op
       end
     end
     puts "Found #{model_classes.size} Models"
