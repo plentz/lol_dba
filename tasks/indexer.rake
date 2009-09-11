@@ -1,4 +1,4 @@
-def check_for_indexes
+def check_for_indexes(migration_format = false)
   model_names = []
   Dir.chdir(Rails.root) do 
     model_names = Dir["**/app/models/*.rb"].collect {|filename| filename.split('/').last }
@@ -19,15 +19,22 @@ def check_for_indexes
   puts "Found #{model_classes.size} Models"
   
   @indexes_required = Hash.new([])
+  @index_migrations = Hash.new([])
   
   model_classes.each do |class_name|
     
-    foreign_keys = []
+  #  foreign_keys = []
     
     # check if this is an STI child instance
     if class_name.base_class.name != class_name.name
       # add the inharitance column on the parent table
-      @indexes_required[class_name.base_class.table_name] += [class_name.base_class.inheritance_column]
+      
+      if !(migration_format)
+        @indexes_required[class_name.base_class.table_name] += [class_name.base_class.inheritance_column]
+      else
+        # index migration for STI should require both the primary key and the inheritance_column in a composite index.
+        @index_migrations[class_name.base_class.table_name] += [[class_name.base_class.inheritance_column, class_name.base_class.primary_key]]
+      end
     end
     
     class_name.reflections.each_pair do |reflection_name, reflection_options|
@@ -35,12 +42,28 @@ def check_for_indexes
       when :belongs_to
         # polymorphic?
         if reflection_options.options.has_key?(:polymorphic) && (reflection_options.options[:polymorphic] == true)
-          @indexes_required[class_name.table_name.to_s] += ["#{reflection_options.name.to_s}_type", "#{reflection_options.name.to_s}_id"]
+          if !(migration_format)
+            @indexes_required[class_name.table_name.to_s] += ["#{reflection_options.name.to_s}_type", "#{reflection_options.name.to_s}_id"]
+          else
+            @index_migrations[class_name.table_name.to_s] += [["#{reflection_options.name.to_s}_type", "#{reflection_options.name.to_s}_id"]]
+          end
         else
-          @indexes_required[class_name.table_name.to_s] += [reflection_options.primary_key_name]
+          if !(migration_format)
+            @indexes_required[class_name.table_name.to_s] += [reflection_options.primary_key_name]
+          else
+            @index_migrations[class_name.table_name.to_s] += [reflection_options.primary_key_name]
+          end
         end
       when :has_and_belongs_to_many
-        @indexes_required[reflection_options.options[:join_table]] += [reflection_options.options[:association_foreign_key], reflection_options.options[:foreign_key]]
+        table_name = reflection_options.options[:join_table] ||= [class_name.table_name, reflection_name.to_s].sort.join('_')
+        association_foreign_key = reflection_options.options[:association_foreign_key] ||= "#{reflection_name.singularize}_id"
+        foreign_key = reflection_options.options[:foreign_key] ||= "#{class_name.name.tableize.signularize}_id"
+        
+        if !(migration_format)
+          @indexes_required[table_name] += [association_foreign_key, foreign_key].sort unless @indexes_required[table_name].include?([association_foreign_key, foreign_key].sort)
+        else
+          @index_migrations[table_name] += [[association_foreign_key, foreign_key].sort] unless @index_migrations[table_name].include?([association_foreign_key, foreign_key].sort)
+        end
       else
         #nothing
       end
@@ -56,7 +79,11 @@ def check_for_indexes
       @missing_indexes[table_name] = keys_to_add unless keys_to_add.empty?
     end
   end
-  @missing_indexes
+  if !(migration_format)
+    @missing_indexes
+  else
+    @index_migrations
+  end
 end
 
 namespace :db do
@@ -69,16 +96,24 @@ namespace :db do
   end
   
   task :show_me_a_migration => :environment do
-    missing_indexes = check_for_indexes
+    migration_format = true
+    missing_indexes = check_for_indexes(migration_format)
 
-    unless missing_indexes.empty?
+    unless missing_indexes.keys.empty?
       add = []
       remove = []
       missing_indexes.each do |table_name, keys_to_add|
         keys_to_add.each do |key|
           next if key.blank?
-          add << "add_index :#{table_name}, :#{key}"
-          remove << "remove_index :#{table_name}, :#{key}"
+          if key.is_a?(Array)
+            keys = key.collect {|k| ":#{k}"}
+            add << "add_index :#{table_name}, [#{keys.join(', ')}]"
+            remove << "remove_index :#{table_name}, :column => [#{keys.join(', ')}]"
+          else
+            add << "add_index :#{table_name}, :#{key}"
+            remove << "remove_index :#{table_name}, :#{key}"
+          end
+          
         end
       end
       
