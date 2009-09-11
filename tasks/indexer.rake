@@ -67,4 +67,35 @@ namespace :db do
       puts "Table '#{table_name}' => #{keys_to_add.to_sentence}"
     end
   end
+  
+  task :show_me_a_migration => :environment do
+    missing_indexes = check_for_indexes
+
+    unless missing_indexes.empty?
+      add = []
+      remove = []
+      missing_indexes.each do |table_name, keys_to_add|
+        keys_to_add.each do |key|
+          next if key.blank?
+          add << "add_index :#{table_name}, :#{key}"
+          remove << "remove_index :#{table_name}, :#{key}"
+        end
+      end
+      
+      migration = <<EOM
+class AddMissingIndexes < ActiveRecord::Migration
+  def self.up
+    #{add.join("\n    ")}
+  end
+  
+  def self.down
+    #{remove.join("\n    ")}
+  end
+end
+EOM
+
+      puts "## Drop this into a file in db/migrate ##"
+      puts migration
+    end
+  end
 end
