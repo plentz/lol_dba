@@ -4,8 +4,8 @@ Rails Indexes
 Scans your models and displays a list of columns that _probably_ should be indexed.
 
 note: there should be mode fields depending on your application design and custom queries.
-
-  # Run it: rake db:show_me_some_indexes
+# Install: script/plugin install http://github.com/eladmeidar/rails_indexes/tree/master
+# Run it: rake db:show_me_some_indexes
 
 
 Future:
@@ -13,8 +13,8 @@ Future:
    Add an option to create a migration that adds all the needed indexes.
    Add an option to scan the application root tree for #find, #find_all_by and #find_by to get some more index-required columns.
 Author:
-   Dave Thomas
-   Pragmatic Programmers, LLC
+   Elad Meidar
+   http://blog.eizesus.com
    
 Released under the same license as Ruby. No Support. No Warranty.
 
