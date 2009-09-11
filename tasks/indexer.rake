@@ -30,10 +30,10 @@ def check_for_indexes(migration_format = false)
       # add the inharitance column on the parent table
       
       if !(migration_format)
-        @indexes_required[class_name.base_class.table_name] += [class_name.base_class.inheritance_column]
+        @indexes_required[class_name.base_class.table_name] += [class_name.base_class.inheritance_column].sort unless  @indexes_required[class_name.base_class.table_name].include?([class_name.base_class.inheritance_column].sort)
       else
         # index migration for STI should require both the primary key and the inheritance_column in a composite index.
-        @index_migrations[class_name.base_class.table_name] += [[class_name.base_class.inheritance_column, class_name.base_class.primary_key]]
+        @index_migrations[class_name.base_class.table_name] += [[class_name.base_class.inheritance_column, class_name.base_class.primary_key]] unless @index_migrations[class_name.base_class.table_name].include?([class_name.base_class.inheritance_column].sort)
       end
     end
     
@@ -41,17 +41,24 @@ def check_for_indexes(migration_format = false)
       case reflection_options.macro
       when :belongs_to
         # polymorphic?
+        @table_name = class_name.table_name.to_s #(reflection_options.options.has_key?(:class_name) ?  reflection_options.options[:class_name].constantize.table_name : )
         if reflection_options.options.has_key?(:polymorphic) && (reflection_options.options[:polymorphic] == true)
+          poly_type = "#{reflection_options.name.to_s}_type"
+          poly_id = "#{reflection_options.name.to_s}_id"
           if !(migration_format)
-            @indexes_required[class_name.table_name.to_s] += ["#{reflection_options.name.to_s}_type", "#{reflection_options.name.to_s}_id"]
+            @indexes_required[@table_name.to_s] += [poly_type, poly_id].sort unless @indexes_required[@table_name.to_s].include?([poly_type, poly_id].sort)
           else
-            @index_migrations[class_name.table_name.to_s] += [["#{reflection_options.name.to_s}_type", "#{reflection_options.name.to_s}_id"]]
+            
+            @index_migrations[@table_name.to_s] += [[poly_type, poly_id].sort] unless @index_migrations[@table_name.to_s].include?([poly_type, poly_id].sort)
           end
         else
+          
+          foreign_key = reflection_options.options[:foreign_key] ||= reflection_options.primary_key_name
+
           if !(migration_format)
-            @indexes_required[class_name.table_name.to_s] += [reflection_options.primary_key_name]
+            @indexes_required[@table_name.to_s] += [foreign_key] unless @indexes_required[@table_name.to_s].include?(foreign_key)
           else
-            @index_migrations[class_name.table_name.to_s] += [reflection_options.primary_key_name]
+            @index_migrations[@table_name.to_s] += [foreign_key] unless @index_migrations[@table_name.to_s].include?(foreign_key)
           end
         end
       when :has_and_belongs_to_many
@@ -60,9 +67,9 @@ def check_for_indexes(migration_format = false)
         foreign_key = reflection_options.options[:foreign_key] ||= "#{class_name.name.tableize.signularize}_id"
         
         if !(migration_format)
-          @indexes_required[table_name] += [association_foreign_key, foreign_key].sort unless @indexes_required[table_name].include?([association_foreign_key, foreign_key].sort)
+          @indexes_required[table_name.to_s] += [association_foreign_key, foreign_key].sort unless @indexes_required[table_name].include?([association_foreign_key, foreign_key].sort)
         else
-          @index_migrations[table_name] += [[association_foreign_key, foreign_key].sort] unless @index_migrations[table_name].include?([association_foreign_key, foreign_key].sort)
+          @index_migrations[table_name.to_s] += [[association_foreign_key, foreign_key].sort] unless @index_migrations[table_name].include?([association_foreign_key, foreign_key].sort)
         end
       else
         #nothing
