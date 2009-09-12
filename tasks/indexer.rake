@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__), "../lib/annotate_models.rb")
+require File.join(File.dirname(__FILE__), "../lib/indexer.rb")
 
 namespace :db do
   desc "collect indexes based on AR::Base.find calls."

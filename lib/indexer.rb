@@ -1,6 +1,12 @@
 module Indexer
   
   
+  def self.sortalize(array)
+    Marshal.load(Marshal.dump(array)).each do |element|
+      element.sort! if element.is_a?(Array)
+    end
+  end
+  
   def self.check_for_indexes(migration_format = false)
     model_names = []
     Dir.chdir(Rails.root) do 
@@ -82,8 +88,8 @@ module Indexer
     @indexes_required.each do |table_name, foreign_keys|
 
       unless foreign_keys.blank?
-        existing_indexes = ActiveRecord::Base.connection.indexes(table_name.to_sym).collect(&:columns).flatten
-        keys_to_add = foreign_keys.uniq - existing_indexes
+        existing_indexes = ActiveRecord::Base.connection.indexes(table_name.to_sym).collect(&:columns)
+        keys_to_add = self.sortalize(foreign_keys.uniq) - self.sortalize(existing_indexes)
         @missing_indexes[table_name] = keys_to_add unless keys_to_add.empty?
       end
     end
@@ -139,6 +145,16 @@ module Indexer
         end
       end
     end
+    @missing_indexes = {}
+    @indexes_required.each do |table_name, foreign_keys|
+
+      unless foreign_keys.blank?
+        existing_indexes = ActiveRecord::Base.connection.indexes(table_name.to_sym).collect(&:columns)
+        keys_to_add = self.sortalize(foreign_keys.uniq) - self.sortalize(existing_indexes)
+        @missing_indexes[table_name] = keys_to_add unless keys_to_add.empty?
+      end
+    end
+    
     @indexes_required
   end
   
@@ -191,7 +207,6 @@ EOM
       puts "## Drop this into a file in db/migrate ##"
       puts migration
     end
-  end
   end
   
   def self.indexes_list
