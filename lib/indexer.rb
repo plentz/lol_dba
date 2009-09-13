@@ -32,15 +32,14 @@ module Indexer
 
     model_classes.each do |class_name|
 
-      # check if this is an STI child instance
-      if class_name.base_class.name != class_name.name && class_name.column_names.include?(class_name.base_class.inheritance_column)
+      # check if this is an STI child instance      
+      if class_name.base_class.name != class_name.name && (class_name.column_names.include?(class_name.base_class.inheritance_column) || class_name.column_names.include?(class_name.inheritance_column))
         # add the inharitance column on the parent table
-
         if !(migration_format)
-          @indexes_required[class_name.base_class.table_name] += [class_name.base_class.inheritance_column].sort unless  @indexes_required[class_name.base_class.table_name].include?([class_name.base_class.inheritance_column].sort)
+          @indexes_required[class_name.base_class.table_name] += [class_name.inheritance_column].sort unless  @indexes_required[class_name.base_class.table_name].include?([class_name.inheritance_column].sort)
         else
           # index migration for STI should require both the primary key and the inheritance_column in a composite index.
-          @index_migrations[class_name.base_class.table_name] += [[class_name.base_class.inheritance_column, class_name.base_class.primary_key]] unless @index_migrations[class_name.base_class.table_name].include?([class_name.base_class.inheritance_column].sort)
+          @index_migrations[class_name.base_class.table_name] += [[class_name.inheritance_column, class_name.base_class.primary_key].sort] unless @index_migrations[class_name.base_class.table_name].include?([class_name.base_class.inheritance_column].sort)
         end
       end
 
