@@ -25,7 +25,13 @@ Note that it would probably make more sense running those tasks on production, w
 * Add an option to create a migration that adds all the needed indexes.
 * Add an option to scan the application root tree for #find, #find_all_by and #find_by to get some more index-required columns.
 
-Author:
+h2. Tests
+
+There's a "test application":http://github.com/eladmeidar/rails_indexes_test_app/tree/master.
+
+
+h4. Author:
+
 Elad Meidar
 "http://blog.eizesus.com":http://blog.eizesus.com
 
