@@ -11,14 +11,15 @@ as a rails plugin:
 
 h2. Usage
 
-Display a simple report:
+<del>Display a simple report:
 <pre>rake db:show_me_some_indexes</pre>
+</del> - *deprecated*
 
 Display a migration for adding/removing all necessary indexes based on associations:
 <pre>rake db:show_me_a_migration</pre>
 
-<del>Display a migration for adding/removing all necessary indexes based on AR::Base#find calls (including: find, find_by, find_all_by, find_by_x_and_y, find_all_by_x_and_y):</del> - deprecated
-<pre><del>rake db:show_me_ar_find_indexes</del></pre>
+Display a migration for adding/removing all necessary indexes based on AR::Base#find calls (including: find, find_by, find_all_by, find_by_x_and_y, find_all_by_x_and_y):
+<pre>rake db:show_me_ar_find_indexes</pre>
 
 Note that it would probably make more sense running those tasks on production, where you *actually* need those indexes to be added.
 
