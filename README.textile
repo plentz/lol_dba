@@ -11,9 +11,9 @@ as a rails plugin:
 
 h2. Usage
 
-<del>Display a simple report:
-<pre>rake db:show_me_some_indexes</pre>
-</del> - *deprecated*
+<del>Display a simple report:</del>
+<pre><del>rake db:show_me_some_indexes</del></pre>
+ - *deprecated*
 
 Display a migration for adding/removing all necessary indexes based on associations:
 <pre>rake db:show_me_a_migration</pre>
