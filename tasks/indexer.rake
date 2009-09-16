@@ -8,6 +8,7 @@ namespace :db do
   
   desc "scan for possible required indexes"
   task :show_me_some_indexes => :environment do
+    # Indexer.indexes_list
     puts "Sorry, simple report is deprecated.\nuse rake db:show_me_a_migration or db:show_me_ar_find_indexes instead"
   end
   
