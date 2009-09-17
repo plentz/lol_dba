@@ -122,7 +122,7 @@ module Indexer
           if model_name.respond_to?(:constantize)
             table_name = model_name.constantize.table_name
           else
-            puts "Unable to constantize #{model_name.to_s}, if you are sure that #{model_name.to_s} is a valid class name, please file an issue on\nhttp://github.com/eladmeidar/rails_indexes"
+            puts "Unable to constantize #{model_name.to_s}, if you are sure that #{model_name.to_s} is a valid class name, please file an issue on\nhttp://github.com/eladmeidar/rails_indexes\nPlease supply the relevant code as well, thanks. =)"
             next
           end
 
