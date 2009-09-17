@@ -118,9 +118,13 @@ module Indexer
 
           model_name, column_names, options = matches[1], matches[6], matches[7]
         #  puts "Model: #{model_name}, columns: #{column_names}, options: #{options}"
-
-          table_name = model_name.constantize.table_name
-          # a simple find has no "by_column_and..."
+          
+          if model_name.respond_to?(:constantize)
+            table_name = model_name.constantize.table_name
+          else
+            puts "Unable to constantize #{model_name.to_s}, if you are sure that #{model_name.to_s} is a valid class name, please file an issue on\nhttp://github.com/eladmeidar/rails_indexes"
+            next
+          end
 
           if column_names.blank?
             primary_key = model_name.constantize.primary_key
