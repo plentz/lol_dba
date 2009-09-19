@@ -102,7 +102,7 @@ module Indexer
   def self.scan_finds
     file_names = []
     Dir.chdir(Rails.root) do 
-      file_names = Dir["**/app/**/*.rb"].uniq
+      file_names = Dir["**/app/**/*.rb"].uniq.reject {|file_with_path| file_with_path.include?('test')}
     end
 
     # ([A-Z]{1}[A-Za-z]+).(find){1}((_all){0,1}(_by_){0,1}([A-Za-z_]+))?\(([0-9A-Za-z:=>. {},]*)\)
