@@ -198,11 +198,11 @@ class AddMissingIndexes < ActiveRecord::Migration
     # http://guides.rubyonrails.org
 
     
-    #{add.join("\n    ")}
+    #{add.uniq.join("\n    ")}
   end
   
   def self.down
-    #{remove.join("\n    ")}
+    #{remove.uniq.join("\n    ")}
   end
 end
 EOM
@@ -253,11 +253,11 @@ class AddFindsMissingIndexes < ActiveRecord::Migration
     # http://www.railstutor.org
     # http://guides.rubyonrails.org
     
-    #{add.join("\n    ")}
+    #{add.uniq.join("\n    ")}
   end
   
   def self.down
-    #{remove.join("\n    ")}
+    #{remove.uniq.join("\n    ")}
   end
 end
 EOM
