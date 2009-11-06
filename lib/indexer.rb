@@ -105,7 +105,6 @@ module Indexer
       file_names = Dir["**/app/**/*.rb"].uniq.reject {|file_with_path| file_with_path.include?('test')}
     end
 
-    # ([A-Z]{1}[A-Za-z]+).(find){1}((_all){0,1}(_by_){0,1}([A-Za-z_]+))?\(([0-9A-Za-z:=>. {},]*)\)
     puts "Found #{file_names.size} files."
 
     @indexes_required = Hash.new([])
@@ -120,7 +119,12 @@ module Indexer
         #  puts "Model: #{model_name}, columns: #{column_names}, options: #{options}"
           
           if model_name.respond_to?(:constantize)
-            table_name = model_name.constantize.table_name
+            if model_name.constantize.respond_to?(:table_name)             
+              table_name = model_name.constantize.table_name
+            else
+              puts "Unable to get the table_name for #{model_name.to_s}. it could be an ActiveResource"
+              next
+            end
           else
             puts "Unable to constantize #{model_name.to_s}, if you are sure that #{model_name.to_s} is a valid class name, please file an issue on\nhttp://github.com/eladmeidar/rails_indexes\nPlease supply the relevant code as well, thanks. =)"
             next
