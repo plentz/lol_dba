@@ -165,6 +165,11 @@ module Indexer
     @indexes_required
   end
   
+  def self.key_exists?(table,key_columns)     
+    result = (key_columns.to_a - ActiveRecord::Base.connection.indexes(table).map { |i| i.columns }.flatten)
+    result.empty?
+  end
+  
   def self.simple_migration
     migration_format = true
     missing_indexes = check_for_indexes(migration_format)
@@ -174,6 +179,7 @@ module Indexer
       remove = []
       missing_indexes.each do |table_name, keys_to_add|
         keys_to_add.each do |key|
+          next if key_exists?(table_name,key)
           next if key.blank?
           if key.is_a?(Array)
             keys = key.collect {|k| ":#{k}"}
@@ -230,6 +236,7 @@ EOM
       remove = []
       find_indexes.each do |table_name, keys_to_add|
         keys_to_add.each do |key|
+          next if key_exists?(table_name,key)
           next if key.blank?
           if key.is_a?(Array)
             keys = key.collect {|k| ":#{k}"}
