@@ -132,7 +132,7 @@ module Indexer
           primary_key = model_name.constantize.primary_key
           @indexes_required[table_name] += [primary_key] unless @indexes_required[table_name].include?(primary_key)
           
-          if column_names.any?
+          if column_names.present?
             column_names = column_names.split('_and_')
 
             # remove find_by_sql references.
