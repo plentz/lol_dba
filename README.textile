@@ -28,8 +28,9 @@ Note that it would probably make more sense running those tasks on production, w
 
 h2. Tests
 
-There's a "test application":http://github.com/eladmeidar/rails_indexes_test_app/tree/master.
-
+Requires SQLite3 installed, then just:
+<pre>rake</pre>
+to run the tests
 
 h4. Author:
 
