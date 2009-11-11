@@ -1,8 +1,8 @@
 require 'test_helper'
 
 class RailsIndexesTest < ActiveSupport::TestCase
-  # Replace this with your real tests.
-  test "the truth" do
-    assert true
+
+  test "fail dammit" do
+    assert_equal 1,4
   end
 end

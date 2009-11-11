@@ -1,6 +1,5 @@
 module Indexer
   
-  
   def self.sortalize(array)
     Marshal.load(Marshal.dump(array)).each do |element|
       element.sort! if element.is_a?(Array)
