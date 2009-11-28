@@ -85,6 +85,7 @@ module Indexer
 
   def self.scan_finds
     file_names = []
+    
     Dir.chdir(Rails.root) do 
       file_names = Dir["**/app/**/*.rb"].uniq.reject {|file_with_path| file_with_path.include?('test')}
     end
@@ -99,19 +100,24 @@ module Indexer
         # this will fail if the file isnot a model file
         
         begin
-          current_model = File.basename(file_name).sub(/\.rb$/,'').camelize.constantize
-          primary_key = current_model.primary_key
-          table_name = current_model.table_name
-          @indexes_required[table_name] += [primary_key] unless @indexes_required[table_name].include?(primary_key)
+          current_model_name = File.basename(file_name).sub(/\.rb$/,'').camelize
         rescue
           # NO-OP
         end
         
+        klass = current_model_name.split('::').inject(Object){ |klass,part| klass.const_get(part) } rescue nil
+        if klass.present? && klass < ActiveRecord::Base && !klass.abstract_class?
+          current_model = current_model_name.constantize
+          primary_key = current_model.primary_key
+          table_name = current_model.table_name
+          @indexes_required[table_name] += [primary_key] unless @indexes_required[table_name].include?(primary_key)
+        end
+        
         find_regexp = Regexp.new(/([A-Z]{1}[A-Za-z]+|self).(find){1}((_all){0,1}(_by_){0,1}([A-Za-z_]+))?\(([0-9A-Za-z"\':=>. \[\]{},]*)\)/)
         if matches = find_regexp.match(line)
-    
+
           model_name, column_names, options = matches[1], matches[6], matches[7]
-          
+      
           if model_name == "self"
             model_name = File.basename(file_name).sub(/\.rb$/,'').camelize
             table_name = model_name.constantize.table_name            
@@ -128,10 +134,10 @@ module Indexer
               next
             end
           end
-          
+      
           primary_key = model_name.constantize.primary_key
           @indexes_required[table_name] += [primary_key] unless @indexes_required[table_name].include?(primary_key)
-          
+      
           if column_names.present?
             column_names = column_names.split('_and_')
 
@@ -152,13 +158,22 @@ module Indexer
         end
       end
     end
+    
     @missing_indexes = {}
     @indexes_required.each do |table_name, foreign_keys|
 
-      unless foreign_keys.blank?
-        existing_indexes = ActiveRecord::Base.connection.indexes(table_name.to_sym).collect {|index| index.columns.size > 1 ? index.columns : index.columns.first}
-        keys_to_add = self.sortalize(foreign_keys.uniq) - self.sortalize(existing_indexes)
-        @missing_indexes[table_name] = keys_to_add unless keys_to_add.empty?
+      unless foreign_keys.blank?          
+        begin
+          if ActiveRecord::Base.connection.tables.include?(table_name.to_s)
+            existing_indexes = ActiveRecord::Base.connection.indexes(table_name.to_sym).collect {|index| index.columns.size > 1 ? index.columns : index.columns.first}
+            keys_to_add = self.sortalize(foreign_keys.uniq) - self.sortalize(existing_indexes)
+            @missing_indexes[table_name] = keys_to_add unless keys_to_add.empty?
+          else
+            puts "BUG: table '#{table_name.to_s}' does not exist, please report this bug."
+          end
+        rescue Exception => e
+          puts "ERROR: #{e}"
+        end
       end
     end
     
