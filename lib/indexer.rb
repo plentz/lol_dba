@@ -56,7 +56,15 @@ module Indexer
         when :has_and_belongs_to_many
           table_name = reflection_options.options[:join_table] ||= [class_name.table_name, reflection_name.to_s].sort.join('_')
           association_foreign_key = reflection_options.options[:association_foreign_key] ||= "#{reflection_name.to_s.singularize}_id"
-          foreign_key = reflection_options.options[:foreign_key] ||= "#{class_name.name.tableize.singularize}_id"
+          
+          # Guess foreign key?
+          if reflection_options.options[:foreign_key]
+            foreign_key = reflection_options.options[:foreign_key]
+          elsif reflection_options.options[:class_name]
+            foreign_key = reflection_options.options[:class_name].foreign_key
+          else
+            foreign_key = "#{class_name.name.tableize.singularize}_id"
+          end
           
           composite_keys = [association_foreign_key, foreign_key]
           
