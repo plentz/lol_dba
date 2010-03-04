@@ -11,20 +11,13 @@ as a rails plugin:
 
 h2. Usage
 
-<del>Display a simple report:</del>
-<pre><del>rake db:show_me_some_indexes</del></pre>
- - *deprecated*
-
 Display a migration for adding/removing all necessary indexes based on associations:
-<pre>rake db:show_me_a_migration</pre>
+<pre>rake db:index_migration</pre>
 
 Display a migration for adding/removing all necessary indexes based on AR::Base#find calls (including: find, find_by, find_all_by, find_by_x_and_y, find_all_by_x_and_y):
-<pre>rake db:show_me_ar_find_indexes</pre>
+<pre>rake db:find_query_indexes</pre>
 
 Note that it would probably make more sense running those tasks on production, where you *actually* need those indexes to be added.
-
-* Add an option to create a migration that adds all the needed indexes.
-* Add an option to scan the application root tree for #find, #find_all_by and #find_by to get some more index-required columns.
 
 h2. Tests
 
@@ -34,12 +27,10 @@ to run the tests
 
 h4. Author:
 
-Elad Meidar
-"http://blog.eizesus.com":http://blog.eizesus.com
+Elad Meidar - "http://blog.eizesus.com":http://blog.eizesus.com
 
 Thanks:
-Eric Davis,
-"http://littlestreamsoftware.com":http://littlestreamsoftware.com
+Eric Davis - "http://littlestreamsoftware.com":http://littlestreamsoftware.com
    
 Released under the same license as Ruby. No Support. No Warranty, no Pain.
 
