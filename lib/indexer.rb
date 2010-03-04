@@ -84,16 +84,23 @@ module Indexer
   end
 
   def self.scan_finds
+    
+    
+    # Collect all files that can contain queries, in app/ directories (includes plugins and such)
+    # TODO: add lib too ? 
     file_names = []
     
     Dir.chdir(Rails.root) do 
       file_names = Dir["**/app/**/*.rb"].uniq.reject {|file_with_path| file_with_path.include?('test')}
     end
-
+    
     @indexes_required = Hash.new([])
+    
+    # Scan each file
     file_names.each do |file_name| 
       current_file = File.open(File.join(Rails.root, file_name), 'r')
 
+      # Scan each line
       current_file.each do |line|
         
         # by default, try to add index on primary key, based on file name
@@ -105,7 +112,10 @@ module Indexer
           # NO-OP
         end
         
+        # Get the model class
         klass = current_model_name.split('::').inject(Object){ |klass,part| klass.const_get(part) } rescue nil
+        
+        # Only add primary key for active record dependent classes and non abstract ones too.
         if klass.present? && klass < ActiveRecord::Base && !klass.abstract_class?
           current_model = current_model_name.constantize
           primary_key = current_model.primary_key
@@ -139,48 +149,56 @@ module Indexer
     @indexes_required
   end
   
-  
+  # Check line for find* methods (include find_all, find_by and just find)
   def self.check_line_for_find_indexes(file_name, line)
-    find_regexp = Regexp.new(/([A-Z]{1}[A-Za-z]+|self).(find){1}((_all){0,1}(_by_){0,1}([A-Za-z_]+))?\(([0-9A-Za-z"\':=>. \[\]{},]*)\)/)
+    
+    # TODO: Assumes that you have a called on #find. you can actually call #find without a caller in a model code. ex:
+    # def something
+    #   find(self.id)
+    # end
+    #
+    # find_regexp = Regexp.new(/([A-Z]{1}[A-Za-z]+|self).(find){1}((_all){0,1}(_by_){0,1}([A-Za-z_]+))?\(([0-9A-Za-z"\':=>. \[\]{},]*)\)/)
+    
+    find_regexp = Regexp.new(/(([A-Z]{1}[A-Za-z]+|self).)?(find){1}((_all){0,1}(_by_){0,1}([A-Za-z_]+))?\(([0-9A-Za-z"\':=>. \[\]{},]*)\)/)
+    
+    # If line matched a finder
     if matches = find_regexp.match(line)
 
-      model_name, column_names, options = matches[1], matches[6], matches[7]
-  
-      if model_name == "self"
+      model_name, column_names, options = matches[2], matches[7], matches[8]
+      
+      # if the finder class is "self" or empty (can be a simple "find()" in a model)
+      if model_name == "self" || model_name.blank?
         model_name = File.basename(file_name).sub(/\.rb$/,'').camelize
         table_name = model_name.constantize.table_name            
       else
         if model_name.respond_to?(:constantize)
           if model_name.constantize.respond_to?(:table_name)             
             table_name = model_name.constantize.table_name
-          else
-            #puts "Unable to get the table_name for #{model_name.to_s}. it could be an ActiveResource"
-            next
           end
-        else
-          #puts "Unable to constantize #{model_name.to_s}, if you are sure that #{model_name.to_s} is a valid class name, please file an issue on\nhttp://github.com/eladmeidar/rails_indexes\nPlease supply the relevant code as well, thanks. =)"
-          next
         end
       end
+      
+      # Check that all prerequisites are met
+      if model_name.present? && table_name.present?
+        primary_key = model_name.constantize.primary_key
+        @indexes_required[table_name] += [primary_key] unless @indexes_required[table_name].include?(primary_key)
   
-      primary_key = model_name.constantize.primary_key
-      @indexes_required[table_name] += [primary_key] unless @indexes_required[table_name].include?(primary_key)
-  
-      if column_names.present?
-        column_names = column_names.split('_and_')
+        if column_names.present?
+          column_names = column_names.split('_and_')
 
-        # remove find_by_sql references.
-        column_names.delete("sql")
+          # remove find_by_sql references.
+          column_names.delete("sql")
 
-        column_names = model_name.constantize.column_names & column_names
+          column_names = model_name.constantize.column_names & column_names
 
-        # Check if there were more than 1 column
-        if column_names.size == 1
-          column_name = column_names.first
-          @indexes_required[table_name] += [column_name] unless @indexes_required[table_name].include?(column_name)
-        else
-          @indexes_required[table_name] += [column_names] unless @indexes_required[table_name].include?(column_names)
-          @indexes_required[table_name] += [column_names.reverse] unless @indexes_required[table_name].include?(column_names.reverse)
+          # Check if there were more than 1 column
+          if column_names.size == 1
+            column_name = column_names.first
+            @indexes_required[table_name] += [column_name] unless @indexes_required[table_name].include?(column_name)
+          else
+            @indexes_required[table_name] += [column_names] unless @indexes_required[table_name].include?(column_names)
+            @indexes_required[table_name] += [column_names.reverse] unless @indexes_required[table_name].include?(column_names.reverse)
+          end
         end
       end
     end
