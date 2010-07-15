@@ -187,7 +187,7 @@ module Indexer
       end
       
       # Check that all prerequisites are met
-      if model_name.present? && table_name.present?
+      if model_name.present? && table_name.present? && model_name.constantize.ancestors.include?(ActiveRecord::Base)
         primary_key = model_name.constantize.primary_key
         @indexes_required[table_name] += [primary_key] unless @indexes_required[table_name].include?(primary_key)
   
