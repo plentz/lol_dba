@@ -6,8 +6,8 @@ note: there should be mode fields depending on your application design and custo
 
 h2. Installation
 
-as a rails plugin:
-<pre>script/plugin install git://github.com/eladmeidar/rails_indexes.git</pre>
+Add *rails_indexes* to your Gemfile.
+<pre>gem 'rails_indexes', :git => 'https://github.com/warpc/rails_indexes'</pre>
 
 h2. Usage
 
@@ -16,14 +16,16 @@ Display a migration for adding/removing all necessary indexes based on associati
 
 Display a migration for adding/removing all necessary indexes based on AR::Base#find calls (including: find, find_by, find_all_by, find_by_x_and_y, find_all_by_x_and_y):
 <pre>rake db:find_query_indexes</pre>
+*Notice:* At now moment it does not support Arel(the new Rails 3 Active Record Query Interface) calls (including: where, joins, includes, from, select...)
 
-Note that it would probably make more sense running those tasks on production, where you *actually* need those indexes to be added.
+Note that add index in big database may take a long time.
 
 h2. Tests
 
-Requires SQLite3 installed, then just:
+<pre>bundle install</pre>
 <pre>rake</pre>
 to run the tests
+*Notice:* At now moment tests not working in Ruby 1.9, use 1.8.7. 
 
 h4. Author:
 

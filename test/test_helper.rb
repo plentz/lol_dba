@@ -8,7 +8,7 @@ require 'active_support'
 require 'active_support/test_case'
 require 'action_controller'
 
-require 'indexer'
+require 'rails_indexes'
 
 ActiveRecord::Base.establish_connection(
   :adapter  => "sqlite3",

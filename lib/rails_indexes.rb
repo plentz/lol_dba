@@ -1,4 +1,6 @@
-module Indexer
+module RailsIndexes
+  
+  require "rails_indexes/railtie.rb" if defined?(Rails)
   
   def self.sortalize(array)
     Marshal.load(Marshal.dump(array)).each do |element|

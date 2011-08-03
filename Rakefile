@@ -1,4 +1,7 @@
-require 'rake'
+#require 'bundler'
+#Bundler::GemHelper.install_tasks
+
+require 'rubygems'
 require 'rake/testtask'
 require 'rake/rdoctask'
 
