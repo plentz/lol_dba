@@ -7,7 +7,7 @@ note: there should be mode fields depending on your application design and custo
 h2. Installation
 
 Add *rails_indexes* to your Gemfile.
-<pre>gem 'rails_indexes', :git => 'https://github.com/warpc/rails_indexes'</pre>
+<pre>gem "rails_indexes", :git => "https://github.com/warpc/rails_indexes"</pre>
 
 h2. Usage
 
