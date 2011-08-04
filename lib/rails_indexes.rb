@@ -8,6 +8,28 @@ module RailsIndexes
     end
   end
   
+  def self.puts_migration_content(migration_name, add_index_array, del_index_array)
+    puts "## Drop this into a file in db/migrate ##"
+    migration = <<EOM  
+    class #{migration_name} < ActiveRecord::Migration
+      def self.up
+  
+        # It is strongly recommanded that you will consult a professional DBA about your infrastucture and implemntation before
+        # changing your database in that matter.
+        # There is a possibility that some of the indexes offered below is not required and can be removed and not added, if you require
+        # further assistance with your rails application, database infrastructure or any other problem, visit:
+  
+        #{add_index_array.uniq.join("\n    ")}
+      end
+
+      def self.down
+        #{del_index_array.uniq.join("\n    ")}
+      end
+    end
+EOM
+  puts migration   
+  end
+  
   def self.check_for_indexes(migration_format = false)
     model_names = []
     Dir.chdir(Rails.root) do 
@@ -109,54 +131,41 @@ module RailsIndexes
     # Scan each file
     file_names.each do |file_name| 
       current_file = File.open(File.join(Rails.root, file_name), 'r')
-
-      # Scan each line
-      current_file.each do |line|
-        
-        # by default, try to add index on primary key, based on file name
-        # this will fail if the file isnot a model file
-        
-        begin
-          current_model_name = File.basename(file_name).sub(/\.rb$/,'').camelize
-        rescue
-          # NO-OP
-        end
-        
-        # Get the model class
-        klass = current_model_name.split('::').inject(Object){ |klass,part| klass.const_get(part) } rescue nil
-        
-        # Only add primary key for active record dependent classes and non abstract ones too.
-        if klass.present? && klass < ActiveRecord::Base && !klass.abstract_class?
-          current_model = current_model_name.constantize
-          primary_key = current_model.primary_key
-          table_name = current_model.table_name
-          @indexes_required[table_name] += [primary_key] unless @indexes_required[table_name].include?(primary_key)
-        end
-        
-        check_line_for_find_indexes(file_name, line)
-        
+      begin 
+        current_model_name = File.basename(file_name).sub(/\.rb$/,'').camelize
+      rescue
+        next
       end
+      
+      # by default, try to add index on primary key, based on file name
+      # this will fail if the file isnot a model file
+      
+      klass = current_model_name.split('::').inject(Object){ |klass,part| klass.const_get(part) } rescue next
+      next if !klass.present? || klass < ActiveRecord::Base && klass.abstract_class?
+          
+      # Scan each line
+      current_file.each { |line| check_line_for_find_indexes(file_name, line) }
     end
     
     @missing_indexes = {}
     @indexes_required.each do |table_name, foreign_keys|
-
-      unless foreign_keys.blank?          
-        begin
-          if ActiveRecord::Base.connection.tables.include?(table_name.to_s)
-            existing_indexes = ActiveRecord::Base.connection.indexes(table_name.to_sym).collect {|index| index.columns.size > 1 ? index.columns : index.columns.first}
-            keys_to_add = self.sortalize(foreign_keys.uniq) - self.sortalize(existing_indexes)
-            @missing_indexes[table_name] = keys_to_add unless keys_to_add.empty?
-          else
-            puts "BUG: table '#{table_name.to_s}' does not exist, please report this bug."
-          end
-        rescue Exception => e
-          puts "ERROR: #{e}"
+      next if foreign_keys.blank?          
+      begin
+        if ActiveRecord::Base.connection.tables.include?(table_name.to_s)
+          existing_indexes = ActiveRecord::Base.connection.indexes(table_name.to_sym).collect {|index| index.columns.size > 1 ? index.columns : index.columns.first}
+          existing_indexes += Array(ActiveRecord::Base.connection.primary_key(table_name.to_s))
+          keys_to_add = self.sortalize(foreign_keys.uniq).uniq - self.sortalize(existing_indexes)
+          p keys_to_add if table_name.to_s == "gifts"
+          @missing_indexes[table_name] = keys_to_add unless keys_to_add.empty?
+        else
+          puts "BUG: table '#{table_name.to_s}' does not exist, please report this bug."
         end
+      rescue Exception => e
+        puts "ERROR: #{e}"
       end
     end
     
-    @indexes_required
+    @missing_indexes
   end
   
   # Check line for find* methods (include find_all, find_by and just find)
@@ -215,13 +224,14 @@ module RailsIndexes
   end
   
   def self.key_exists?(table,key_columns)     
-    result = (key_columns.to_a - ActiveRecord::Base.connection.indexes(table).map { |i| i.columns }.flatten)
+    result = (Array(key_columns) - ActiveRecord::Base.connection.indexes(table).map { |i| i.columns }.flatten)
+    #FIXME: Primary key always indexes, but ActiveRecord::Base.connection.indexes not show it!
+    result = result - Array(ActiveRecord::Base.connection.primary_key(table)) if result
     result.empty?
   end
   
   def self.simple_migration
-    migration_format = true
-    missing_indexes = check_for_indexes(migration_format)
+    missing_indexes = check_for_indexes(true)
 
     unless missing_indexes.keys.empty?
       add = []
@@ -242,32 +252,7 @@ module RailsIndexes
         end
       end
       
-      migration = <<EOM  
-class AddMissingIndexes < ActiveRecord::Migration
-  def self.up
-    
-    # These indexes were found by searching for AR::Base finds on your application
-    # It is strongly recommanded that you will consult a professional DBA about your infrastucture and implemntation before
-    # changing your database in that matter.
-    # There is a possibility that some of the indexes offered below is not required and can be removed and not added, if you require
-    # further assistance with your rails application, database infrastructure or any other problem, visit:
-    #
-    # http://www.railsmentors.org
-    # http://www.railstutor.org
-    # http://guides.rubyonrails.org
-
-    
-    #{add.uniq.join("\n    ")}
-  end
-  
-  def self.down
-    #{remove.uniq.join("\n    ")}
-  end
-end
-EOM
-
-      puts "## Drop this into a file in db/migrate ##"
-      puts migration
+     puts_migration_content("AddMissingIndexes", add, remove)
     end
   end
   
@@ -280,54 +265,28 @@ EOM
   def self.ar_find_indexes(migration_mode=true)
     find_indexes = self.scan_finds
     
-    if migration_mode
-      unless find_indexes.keys.empty?
-        add = []
-        remove = []
-        find_indexes.each do |table_name, keys_to_add|
-          keys_to_add.each do |key|
-            next if key_exists?(table_name,key)
-            next if key.blank?
-            if key.is_a?(Array)
-              keys = key.collect {|k| ":#{k}"}
-              add << "add_index :#{table_name}, [#{keys.join(', ')}]"
-              remove << "remove_index :#{table_name}, :column => [#{keys.join(', ')}]"
-            else
-              add << "add_index :#{table_name}, :#{key}"
-              remove << "remove_index :#{table_name}, :#{key}"
-            end
-          
+    return find_indexes unless migration_mode
+    
+    unless find_indexes.keys.empty?
+      add = []
+      remove = []
+      find_indexes.each do |table_name, keys_to_add|
+        keys_to_add.each do |key|
+          next if key_exists?(table_name,key)
+          next if key.blank?
+          if key.is_a?(Array)
+            keys = key.collect {|k| ":#{k}"}
+            add << "add_index :#{table_name}, [#{keys.join(', ')}]"
+            remove << "remove_index :#{table_name}, :column => [#{keys.join(', ')}]"
+          else
+            add << "add_index :#{table_name}, :#{key}"
+            remove << "remove_index :#{table_name}, :#{key}"
           end
         end
-      
-        migration = <<EOM      
-class AddFindsMissingIndexes < ActiveRecord::Migration
-  def self.up
-  
-    # These indexes were found by searching for AR::Base finds on your application
-    # It is strongly recommanded that you will consult a professional DBA about your infrastucture and implemntation before
-    # changing your database in that matter.
-    # There is a possibility that some of the indexes offered below is not required and can be removed and not added, if you require
-    # further assistance with your rails application, database infrastructure or any other problem, visit:
-    #
-    # http://www.railsmentors.org
-    # http://www.railstutor.org
-    # http://guides.rubyonrails.org
-  
-    #{add.uniq.join("\n    ")}
-  end
+      end   
 
-  def self.down
-    #{remove.uniq.join("\n    ")}
-  end
-end
-EOM
- 
-        puts "## Drop this into a file in db/migrate ##"
-        puts migration
-      end
+      puts_migration_content("AddFindsMissingIndexes", add, remove)
     end
-  else
-    find_indexes
   end
+  
 end

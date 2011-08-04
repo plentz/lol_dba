@@ -43,35 +43,38 @@ class RailsIndexesTest < ActiveSupport::TestCase
     assert !(@relationship_indexes["companies"].include?("country_id"))
   end
   
-  test "default find_by indexes for primary keys" do
+  test "should not show indexes for primary keys" do
     @find_by_indexes = RailsIndexes.ar_find_indexes(false)
     
-    # Default added the primary key for each table
-    assert @find_by_indexes.has_key?("users")
-    assert @find_by_indexes.has_key?("companies")
-    assert @find_by_indexes.has_key?("gifts")
-    assert @find_by_indexes.has_key?("freelancers")
-    assert @find_by_indexes.has_key?("countries")
+    # Default not added the primary key for each table
+    ["users", "gifts", "freelancers"]. each do |table|
+      assert @find_by_indexes[table.to_s].exclude?(ActiveRecord::Base.connection.primary_key(table.to_s))
+    end
   end
   
-  test "default find_by indexes for custom primary keys" do
-    @find_by_indexes = RailsIndexes.ar_find_indexes(false)
-
-    assert @find_by_indexes["gifts"].include?("custom_primary_key")
-  end
+  #test "should show table with broken db primary keys" do
+  #Check sutuation, than db primery key no set no db
+  #  @find_by_indexes = RailsIndexes.ar_find_indexes(false)
+  #  @find_by_indexes
+  #end
+  
+  #test "default find_by indexes for custom primary keys" do
+  #  @find_by_indexes = RailsIndexes.ar_find_indexes(false)
+  #
+  #  assert @find_by_indexes["gifts"].include?("custom_primary_key")
+  #end
   
   test "find_by indexes for self.find_by_email_and_name" do
     @find_by_indexes = RailsIndexes.ar_find_indexes(false)
-    
-    assert @find_by_indexes["users"].include?(["name", "email"])
     assert @find_by_indexes["users"].include?(["email", "name"])
+    assert !@find_by_indexes["users"].include?(["name", "email"])
   end
   
   test "find_by indexes for Gift.find_all_by_name_and_price" do
     @find_by_indexes = RailsIndexes.ar_find_indexes(false)
     
     assert @find_by_indexes["gifts"].include?(["name", "price"])
-    assert @find_by_indexes["gifts"].include?(["price", "name"])
+    assert !@find_by_indexes["gifts"].include?(["price", "name"])
   end
   
   test "find_by indexes from UsersController" do

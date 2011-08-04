@@ -29,8 +29,7 @@ ActiveRecord::Schema.define do
     t.column "company_id", :integer
   end
   
-  create_table "gifts", :force => true do |t|
-    t.column "custom_primary_key", :integer
+  create_table "gifts", :primary_key => "custom_primary_key", :force => true do |t|
     t.column "name", :string
     t.column "price", :integer
   end

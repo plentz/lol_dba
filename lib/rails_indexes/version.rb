@@ -1,3 +1,3 @@
 module RailsIndexes
-  VERSION = "1.0.1" unless defined? RailsIndexes::VERSION
+  VERSION = "1.0.5" unless defined? RailsIndexes::VERSION
 end
