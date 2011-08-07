@@ -2,15 +2,9 @@ module RailsIndexes
   
   require "rails_indexes/railtie.rb" if defined?(Rails)
   
-  def self.sortalize(array)
-    Marshal.load(Marshal.dump(array)).each do |element|
-      element.sort! if element.is_a?(Array)
-    end
-  end
-  
-  def self.puts_migration_content(migration_name, add_index_array, del_index_array)
-    puts "## Drop this into a file in db/migrate ##"
+  def self.form_migration_content(migration_name, add_index_array, del_index_array)
     migration = <<EOM  
+    ## Drop this into a file in db/migrate ##
     class #{migration_name} < ActiveRecord::Migration
       def self.up
   
@@ -27,13 +21,72 @@ module RailsIndexes
       end
     end
 EOM
-  puts migration   
+ 
   end
+  
+  def self.get_through_foreign_key(target_class, reflection_options)
+    if target_class.reflections[reflection_options.options[:through]]
+      # has_many :through
+      reflection = target_class.reflections[reflection_options.options[:through]]
+    else
+      # has_and_belongs_to_many
+      reflection = reflection_options
+    end  
+    # Guess foreign key?  
+    if reflection.options[:foreign_key]
+      association_foreign_key = reflection.options[:foreign_key]
+    elsif reflection.options[:class_name]
+      association_foreign_key = reflection.options[:class_name].foreign_key
+    else
+      association_foreign_key = "#{target_class.name.tableize.singularize}_id"
+    end
+  end
+  
+  def self.validate_and_sort_indexes(indexes_required)
+    missing_indexes = {}
+    warning_messages = ""
+    indexes_required.each do |table_name, foreign_keys|
+        next if foreign_keys.blank?          
+        begin
+          if ActiveRecord::Base.connection.tables.include?(table_name.to_s)
+            existing_indexes = ActiveRecord::Base.connection.indexes(table_name.to_sym).collect {|index| index.columns.size > 1 ? index.columns : index.columns.first}
+            existing_indexes += Array(ActiveRecord::Base.connection.primary_key(table_name.to_s))
+            keys_to_add = foreign_keys.uniq - existing_indexes
+            missing_indexes[table_name] = keys_to_add unless keys_to_add.empty?
+          else
+            warning_messages << "BUG: table '#{table_name.to_s}' does not exist, please report this bug.\n    "
+          end
+        rescue Exception => e
+          puts "ERROR: #{e}"
+        end
+    end
+    return missing_indexes, warning_messages
+  end
+  
+  def self.form_data_for_migration(missing_indexes)
+    add = []
+    remove = []
+    missing_indexes.each do |table_name, keys_to_add|
+      keys_to_add.each do |key|
+        next if key.blank?
+        next if key_exists?(table_name,key)
+        if key.is_a?(Array)
+          keys = key.collect {|k| ":#{k}"}
+          add << "add_index :#{table_name}, [#{keys.join(', ')}]"
+          remove << "remove_index :#{table_name}, :column => [#{keys.join(', ')}]"
+        else
+          add << "add_index :#{table_name}, :#{key}"
+          remove << "remove_index :#{table_name}, :#{key}"
+        end
+      end
+    end
+    return add, remove
+  end    
   
   def self.check_for_indexes(migration_format = false)
     model_names = []
     Dir.chdir(Rails.root) do 
-      model_names = Dir["**/app/models/**/*.rb"].collect {|filename| File.basename(filename) }.uniq
+      model_names = Dir["app/models/**/*.rb"].collect {|filename| File.basename(filename) }.uniq
     end
 
     model_classes = []
@@ -54,15 +107,15 @@ EOM
     model_classes.each do |class_name|
 
       # check if this is an STI child instance      
-      if class_name.base_class.name != class_name.name && (class_name.column_names.include?(class_name.base_class.inheritance_column) || class_name.column_names.include?(class_name.inheritance_column))
-        
+      #if class_name.base_class.name != class_name.name && (class_name.column_names.include?(class_name.base_class.inheritance_column) || class_name.column_names.include?(class_name.inheritance_column))
+      if class_name.base_class.inheritance_column  
         # add the inharitance column on the parent table
         # index migration for STI should require both the primary key and the inheritance_column in a composite index.
         @index_migrations[class_name.base_class.table_name] += [[class_name.inheritance_column, class_name.base_class.primary_key].sort] unless @index_migrations[class_name.base_class.table_name].include?([class_name.base_class.inheritance_column].sort)
       end
-      #puts "class name: #{class_name}"
+
       class_name.reflections.each_pair do |reflection_name, reflection_options|
-        #puts "reflection => #{reflection_name}"
+
         case reflection_options.macro
         when :belongs_to
           # polymorphic?
@@ -73,50 +126,50 @@ EOM
     
             @index_migrations[@table_name.to_s] += [[poly_type, poly_id].sort] unless @index_migrations[@table_name.to_s].include?([poly_type, poly_id].sort)
           else
-
             foreign_key = reflection_options.options[:foreign_key] ||= reflection_options.primary_key_name
-              @index_migrations[@table_name.to_s] += [foreign_key] unless @index_migrations[@table_name.to_s].include?(foreign_key)
+            @index_migrations[@table_name.to_s] += [foreign_key] unless @index_migrations[@table_name.to_s].include?(foreign_key)
           end
         when :has_and_belongs_to_many
           table_name = reflection_options.options[:join_table] ||= [class_name.table_name, reflection_name.to_s].sort.join('_')
+          
           association_foreign_key = reflection_options.options[:association_foreign_key] ||= "#{reflection_name.to_s.singularize}_id"
           
-          # Guess foreign key?
-          if reflection_options.options[:foreign_key]
-            foreign_key = reflection_options.options[:foreign_key]
-          elsif reflection_options.options[:class_name]
-            foreign_key = reflection_options.options[:class_name].foreign_key
-          else
-            foreign_key = "#{class_name.name.tableize.singularize}_id"
-          end
+          foreign_key = get_through_foreign_key(class_name, reflection_options)
           
           composite_keys = [association_foreign_key, foreign_key]
           
           @index_migrations[table_name.to_s] += [composite_keys] unless @index_migrations[table_name].include?(composite_keys)
           @index_migrations[table_name.to_s] += [composite_keys.reverse] unless @index_migrations[table_name].include?(composite_keys.reverse)
+        when :has_many
+          next unless reflection_options.options[:through]
 
-        else
-          #nothing
-        end
+          table_name = reflection_options.options[:through].to_s.singularize.camelize.constantize.table_name
+         
+          foreign_key = get_through_foreign_key(class_name, reflection_options)
+
+          if reflection_options.options[:source]
+            association_class = reflection_options.options[:source].to_s.singularize.camelize.constantize
+          else  
+            association_class = reflection_name.to_s.singularize.camelize.constantize
+          end
+          
+          association_foreign_key = get_through_foreign_key(association_class, reflection_options)
+                          
+          composite_keys = [association_foreign_key.to_s, foreign_key.to_s]
+          
+          @index_migrations[table_name] += [composite_keys] unless @index_migrations[table_name].include?(composite_keys)
+          @index_migrations[table_name] += [composite_keys.reverse] unless @index_migrations[table_name].include?(composite_keys.reverse)
+
+        end  
+        
       end
     end
-
-    @missing_indexes = {}
     
-    @index_migrations.each do |table_name, foreign_keys|
-
-      unless foreign_keys.blank?
-        existing_indexes = ActiveRecord::Base.connection.indexes(table_name.to_sym).collect {|index| index.columns.size > 1 ? index.columns : index.columns.first}
-        keys_to_add = foreign_keys.uniq - existing_indexes #self.sortalize(foreign_keys.uniq) - self.sortalize(existing_indexes)
-        @missing_indexes[table_name] = keys_to_add unless keys_to_add.empty?
-      end
-    end
+    missing_indexes, warning_messages = validate_and_sort_indexes(@index_migrations)
     
-    @missing_indexes
   end
 
   def self.scan_finds
-    
     
     # Collect all files that can contain queries, in app/ directories (includes plugins and such)
     # TODO: add lib too ? 
@@ -134,7 +187,7 @@ EOM
       begin 
         current_model_name = File.basename(file_name).sub(/\.rb$/,'').camelize
       rescue
-        next
+        # No-op
       end
       
       # by default, try to add index on primary key, based on file name
@@ -147,25 +200,8 @@ EOM
       current_file.each { |line| check_line_for_find_indexes(file_name, line) }
     end
     
-    @missing_indexes = {}
-    @indexes_required.each do |table_name, foreign_keys|
-      next if foreign_keys.blank?          
-      begin
-        if ActiveRecord::Base.connection.tables.include?(table_name.to_s)
-          existing_indexes = ActiveRecord::Base.connection.indexes(table_name.to_sym).collect {|index| index.columns.size > 1 ? index.columns : index.columns.first}
-          existing_indexes += Array(ActiveRecord::Base.connection.primary_key(table_name.to_s))
-          keys_to_add = self.sortalize(foreign_keys.uniq).uniq - self.sortalize(existing_indexes)
-          p keys_to_add if table_name.to_s == "gifts"
-          @missing_indexes[table_name] = keys_to_add unless keys_to_add.empty?
-        else
-          puts "BUG: table '#{table_name.to_s}' does not exist, please report this bug."
-        end
-      rescue Exception => e
-        puts "ERROR: #{e}"
-      end
-    end
+    missing_indexes, warning_messages = validate_and_sort_indexes(@indexes_required)
     
-    @missing_indexes
   end
   
   # Check line for find* methods (include find_all, find_by and just find)
@@ -230,63 +266,31 @@ EOM
     result.empty?
   end
   
-  def self.simple_migration
-    missing_indexes = check_for_indexes(true)
-
-    unless missing_indexes.keys.empty?
-      add = []
-      remove = []
-      missing_indexes.each do |table_name, keys_to_add|
-        keys_to_add.each do |key|
-          next if key_exists?(table_name,key)
-          next if key.blank?
-          if key.is_a?(Array)
-            keys = key.collect {|k| ":#{k}"}
-            add << "add_index :#{table_name}, [#{keys.join(', ')}]"
-            remove << "remove_index :#{table_name}, :column => [#{keys.join(', ')}]"
-          else
-            add << "add_index :#{table_name}, :#{key}"
-            remove << "remove_index :#{table_name}, :#{key}"
-          end
-          
-        end
-      end
-      
-     puts_migration_content("AddMissingIndexes", add, remove)
-    end
+  #def self.indexes_list
+  #  check_for_indexes.each do |table_name, keys_to_add|
+  #    puts "Table '#{table_name}' => #{keys_to_add.to_sentence}"
+  #  end
+  #end
+  
+  def self.puts_migration_content(migration_name, indexes, warning_messages)
+    puts warning_messages
+    return if indexes.keys.empty?
+    
+    add, remove = form_data_for_migration(indexes)
+    puts form_migration_content(migration_name, add, remove)
   end
   
-  def self.indexes_list
-    check_for_indexes.each do |table_name, keys_to_add|
-      puts "Table '#{table_name}' => #{keys_to_add.to_sentence}"
-    end
+  def self.simple_migration
+    missing_indexes, warning_messages = check_for_indexes(true)
+    
+    puts_migration_content("AddMissingIndexes", missing_indexes, warning_messages)
   end
   
   def self.ar_find_indexes(migration_mode=true)
-    find_indexes = self.scan_finds
+    find_indexes, warning_messages = self.scan_finds
+    return find_indexes, warning_messages unless migration_mode
     
-    return find_indexes unless migration_mode
-    
-    unless find_indexes.keys.empty?
-      add = []
-      remove = []
-      find_indexes.each do |table_name, keys_to_add|
-        keys_to_add.each do |key|
-          next if key_exists?(table_name,key)
-          next if key.blank?
-          if key.is_a?(Array)
-            keys = key.collect {|k| ":#{k}"}
-            add << "add_index :#{table_name}, [#{keys.join(', ')}]"
-            remove << "remove_index :#{table_name}, :column => [#{keys.join(', ')}]"
-          else
-            add << "add_index :#{table_name}, :#{key}"
-            remove << "remove_index :#{table_name}, :#{key}"
-          end
-        end
-      end   
-
-      puts_migration_content("AddFindsMissingIndexes", add, remove)
-    end
+    puts_migration_content("AddFindsMissingIndexes", find_indexes, warning_messages)
   end
   
 end

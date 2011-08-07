@@ -15,3 +15,9 @@ class User < ActiveRecord::Base
     self.find_by_email_and_name(email, name)
   end
 end
+
+
+# Test STI
+class Manager < User
+
+end

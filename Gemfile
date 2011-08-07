@@ -3,5 +3,7 @@ source :rubygems
 gem "activerecord", :require => "active_record"
 gem "actionpack"
 gem "railties"
-gem "test-unit", "~> 2.3.0"
+gem 'rspec'
+gem 'simplecov', '>= 0.4.0', :require => false
+gem 'simplecov-html'
 gem "sqlite3"

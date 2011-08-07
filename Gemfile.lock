@@ -24,6 +24,7 @@ GEM
     activesupport (3.0.9)
     arel (2.0.10)
     builder (2.1.2)
+    diff-lcs (1.1.2)
     erubis (2.6.6)
       abstract (>= 1.0.0)
     i18n (0.5.0)
@@ -40,8 +41,18 @@ GEM
       thor (~> 0.14.4)
     rake (0.9.2)
     rdoc (3.9.1)
+    rspec (2.6.0)
+      rspec-core (~> 2.6.0)
+      rspec-expectations (~> 2.6.0)
+      rspec-mocks (~> 2.6.0)
+    rspec-core (2.6.4)
+    rspec-expectations (2.6.0)
+      diff-lcs (~> 1.1.2)
+    rspec-mocks (2.6.0)
+    simplecov (0.4.2)
+      simplecov-html (~> 0.4.4)
+    simplecov-html (0.4.5)
     sqlite3 (1.3.4)
-    test-unit (2.3.0)
     thor (0.14.6)
     tzinfo (0.3.29)
 
@@ -52,5 +63,7 @@ DEPENDENCIES
   actionpack
   activerecord
   railties
+  rspec
+  simplecov (>= 0.4.0)
+  simplecov-html
   sqlite3
-  test-unit (~> 2.3.0)

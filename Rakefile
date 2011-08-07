@@ -2,19 +2,14 @@
 #Bundler::GemHelper.install_tasks
 
 require 'rubygems'
-require 'rake/testtask'
-require 'rake/rdoctask'
+require 'rspec/core/rake_task'
+require 'rdoc/task'
 
 desc 'Default: run unit tests.'
-task :default => :test
+task :default => :spec
 
 desc 'Testing the rails indexes plugin.'
-Rake::TestTask.new(:test) do |t|
-  t.libs << 'lib'
-  t.libs << 'test'
-  t.pattern = 'test/**/*_test.rb'
-  t.verbose = true
-end
+RSpec::Core::RakeTask.new('spec')
 
 desc 'Generate documentation for the rails_indexes plugin.'
 Rake::RDocTask.new(:rdoc) do |rdoc|

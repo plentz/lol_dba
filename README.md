@@ -35,8 +35,19 @@ Compatible with Ruby 1.9 and Rails 3.
 Upcoming features/enhancements
 ------------------------------
 
-  *   Support Arel(the new Rails 3 Active Record Query Interface) call for `find_query_indexes` action
-  *   Support `has_many :through` analize for indexes based on associations
+  * Support Arel(the new Rails 3 Active Record Query Interface) call for `find_query_indexes` action
+  
+
+Differences from the original [rails_indexes](https://github.com/eladmeidar/rails_indexes)
+-------------------------------------------
+
+  * Compatible with Ruby 1.9 and Rails 3
+  * Installing as Gem
+  * Analize `has_many :through` associations
+  * Working STI analize
+  * Good test coverage with RSpec
+  * Do not suggest add index for primary key (about reason read below)
+  
 
 About primary_key
 -----------------
@@ -52,8 +63,6 @@ Tests
     rake
   
 to run the tests.
-
-*Notice:* At now moment tests not working in Ruby 1.9, use 1.8.7. 
 
 Feedback
 --------

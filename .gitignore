@@ -1,3 +1,4 @@
 .bundle
 .rvmrc
 .DS_Store
+coverage/

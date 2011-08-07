@@ -1,7 +1,8 @@
 ActiveRecord::Schema.define do
   create_table "users", :force => true do |t|
-    t.column "name",  :text
-    t.column "email", :text
+    t.column "name",  :string
+    t.column "email", :string
+    t.column "type",  :string
   end
   
   create_table "companies", :force => true do |t|
@@ -22,6 +23,29 @@ ActiveRecord::Schema.define do
   create_table "freelancers", :force => true do |t|
     t.column "name", :string
     t.column "price_per_hour", :integer
+    t.column 'worker_type', :string
+  end
+  
+  create_table "timesheets", :force => true do |t|
+    t.column "price_per_hour", :integer
+    t.column "hours", :integer
+  end
+  
+  create_table "complex_timesheets", :force => true do |t|
+    t.column "price_per_hour", :integer
+    t.column "hours", :integer
+  end
+  
+  create_table "billable_weeks", :force => true do |t|
+    t.column "date", :date
+    t.column "timesheet_id", :integer
+    t.column "freelancer_id", :integer
+  end
+  
+  create_table "complex_billable_week", :force => true do |t|
+    t.column "date", :date
+    t.column "id_complex_timesheet", :integer
+    t.column "freelancer_id", :integer
   end
   
   create_table "companies_freelancers", :id => false, :force => true do |t|

@@ -21,5 +21,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'actionpack'
   s.add_dependency 'railties'
   s.add_development_dependency 'sqlite3'
-  s.add_development_dependency 'test-unit',  "~> 2.3.0"
+  s.add_development_dependency 'rspec'
 end
