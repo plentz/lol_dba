@@ -39,7 +39,7 @@ ActiveRecord::Schema.define do
   create_table "billable_weeks", :force => true do |t|
     t.column "date", :date
     t.column "timesheet_id", :integer
-    t.column "freelancer_id", :integer
+    t.column "remote_worker_id", :integer
   end
   
   create_table "complex_billable_week", :force => true do |t|

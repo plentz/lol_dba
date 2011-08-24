@@ -1,6 +1,6 @@
 class Timesheet < ActiveRecord::Base
   
-  has_many :billable_weeks
-  has_many :freelancers, :through => :billable_weeks
+  has_many :paiment_weeks,  :class_name => "BillableWeek"
+  has_many :remote_workers, :through => :paiment_weeks
   
 end
