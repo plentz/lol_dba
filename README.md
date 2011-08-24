@@ -11,6 +11,10 @@ Installation
 Add rails_indexes to your Gemfile:
 
     gem "rails_indexes", :git => "https://github.com/warpc/rails_indexes"
+    
+and install gem
+
+    bundle install
 
 Usage
 -----
