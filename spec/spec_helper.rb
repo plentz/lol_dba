@@ -2,11 +2,11 @@ require 'simplecov'
 
 SimpleCov.adapters.define 'rails_indexes' do
   add_group 'Libraries', 'lib'
-  
+
   add_filter 'spec'
 end
 
-SimpleCov.start 'rails_indexes' 
+SimpleCov.start 'rails_indexes'
 
 require 'rubygems'
 require 'bundler/setup'

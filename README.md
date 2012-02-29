@@ -11,7 +11,7 @@ Installation
 Add rails_indexes to your Gemfile:
 
     gem "rails_indexes", :git => "https://github.com/warpc/rails_indexes"
-    
+
 and install gem
 
     bundle install
@@ -40,7 +40,7 @@ Upcoming features/enhancements
 ------------------------------
 
   * Support Arel(the new Rails 3 Active Record Query Interface) call for `find_query_indexes` action
-  
+
 
 Differences from the original [rails_indexes](https://github.com/eladmeidar/rails_indexes)
 -------------------------------------------
@@ -51,7 +51,7 @@ Differences from the original [rails_indexes](https://github.com/eladmeidar/rail
   * Working STI analize
   * Good test coverage with RSpec
   * Do not suggest add index for primary key (about reason read below)
-  
+
 
 About primary_key
 -----------------
@@ -65,7 +65,7 @@ Tests
 
     bundle install
     rake
-  
+
 to run the tests.
 
 Feedback
