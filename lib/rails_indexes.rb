@@ -8,20 +8,19 @@ module RailsIndexes
     class #{migration_name} < ActiveRecord::Migration
       def self.up
   
-        # It is strongly recommanded that you will consult a professional DBA about your infrastucture and implemntation before
+        # It is strongly recommanded that you will consult a professional DBA about your infrastucture and implementation before
         # changing your database in that matter.
         # There is a possibility that some of the indexes offered below is not required and can be removed and not added, if you require
         # further assistance with your rails application, database infrastructure or any other problem, visit:
   
-        #{add_index_array.uniq.join("\n    ")}
+        #{add_index_array.uniq.join("\n        ")}
       end
 
       def self.down
-        #{del_index_array.uniq.join("\n    ")}
+        #{del_index_array.uniq.join("\n        ")}
       end
     end
 EOM
- 
   end
   
   def self.get_through_foreign_key(target_class, reflection_options)
@@ -32,7 +31,7 @@ EOM
       # has_and_belongs_to_many
       reflection = reflection_options
     end  
-    # Guess foreign key?  
+    # Guess foreign key?
     if reflection.options[:foreign_key]
       association_foreign_key = reflection.options[:foreign_key]
     elsif reflection.options[:class_name]
@@ -46,19 +45,19 @@ EOM
     missing_indexes = {}
     warning_messages = ""
     indexes_required.each do |table_name, foreign_keys|
-        next if foreign_keys.blank?          
-        begin
-          if ActiveRecord::Base.connection.tables.include?(table_name.to_s)
-            existing_indexes = ActiveRecord::Base.connection.indexes(table_name.to_sym).collect {|index| index.columns.size > 1 ? index.columns : index.columns.first}
-            existing_indexes += Array(ActiveRecord::Base.connection.primary_key(table_name.to_s))
-            keys_to_add = foreign_keys.uniq - existing_indexes
-            missing_indexes[table_name] = keys_to_add unless keys_to_add.empty?
-          else
-            warning_messages << "BUG: table '#{table_name.to_s}' does not exist, please report this bug.\n    "
-          end
-        rescue Exception => e
-          puts "ERROR: #{e}"
+      next if foreign_keys.blank?          
+      begin
+        if ActiveRecord::Base.connection.tables.include?(table_name.to_s)
+          existing_indexes = ActiveRecord::Base.connection.indexes(table_name.to_sym).collect {|index| index.columns.size > 1 ? index.columns : index.columns.first}
+          existing_indexes += Array(ActiveRecord::Base.connection.primary_key(table_name.to_s))
+          keys_to_add = foreign_keys.uniq - existing_indexes
+          missing_indexes[table_name] = keys_to_add unless keys_to_add.empty?
+        else
+          warning_messages << "BUG: table '#{table_name.to_s}' does not exist, please report this bug.\n    "
         end
+      rescue Exception => e
+        puts "ERROR: #{e}"
+      end
     end
     return missing_indexes, warning_messages
   end
@@ -84,21 +83,12 @@ EOM
   end    
   
   def self.check_for_indexes(migration_format = false)
-    model_names = []
-    Dir.chdir(Rails.root) do 
-      model_names = Dir["app/models/**/*.rb"].collect {|filename| File.basename(filename) }.uniq
-    end
+    Dir.glob(Rails.root + "app/models/**/*.rb").each {|file| require file }
 
     model_classes = []
-    model_names.each do |model_name|
-      class_name = model_name.sub(/\.rb$/,'').camelize
-      begin
-        klass = class_name.split('::').inject(Object){ |klass,part| klass.const_get(part) }
-        if klass < ActiveRecord::Base && !klass.abstract_class?
-          model_classes << klass
-        end
-      rescue
-        # No-op
+    ActiveRecord::Base.subclasses.each do |klass|
+      if !klass.abstract_class? && klass != ActiveRecord::SessionStore::Session
+        model_classes << klass
       end
     end
     
@@ -126,7 +116,7 @@ EOM
     
               @index_migrations[@table_name.to_s] += [[poly_type, poly_id].sort] unless @index_migrations[@table_name.to_s].include?([poly_type, poly_id].sort)
             else
-              foreign_key = reflection_options.options[:foreign_key] ||= reflection_options.primary_key_name
+              foreign_key = reflection_options.options[:foreign_key] ||= reflection_options.foreign_key
               @index_migrations[@table_name.to_s] += [foreign_key] unless @index_migrations[@table_name.to_s].include?(foreign_key)
             end
           when :has_and_belongs_to_many
@@ -141,6 +131,7 @@ EOM
             @index_migrations[table_name.to_s] += [composite_keys] unless @index_migrations[table_name].include?(composite_keys)
             @index_migrations[table_name.to_s] += [composite_keys.reverse] unless @index_migrations[table_name].include?(composite_keys.reverse)
           when :has_many
+            # has_many tables are threaten by the other side of the relation
             next unless reflection_options.options[:through]
 
             table_name = reflection_options.options[:through].to_s.singularize.camelize.constantize.table_name
@@ -160,7 +151,11 @@ EOM
                 # has_many  
                 blg_to_class = blg_to_reflection.name.to_s.singularize.camelize.constantize
               end
-              # get foreign_key from belogn_to 
+
+              #multiple level :through relation, can be ignored for now(it will be checked in the right relation)
+              next if blg_to_class.reflections[reflection_name.to_s.singularize.to_sym].nil?
+
+              # get foreign_key from belongs_to 
               association_foreign_key = blg_to_class.reflections[reflection_name.to_s.singularize.to_sym].options[:foreign_key]
             end
                           
@@ -171,7 +166,7 @@ EOM
           end
         rescue Exception => e
           p "Some errors here:"
-          p "Please add info after this string in to https://github.com/warpc/rails_indexes/issues"
+          p "Please add info after this string in to https://github.com/plentz/rails_indexes/issues"
           p "Class: #{class_name}"
           p "Association type: #{reflection_options.macro}"
           p "Association options: #{reflection_options.options}"
@@ -282,12 +277,6 @@ EOM
     result.empty?
   end
   
-  #def self.indexes_list
-  #  check_for_indexes.each do |table_name, keys_to_add|
-  #    puts "Table '#{table_name}' => #{keys_to_add.to_sentence}"
-  #  end
-  #end
-  
   def self.puts_migration_content(migration_name, indexes, warning_messages)
     puts warning_messages
     return if indexes.keys.empty?
@@ -308,5 +297,4 @@ EOM
     
     puts_migration_content("AddFindsMissingIndexes", find_indexes, warning_messages)
   end
-  
 end
