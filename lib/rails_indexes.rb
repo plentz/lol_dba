@@ -111,7 +111,7 @@ EOM
               poly_id = "#{reflection_options.name.to_s}_id"
               @index_migrations[@table_name.to_s] += [[poly_type, poly_id].sort] unless @index_migrations[@table_name.to_s].include?([poly_type, poly_id].sort)
             else
-              foreign_key = reflection_options.options[:foreign_key] ||= reflection_options.foreign_key
+              foreign_key = reflection_options.options[:foreign_key] ||= reflection_options.respond_to?(:primary_key_name) ? reflection_options.primary_key_name : reflection_options.foreign_key
               @index_migrations[@table_name.to_s] += [foreign_key] unless @index_migrations[@table_name.to_s].include?(foreign_key)
             end
           when :has_and_belongs_to_many
