@@ -98,7 +98,7 @@ EOM
 
       # check if this is an STI child instance
       #if class_name.base_class.name != class_name.name && (class_name.column_names.include?(class_name.base_class.inheritance_column) || class_name.column_names.include?(class_name.inheritance_column))
-      if class_name.base_class.inheritance_column
+      unless class_name < ActiveRecord::Base
         # add the inharitance column on the parent table
         # index migration for STI should require both the primary key and the inheritance_column in a composite index.
         @index_migrations[class_name.base_class.table_name] += [[class_name.inheritance_column, class_name.base_class.primary_key].sort] unless @index_migrations[class_name.base_class.table_name].include?([class_name.base_class.inheritance_column].sort)
@@ -161,7 +161,6 @@ EOM
             #FIXME currently we don't support :through => :another_regular_has_many_and_non_through_relation
             #puts "#{class_name} - #{reflection_options.macro} - #{table_name} >" + composite_keys.inspect
             next if association_foreign_key.nil?
-
             composite_keys = [association_foreign_key.to_s, foreign_key.to_s]
             @index_migrations[table_name] += [composite_keys] unless @index_migrations[table_name].include?(composite_keys)
             @index_migrations[table_name] += [composite_keys.reverse] unless @index_migrations[table_name].include?(composite_keys.reverse)
