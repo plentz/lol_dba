@@ -4,15 +4,11 @@ module RailsIndexes
 
   def self.form_migration_content(migration_name, add_index_array, del_index_array)
     migration = <<EOM
-    ## Drop this into a file in db/migrate ##
+    ## run `rails g migrate AddMissingIndexes` and add the following content
+
+
     class #{migration_name} < ActiveRecord::Migration
       def self.up
-
-        # It is strongly recommanded that you will consult a professional DBA about your infrastucture and implementation before
-        # changing your database in that matter.
-        # There is a possibility that some of the indexes offered below is not required and can be removed and not added, if you require
-        # further assistance with your rails application, database infrastructure or any other problem, visit:
-
         #{add_index_array.uniq.join("\n        ")}
       end
 
@@ -279,10 +275,12 @@ EOM
 
   def self.puts_migration_content(migration_name, indexes, warning_messages)
     puts warning_messages
-    return if indexes.keys.empty?
-
-    add, remove = form_data_for_migration(indexes)
-    puts form_migration_content(migration_name, add, remove)
+    if indexes.keys.empty?
+      puts "Yey, no missing indexes found!"
+    else
+      add, remove = form_data_for_migration(indexes)
+      puts form_migration_content(migration_name, add, remove)
+    end
   end
 
   def self.simple_migration
