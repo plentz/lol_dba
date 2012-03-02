@@ -1,7 +1,7 @@
 require 'rails_indexes'
 require 'rails'
 
-module RailsIndexes
+module LolDba
   class Railtie < Rails::Railtie
     rake_tasks do
       load "tasks/rails_indexes.rake"

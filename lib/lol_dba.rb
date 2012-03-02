@@ -1,6 +1,6 @@
-module RailsIndexes
+module LolDba
 
-  require "rails_indexes/railtie.rb" if defined?(Rails)
+  require "lol_dba/railtie.rb" if defined?(Rails)
 
   def self.form_migration_content(migration_name, add_index_array, del_index_array)
     migration = <<EOM
@@ -99,7 +99,6 @@ EOM
         # index migration for STI should require both the primary key and the inheritance_column in a composite index.
         @index_migrations[class_name.base_class.table_name] += [[class_name.inheritance_column, class_name.base_class.primary_key].sort] unless @index_migrations[class_name.base_class.table_name].include?([class_name.base_class.inheritance_column].sort)
       end
-
       class_name.reflections.each_pair do |reflection_name, reflection_options|
         begin
           case reflection_options.macro
@@ -109,6 +108,7 @@ EOM
             if reflection_options.options.has_key?(:polymorphic) && (reflection_options.options[:polymorphic] == true)
               poly_type = "#{reflection_options.name.to_s}_type"
               poly_id = "#{reflection_options.name.to_s}_id"
+              
               @index_migrations[@table_name.to_s] += [[poly_type, poly_id].sort] unless @index_migrations[@table_name.to_s].include?([poly_type, poly_id].sort)
             else
               foreign_key = reflection_options.options[:foreign_key] ||= reflection_options.respond_to?(:primary_key_name) ? reflection_options.primary_key_name : reflection_options.foreign_key
@@ -116,6 +116,7 @@ EOM
             end
           when :has_and_belongs_to_many
             table_name = reflection_options.options[:join_table] ||= [class_name.table_name, reflection_name.to_s].sort.join('_')
+            
 
             association_foreign_key = reflection_options.options[:association_foreign_key] ||= "#{reflection_name.to_s.singularize}_id"
 
@@ -155,7 +156,6 @@ EOM
             end
 
             #FIXME currently we don't support :through => :another_regular_has_many_and_non_through_relation
-            #puts "#{class_name} - #{reflection_options.macro} - #{table_name} >" + composite_keys.inspect
             next if association_foreign_key.nil?
             composite_keys = [association_foreign_key.to_s, foreign_key.to_s]
             @index_migrations[table_name] += [composite_keys] unless @index_migrations[table_name].include?(composite_keys)
@@ -163,7 +163,7 @@ EOM
           end
         rescue Exception => e
           p "Some errors here:"
-          p "Please add info after this string in to https://github.com/plentz/rails_indexes/issues"
+          p "Please add info after this string in to https://github.com/plentz/lol_dba/issues"
           p "Class: #{class_name}"
           p "Association type: #{reflection_options.macro}"
           p "Association options: #{reflection_options.options}"

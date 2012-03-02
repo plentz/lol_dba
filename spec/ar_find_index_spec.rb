@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "Collect indexes based on AR::Base.find calls:" do
 
   before do
-    @find_by_indexes, @warning_messages = RailsIndexes.ar_find_indexes(false)
+    @find_by_indexes, @warning_messages = LolDba.ar_find_indexes(false)
   end
 
   it "not show indexes for primary keys" do

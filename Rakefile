@@ -11,10 +11,10 @@ task :default => :spec
 desc 'Testing the rails indexes plugin.'
 RSpec::Core::RakeTask.new('spec')
 
-desc 'Generate documentation for the rails_indexes plugin.'
+desc 'Generate documentation for the lol_dba plugin.'
 Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title    = 'RailsIndexes'
+  rdoc.title    = 'LolDba'
   rdoc.options << '--line-numbers' << '--inline-source'
   rdoc.rdoc_files.include('README')
   rdoc.rdoc_files.include('lib/**/*.rb')

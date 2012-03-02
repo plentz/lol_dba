@@ -1,6 +1,6 @@
-#Rails Indexes
+#Lol DBA
 
-Rails indexes is a small package of 2 rake tasks that scan your application models and displays a list of columns that _probably_ should be indexed.
+Lol DBA is a small package of 2 rake tasks that scan your application models and displays a list of columns that _probably_ should be indexed.
 
 *Note:* there should be mode fields depending on your application design and custom queries.
 
@@ -8,9 +8,9 @@ Rails indexes is a small package of 2 rake tasks that scan your application mode
 Installation
 ------------
 
-Add rails_indexes to your Gemfile:
+Add lol_dba to your Gemfile:
 
-    gem "rails_indexes", :git => "https://github.com/warpc/rails_indexes"
+    gem "lol_dba"
 
 and install gem
 
@@ -34,7 +34,7 @@ Note that add index in big database may take a long time.
 Compatibility
 -------------
 
-Compatible with Ruby 1.9 and Rails 3.
+Compatible with Ruby 1.9 and Rails 3.x. I think.
 
 Upcoming features/enhancements
 ------------------------------
@@ -42,10 +42,10 @@ Upcoming features/enhancements
   * Support Arel(the new Rails 3 Active Record Query Interface) call for `find_query_indexes` action
 
 
-Differences from the original [rails_indexes](https://github.com/eladmeidar/rails_indexes)
+Differences from the original [rails_indexes](https://github.com/eladmeidar/rails_indexes) and [the fork I used as starting point](https://github.com/warpc/rails_indexes)
 -------------------------------------------
 
-  * Compatible with Ruby 1.9 and Rails 3
+  * Compatible with Ruby 1.9 and Rails 3.x
   * Installing as Gem
   * Analize `has_many :through` associations
   * Working STI analize
@@ -75,11 +75,12 @@ All feedback, bug reports and thoughts on this gratefully received.
 
 Author:
 ------
-Elad Meidar - [http://blog.eizesus.com](http://blog.eizesus.com)
+[Diego Plentz](http://plentz.org)
 
 Thanks:
-Eric Davis - [http://littlestreamsoftware.com](http://littlestreamsoftware.com)
+[Elad Meidar](http://blog.eizesus.com)
+[Eric Davis](http://littlestreamsoftware.com)
 
 License
 -------
-Released under the same license as Ruby. No Support. No Warranty, no Pain.
+Lol DBA is released under the MIT license.

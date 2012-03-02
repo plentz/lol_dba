@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "Collect indexes based on associations:" do
 
   before do
-    @relationship_indexes, @warning_messages = RailsIndexes.check_for_indexes
+    @relationship_indexes, @warning_messages = LolDba.check_for_indexes
   end
 
   it "find relationship indexes" do

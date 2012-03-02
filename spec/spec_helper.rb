@@ -1,12 +1,12 @@
 require 'simplecov'
 
-SimpleCov.adapters.define 'rails_indexes' do
+SimpleCov.adapters.define 'lol_dba' do
   add_group 'Libraries', 'lib'
 
   add_filter 'spec'
 end
 
-SimpleCov.start 'rails_indexes'
+SimpleCov.start 'lol_dba'
 
 require 'rubygems'
 require 'bundler/setup'
@@ -15,7 +15,7 @@ require 'active_record'
 require 'active_support'
 require 'action_controller'
 
-require 'rails_indexes'
+require 'lol_dba'
 
 ActiveRecord::Base.establish_connection(
   :adapter  => "sqlite3",
