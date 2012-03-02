@@ -1,10 +1,10 @@
-require 'rails_indexes'
+require 'lol_dba'
 require 'rails'
 
 module LolDba
   class Railtie < Rails::Railtie
     rake_tasks do
-      load "tasks/rails_indexes.rake"
+      load "tasks/lol_dba.rake"
     end
   end
 end
