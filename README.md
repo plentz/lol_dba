@@ -31,12 +31,6 @@ Compatibility
 
 Compatible with Ruby 1.9 and Rails 3.x. I think.
 
-Upcoming features/enhancements
-------------------------------
-
-  * support Arel(the new Rails 3 Active Record Query Interface) call for `find_query_indexes` action
-  * support for `change` migrations
-
 About primary_key
 -----------------
 >The primary key is always indexed. This is generally true for all storage engines that at all supports indices.
