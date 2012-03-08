@@ -1,4 +1,4 @@
-#Lol DBA
+#lol_dba
 
 lol_dba is a small package of rake tasks that scan your application models and displays a list of columns that probably should be indexed. Also, it can generate .sql migration scripts. Most of the code come from rails_indexes and migration_sql_generator.
 
@@ -20,17 +20,11 @@ Display a migration for adding/removing all necessary indexes based on associati
 
     rake db:find_indexes
 
-Display a migration for adding/removing all necessary indexes based on AR::Base#find calls (including: `find`, `find_by`, `find_all_by`, `find_by_x_and_y`, `find_all_by_x_and_y`):
-
-    rake db:find_query_indexes
-
 Generate .sql files for all your migrations inside db/migrate_sql folder:
 
     rake db:migrate_sql
 
-*Notice:* At this moment it does not support Arel(the new Rails 3 Active Record Query Interface) calls (including: where, joins, includes, from, select...), but still usefull for indexes based on association.
-
-Note that add index in big database may take a long time.
+Note that create an index in a big database may take a long time.
 
 Compatibility
 -------------

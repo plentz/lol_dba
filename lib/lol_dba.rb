@@ -179,95 +179,6 @@ EOM
 
   end
 
-  def self.scan_finds
-
-    # Collect all files that can contain queries, in app/ directories (includes plugins and such)
-    # TODO: add lib too ?
-    file_names = []
-
-    Dir.chdir(Rails.root) do
-      file_names = Dir["**/app/**/*.rb"].uniq.reject {|file_with_path| file_with_path.include?('test')}
-    end
-
-    @indexes_required = Hash.new([])
-
-    # Scan each file
-    file_names.each do |file_name|
-      current_file = File.open(File.join(Rails.root, file_name), 'r')
-      begin
-        current_model_name = File.basename(file_name).sub(/\.rb$/,'').camelize
-      rescue
-        # No-op
-      end
-
-      # by default, try to add index on primary key, based on file name
-      # this will fail if the file is not a model file
-
-      klass = current_model_name.split('::').inject(Object){ |klass,part| klass.const_get(part) } rescue next
-      next if !klass.present? || klass < ActiveRecord::Base && klass.abstract_class?
-
-      # Scan each line
-      current_file.each { |line| check_line_for_find_indexes(file_name, line) }
-    end
-
-    missing_indexes, warning_messages = validate_and_sort_indexes(@indexes_required)
-
-  end
-
-  # Check line for find* methods (include find_all, find_by and just find)
-  def self.check_line_for_find_indexes(file_name, line)
-    # TODO: Assumes that you have a called on #find. you can actually call #find without a caller in a model code. ex:
-    # def something
-    #   find(self.id)
-    # end
-    #
-    # find_regexp = Regexp.new(/([A-Z]{1}[A-Za-z]+|self).(find){1}((_all){0,1}(_by_){0,1}([A-Za-z_]+))?\(([0-9A-Za-z"\':=>. \[\]{},]*)\)/)
-
-    find_regexp = Regexp.new(/(([A-Z]{1}[A-Za-z]+|self).)?(find){1}((_all){0,1}(_by_){0,1}([A-Za-z_]+))?\(([0-9A-Za-z"\':=>. \[\]{},]*)\)/)
-
-    # If line matched a finder
-    if matches = find_regexp.match(line)
-
-      model_name, column_names, options = matches[2], matches[7], matches[8]
-
-      # if the finder class is "self" or empty (can be a simple "find()" in a model)
-      if model_name == "self" || model_name.blank?
-        model_name = File.basename(file_name).sub(/\.rb$/,'').camelize
-        table_name = model_name.constantize.table_name
-      else
-        if model_name.respond_to?(:constantize)
-          if model_name.constantize.respond_to?(:table_name)
-            table_name = model_name.constantize.table_name
-          end
-        end
-      end
-
-      # Check that all prerequisites are met
-      if model_name.present? && table_name.present? && model_name.constantize.ancestors.include?(ActiveRecord::Base)
-        primary_key = model_name.constantize.primary_key
-        @indexes_required[table_name] += [primary_key] unless @indexes_required[table_name].include?(primary_key)
-
-        if column_names.present?
-          column_names = column_names.split('_and_')
-
-          # remove find_by_sql references.
-          column_names.delete("sql")
-
-          column_names = model_name.constantize.column_names & column_names
-
-          # Check if there were more than 1 column
-          if column_names.size == 1
-            column_name = column_names.first
-            @indexes_required[table_name] += [column_name] unless @indexes_required[table_name].include?(column_name)
-          else
-            @indexes_required[table_name] += [column_names] unless @indexes_required[table_name].include?(column_names)
-            @indexes_required[table_name] += [column_names.reverse] unless @indexes_required[table_name].include?(column_names.reverse)
-          end
-        end
-      end
-    end
-  end
-
   def self.key_exists?(table,key_columns)
     result = (Array(key_columns) - ActiveRecord::Base.connection.indexes(table).map { |i| i.columns }.flatten)
     #FIXME: Primary key always indexes, but ActiveRecord::Base.connection.indexes not show it!
@@ -289,12 +200,5 @@ EOM
     missing_indexes, warning_messages = check_for_indexes(true)
 
     puts_migration_content("AddMissingIndexes", missing_indexes, warning_messages)
-  end
-
-  def self.ar_find_indexes(migration_mode=true)
-    find_indexes, warning_messages = self.scan_finds
-    return find_indexes, warning_messages unless migration_mode
-
-    puts_migration_content("AddFindsMissingIndexes", find_indexes, warning_messages)
   end
 end
