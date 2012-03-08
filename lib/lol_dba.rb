@@ -1,5 +1,7 @@
 module LolDba
 
+  require "lol_dba/writer"
+  require "lol_dba/migration"
   require "lol_dba/railtie.rb" if defined?(Rails)
 
   def self.form_migration_content(migration_name, add_index_array, del_index_array)

@@ -7,3 +7,5 @@ gem 'rspec'
 gem 'simplecov', :require => false
 gem 'simplecov-html'
 gem 'sqlite3'
+
+gemspec
