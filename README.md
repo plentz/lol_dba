@@ -28,7 +28,7 @@ Generate .sql files for all your migrations inside db/migrate_sql folder:
 
     rake db:migrate_sql
 
-*Notice:* At now moment it does not support Arel(the new Rails 3 Active Record Query Interface) calls (including: where, joins, includes, from, select...), but still usefull for indexes based on association.
+*Notice:* At this moment it does not support Arel(the new Rails 3 Active Record Query Interface) calls (including: where, joins, includes, from, select...), but still usefull for indexes based on association.
 
 Note that add index in big database may take a long time.
 
