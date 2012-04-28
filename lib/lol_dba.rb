@@ -4,18 +4,14 @@ module LolDba
   require "lol_dba/migration"
   require "lol_dba/railtie.rb" if defined?(Rails)
 
-  def self.form_migration_content(migration_name, add_index_array, del_index_array)
+  def self.form_migration_content(migration_name, index_array)
     migration = <<EOM
     ## run `rails g migration AddMissingIndexes` and add the following content
 
 
     class #{migration_name} < ActiveRecord::Migration
-      def self.up
-        #{add_index_array.uniq.join("\n        ")}
-      end
-
-      def self.down
-        #{del_index_array.uniq.join("\n        ")}
+      def change
+        #{index_array.uniq.join("\n        ")}
       end
     end
 EOM
@@ -62,7 +58,6 @@ EOM
 
   def self.form_data_for_migration(missing_indexes)
     add = []
-    remove = []
     missing_indexes.each do |table_name, keys_to_add|
       keys_to_add.each do |key|
         next if key.blank?
@@ -70,14 +65,12 @@ EOM
         if key.is_a?(Array)
           keys = key.collect {|k| ":#{k}"}
           add << "add_index :#{table_name}, [#{keys.join(', ')}]"
-          remove << "remove_index :#{table_name}, :column => [#{keys.join(', ')}]"
         else
           add << "add_index :#{table_name}, :#{key}"
-          remove << "remove_index :#{table_name}, :#{key}"
         end
       end
     end
-    return add, remove
+    return add
   end
 
   def self.check_for_indexes(migration_format = false)
@@ -191,8 +184,8 @@ EOM
     if indexes.keys.empty?
       puts "Yey, no missing indexes found!"
     else
-      add, remove = form_data_for_migration(indexes)
-      puts form_migration_content(migration_name, add, remove)
+      add = form_data_for_migration(indexes)
+      puts form_migration_content(migration_name, add)
     end
   end
 

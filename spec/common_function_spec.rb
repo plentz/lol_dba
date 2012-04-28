@@ -4,27 +4,19 @@ describe "Function form_migration_content:" do
 
   before do
     @add = ["add_index :report, :_id_test_plan"]
-    @remove = ["remove_index :report, :_id_test_plan"]
   end
 
   it "print migration skeleton with set name" do
     #$stdout.should_receive(:puts).with(/TestMigration/i)
-    migration = LolDba.form_migration_content("TestMigration", @add, @remove)
+    migration = LolDba.form_migration_content("TestMigration", @add)
     migration.should =~ /class TestMigration/i
   end
 
   it "print migration with add_keys params" do
   #  $stdout.should_receive(:puts).with(/add_index :report, :_id_test_plan/i)
-    migration = LolDba.form_migration_content("TestMigration", @add, @remove)
+    migration = LolDba.form_migration_content("TestMigration", @add)
     migration.should =~ /add_index :report, :_id_test_plan/i
   end
-
-  it "print migration with remove_keys params" do
-  #  $stdout.should_receive(:puts).with(/remove_index :report, :_id_test_plan/i)
-     migration = LolDba.form_migration_content("TestMigration", @add, @remove)
-     migration.should =~ /remove_index :report, :_id_test_plan/i
-  end
-
 end
 
 describe "Function form_data_for_migration:" do
@@ -33,20 +25,18 @@ describe "Function form_data_for_migration:" do
     relationship_indexes = {:users => [:user_id]}
     LolDba.stub(:key_exists?).with(:users, :user_id).and_return(false)
 
-    add_indexes, remove_indexes = LolDba.form_data_for_migration(relationship_indexes)
+    add_indexes = LolDba.form_data_for_migration(relationship_indexes)
 
     add_indexes.first.should == "add_index :users, :user_id"
-    remove_indexes.first.should == "remove_index :users, :user_id"
   end
 
   it "return data for migrations for non-indexed composite key in table" do
     relationship_indexes = {:friends => [[:user_id, :friend_id]]}
     LolDba.stub(:key_exists?).with(:friends, [:user_id, :friend_id]).and_return(false)
 
-    add_indexes, remove_indexes = LolDba.form_data_for_migration(relationship_indexes)
+    add_indexes = LolDba.form_data_for_migration(relationship_indexes)
 
     add_indexes.first.should == "add_index :friends, [:user_id, :friend_id]"
-    remove_indexes.first.should == "remove_index :friends, :column => [:user_id, :friend_id]"
   end
 
   it "ignore empty or nil keys for table" do
