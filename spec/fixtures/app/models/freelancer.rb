@@ -1,6 +1,6 @@
 class Freelancer < ActiveRecord::Base
 
-  set_inheritance_column 'worker_type'
+  self.inheritance_column = 'worker_type'
   # use for testing custom class_name FK
   has_and_belongs_to_many :employers, :class_name => "Company"
 
