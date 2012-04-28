@@ -24,12 +24,12 @@ module LolDba
     end
 
     def up
-      migration_class.up
+      migration_class.migrate(:up)
       connection.execute("INSERT INTO schema_migrations (version) VALUES (#{number})")
     end
 
     def down
-      migration_class.down
+      migration_class.migrate(:down)
       connection.execute("DELETE FROM schema_migrations WHERE version = #{number}")
     end
 

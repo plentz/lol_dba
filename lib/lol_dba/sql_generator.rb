@@ -50,7 +50,6 @@ module LolDba
       end
     
       def up_and_down(file)
-        #TODO support to migrations with change
         migration = LolDba::Migration.new(file)
         LolDba::Writer.file_name = "#{migration}.sql"
         migration.up
