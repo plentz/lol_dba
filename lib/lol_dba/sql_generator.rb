@@ -12,14 +12,14 @@ module LolDba
     
       def redefine_execute_methods
         save_original_methods
-        connection.class.send(:define_method, :execute) {|*args| Writer.write(args.first) }
-        connection.class.send(:define_method, :do_execute) {|*args| Writer.write(args.first) }
-        connection.class.send(:define_method, :column_for) {|*args| args.last }
-        connection.class.send(:define_method, :change_column) {|*args| [] }
-        connection.class.send(:define_method, :rename_column) {|*args| [] }
-        connection.class.send(:define_method, :tables) {|*args| [] }
-        connection.class.send(:define_method, :select_all) {|*args| [] }
-        connection.class.send(:define_method, :indexes) {|*args| [] }
+        connection.class.send(:define_method, :execute) { |*args| Writer.write(args.first) }
+        connection.class.send(:define_method, :do_execute) { |*args| Writer.write(args.first) }
+        connection.class.send(:define_method, :column_for) { |*args| args.last }
+        connection.class.send(:define_method, :change_column) { |*args| [] }
+        connection.class.send(:define_method, :rename_column) { |*args| [] }
+        connection.class.send(:define_method, :tables) { |*args| [] }
+        connection.class.send(:define_method, :select_all) { |*args| [] }
+        connection.class.send(:define_method, :indexes) { |*args| [] }
       end
 
       def save_original_methods
@@ -46,7 +46,7 @@ module LolDba
       end
         
       def generate
-        generate_instead_of_executing { migrations.each{|file| up_and_down(file) } }
+        generate_instead_of_executing { migrations.each { |file| up_and_down(file) } }
       end
     
       def up_and_down(file)
