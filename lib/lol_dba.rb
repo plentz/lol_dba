@@ -118,7 +118,7 @@ EOM
             foreign_key = get_through_foreign_key(class_name, reflection_options)
 
             composite_keys = [association_foreign_key, foreign_key]
-
+            
             @index_migrations[table_name.to_s] += [composite_keys] unless @index_migrations[table_name].include?(composite_keys)
             @index_migrations[table_name.to_s] += [composite_keys.reverse] unless @index_migrations[table_name].include?(composite_keys.reverse)
           when :has_many
@@ -154,7 +154,6 @@ EOM
             next if association_foreign_key.nil?
             composite_keys = [association_foreign_key.to_s, foreign_key.to_s]
             @index_migrations[table_name] += [composite_keys] unless @index_migrations[table_name].include?(composite_keys)
-            @index_migrations[table_name] += [composite_keys.reverse] unless @index_migrations[table_name].include?(composite_keys.reverse)
           end
         rescue Exception => e
           p "Some errors here:"
