@@ -64,7 +64,7 @@ EOM
         next if key_exists?(table_name,key)
         if key.is_a?(Array)
           keys = key.collect {|k| ":#{k}"}
-          add << "add_index :#{table_name}, [#{keys.join(', ')}]"
+          add << "add_index :#{table_name}, [#{keys.join(', ')}], :name => 'index_#{table_name}_foreign_keys'"
         else
           add << "add_index :#{table_name}, :#{key}"
         end
