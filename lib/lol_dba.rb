@@ -125,12 +125,13 @@ EOM
             # has_many tables are threaten by the other side of the relation
             next unless reflection_options.options[:through]
 
-            table_name = reflection_options.options[:through].to_s.singularize.camelize.constantize.table_name
+            association_clazz = class_name.reflections[reflection_options.options[:through]].klass
+            table_name = association_clazz.table_name
 
             foreign_key = get_through_foreign_key(class_name, reflection_options)
 
             if reflection_options.options[:source]
-              association_class = reflection_options.options[:source].to_s.singularize.camelize.constantize
+              association_class = association_clazz.reflections[reflection_options.options[:source]].klass
               association_foreign_key = get_through_foreign_key(association_class, reflection_options)
             else
               # go to joining model through has_many and find belongs_to
@@ -157,16 +158,14 @@ EOM
             @index_migrations[table_name] += [composite_keys.reverse] unless @index_migrations[table_name].include?(composite_keys.reverse)
           end
         rescue Exception => e
-          unless ENV["RAILS_ENV"] == "test"
-            puts "Some errors here:"
-            puts "Please, create an issue with the following information here https://github.com/plentz/lol_dba/issues:"
-            puts "***************************"
-            puts "Class: #{class_name}"
-            puts "Association type: #{reflection_options.macro}"
-            puts "Association options: #{reflection_options.options}"
-            puts "Exception: #{e.message}"
-            e.backtrace.each{|trace| puts trace}
-          end
+          puts "Some errors here:"
+          puts "Please, create an issue with the following information here https://github.com/plentz/lol_dba/issues:"
+          puts "***************************"
+          puts "Class: #{class_name}"
+          puts "Association type: #{reflection_options.macro}"
+          puts "Association options: #{reflection_options.options}"
+          puts "Exception: #{e.message}"
+          e.backtrace.each{|trace| puts trace}
         end
       end # case end
     end # each_pair end
