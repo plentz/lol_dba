@@ -120,7 +120,6 @@ EOM
             composite_keys = [association_foreign_key, foreign_key]
 
             @index_migrations[table_name.to_s] += [composite_keys] unless @index_migrations[table_name].include?(composite_keys)
-            @index_migrations[table_name.to_s] += [composite_keys.reverse] unless @index_migrations[table_name].include?(composite_keys.reverse)
           when :has_many
             # has_many tables are threaten by the other side of the relation
             next unless reflection_options.options[:through]
@@ -155,7 +154,6 @@ EOM
             next if association_foreign_key.nil?
             composite_keys = [association_foreign_key.to_s, foreign_key.to_s]
             @index_migrations[table_name] += [composite_keys] unless @index_migrations[table_name].include?(composite_keys)
-            @index_migrations[table_name] += [composite_keys.reverse] unless @index_migrations[table_name].include?(composite_keys.reverse)
           end
         rescue Exception => e
           puts "Some errors here:"
