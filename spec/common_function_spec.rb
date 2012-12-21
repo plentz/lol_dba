@@ -41,10 +41,9 @@ describe "Function form_data_for_migration:" do
 
   it "ignore empty or nil keys for table" do
     relationship_indexes = {:table => [""], :table2 => [nil]}
-    add_indexes, remove_indexes = LolDba.form_data_for_migration(relationship_indexes)
+    add_indexes = LolDba.form_data_for_migration(relationship_indexes)
 
     add_indexes.should be_empty
-    remove_indexes.should be_empty
   end
 
 end
