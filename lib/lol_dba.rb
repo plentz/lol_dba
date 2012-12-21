@@ -6,7 +6,7 @@ module LolDba
 
   def self.form_migration_content(migration_name, index_array)
     migration = <<EOM
-    ## run `rails g migration AddMissingIndexes` and add the following content
+* run `rails g migration AddMissingIndexes` and add the following content:
 
 
     class #{migration_name} < ActiveRecord::Migration
@@ -184,8 +184,9 @@ EOM
     if indexes.keys.empty?
       puts "Yey, no missing indexes found!"
     else
-      puts "# if you have a problem with the index name('index name too long') you can solve with the :name option."
-      puts "# something like :name => 'my_index'."
+      tip = "* TIP: if you have a problem with the index name('index name too long') you can solve with the :name option. "
+      tip += "Something like :name => 'my_index'."
+      puts tip
       add = form_data_for_migration(indexes)
       puts form_migration_content(migration_name, add)
     end
