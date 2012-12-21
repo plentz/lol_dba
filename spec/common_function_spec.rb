@@ -75,9 +75,11 @@ describe "Function puts_migration_content:" do
   end
 
   it "print migration code" do
-     $stdout.should_receive(:puts).with("")
-     $stdout.should_receive(:puts).with(/TestMigration/i)
-     LolDba.puts_migration_content("TestMigration", @relationship_indexes, "")
+    $stdout.should_receive(:puts).with("")
+    $stdout.should_receive(:puts).with(/index name too long/)
+    $stdout.should_receive(:puts).with(/my_index/)
+    $stdout.should_receive(:puts).with(/TestMigration/i)
+    LolDba.puts_migration_content("TestMigration", @relationship_indexes, "")
   end
 
   it "print warning messages if they exist" do
