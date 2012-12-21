@@ -124,13 +124,13 @@ EOM
             # has_many tables are threaten by the other side of the relation
             next unless reflection_options.options[:through]
 
-            association_clazz = class_name.reflections[reflection_options.options[:through]].klass
-            table_name = association_clazz.table_name
+            through_class = class_name.reflections[reflection_options.options[:through]].klass
+            table_name = through_class.table_name
 
             foreign_key = get_through_foreign_key(class_name, reflection_options)
 
             if reflection_options.options[:source]
-              association_class = association_clazz.reflections[reflection_options.options[:source]].klass
+              association_class = through_class.reflections[reflection_options.options[:source]].klass
               association_foreign_key = get_through_foreign_key(association_class, reflection_options)
             else
               # go to joining model through has_many and find belongs_to
