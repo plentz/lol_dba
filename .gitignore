@@ -1,4 +1,4 @@
 .bundle
 .rvmrc
 .DS_Store
-coverage/
+.gem
