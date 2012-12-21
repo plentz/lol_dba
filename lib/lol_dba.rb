@@ -157,13 +157,16 @@ EOM
             @index_migrations[table_name] += [composite_keys.reverse] unless @index_migrations[table_name].include?(composite_keys.reverse)
           end
         rescue Exception => e
-          p "Some errors here:"
-          p "Please add info after this string in to https://github.com/plentz/lol_dba/issues"
-          p "Class: #{class_name}"
-          p "Association type: #{reflection_options.macro}"
-          p "Association options: #{reflection_options.options}"
-          p e.message
-          p e.backtrace.inspect
+          unless ENV["RAILS_ENV"] == "test"
+            puts "Some errors here:"
+            puts "Please, create an issue with the following information here https://github.com/plentz/lol_dba/issues:"
+            puts "***************************"
+            puts "Class: #{class_name}"
+            puts "Association type: #{reflection_options.macro}"
+            puts "Association options: #{reflection_options.options}"
+            puts "Exception: #{e.message}"
+            e.backtrace.each{|trace| puts trace}
+          end
         end
       end # case end
     end # each_pair end
