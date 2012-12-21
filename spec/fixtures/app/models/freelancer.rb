@@ -12,8 +12,3 @@ class Freelancer < ActiveRecord::Base
   has_many :complex_timesheets, :through => :complex_billable_weeks
 
 end
-
-# Check custom STI
-class Worker
-
-end

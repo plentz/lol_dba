@@ -42,17 +42,13 @@ describe "Collect indexes based on associations:" do
   end
 
   it "find indexes for has_many :through" do
-    @relationship_indexes["billable_weeks"].should include(["timesheet_id", "remote_worker_id"])
+    puts @relationship_indexes["billable_weeks"].inspect
+    @relationship_indexes["billable_weeks"].should include(["remote_worker_id", "timesheet_id"])
+    @relationship_indexes["complex_billable_week"].should include(["freelancer_id", "id_complex_timesheet"])
   end
 
   it "find indexes for has_many :through with source and foreign key" do
     @relationship_indexes["complex_billable_week"].should include(["freelancer_id", "id_complex_timesheet"])
-  end
-
-  it "find two combinations for the combined index for has_many :through" do
-    @relationship_indexes["billable_weeks"].should include(["timesheet_id", "remote_worker_id"])
-    @relationship_indexes["complex_billable_week"].should include(["freelancer_id", "id_complex_timesheet"])
-    @relationship_indexes["complex_billable_week"].should include(["id_complex_timesheet", "freelancer_id"])
   end
 
   it "do not include wrong class" do

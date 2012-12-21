@@ -77,22 +77,17 @@ EOM
     Dir.glob(Rails.root + "app/models/**/*.rb").each {|file| require file }
 
     model_classes = []
-    ActiveRecord::Base.subclasses.each do |klass|
-      if !klass.abstract_class? && klass != ActiveRecord::SessionStore::Session
-        model_classes << klass
+    ObjectSpace.each_object(Module) do |obj|
+      if Class == obj.class && obj != ActiveRecord::Base && obj.ancestors.include?(ActiveRecord::Base) && obj != ActiveRecord::SessionStore::Session
+        model_classes << obj
       end
     end
 
     @index_migrations = Hash.new([])
 
     model_classes.each do |class_name|
-
-      # check if this is an STI child instance
-      #if class_name.base_class.name != class_name.name && (class_name.column_names.include?(class_name.base_class.inheritance_column) || class_name.column_names.include?(class_name.inheritance_column))
-      unless class_name < ActiveRecord::Base
-        # add the inharitance column on the parent table
-        # index migration for STI should require both the primary key and the inheritance_column in a composite index.
-        @index_migrations[class_name.base_class.table_name] += [[class_name.inheritance_column, class_name.base_class.primary_key].sort] unless @index_migrations[class_name.base_class.table_name].include?([class_name.base_class.inheritance_column].sort)
+      unless class_name.descends_from_active_record?
+        @index_migrations[class_name.base_class.table_name] += [[class_name.inheritance_column, class_name.base_class.primary_key].sort] unless @index_migrations[class_name.base_class.table_name].include?([class_name.inheritance_column, class_name.base_class.primary_key].sort)
       end
       class_name.reflections.each_pair do |reflection_name, reflection_options|
         begin
@@ -111,7 +106,6 @@ EOM
             end
           when :has_and_belongs_to_many
             table_name = reflection_options.options[:join_table] ||= [class_name.table_name, reflection_name.to_s].sort.join('_')
-            
 
             association_foreign_key = reflection_options.options[:association_foreign_key] ||= "#{reflection_name.to_s.singularize}_id"
 
@@ -152,7 +146,7 @@ EOM
 
             #FIXME currently we don't support :through => :another_regular_has_many_and_non_through_relation
             next if association_foreign_key.nil?
-            composite_keys = [association_foreign_key.to_s, foreign_key.to_s]
+            composite_keys = [association_foreign_key.to_s, foreign_key.to_s].sort
             @index_migrations[table_name] += [composite_keys] unless @index_migrations[table_name].include?(composite_keys)
           end
         rescue Exception => e

@@ -1,6 +1,6 @@
 source :rubygems
 
-gem 'activerecord', :require => 'active_record'
+gem 'activerecord'
 gem 'actionpack'
 gem 'railties'
 gem 'rspec-rails'
