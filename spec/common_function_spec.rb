@@ -83,7 +83,8 @@ describe "Function puts_migration_content:" do
 
   it "print warning messages if they exist" do
     warning = "warning text here"
-    $stdout.should_receive(:puts).with(/warning text here/i)
+    $stdout.should_receive(:puts).at_least(:once).with(warning)
+    $stdout.should_receive(:puts)
 
     LolDba.puts_migration_content("TestMigration", {}, warning)
   end
