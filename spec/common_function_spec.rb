@@ -91,6 +91,7 @@ describe "Function puts_migration_content:" do
 
   it "print nothing if no indexes and warning messages exist" do
     $stdout.should_receive(:puts).with("")
+    $stdout.should_receive(:puts).with("Yey, no missing indexes found!")
     LolDba.puts_migration_content("TestMigration",{}, "")
   end
 
