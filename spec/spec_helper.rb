@@ -1,21 +1,10 @@
-require 'simplecov'
-
-SimpleCov.adapters.define 'lol_dba' do
-  add_group 'Libraries', 'lib'
-
-  add_filter 'spec'
-end
-
-SimpleCov.start 'lol_dba'
-
-require 'rubygems'
-require 'bundler/setup'
-
 require 'active_record'
 require 'active_support'
 require 'action_controller'
-
 require 'lol_dba'
+require 'rspec/rails'
+
+ENV["RAILS_ENV"] ||= 'test'
 
 ActiveRecord::Base.establish_connection(
   :adapter  => "sqlite3",
@@ -28,13 +17,7 @@ class Rails
   end
 end
 
-RSpec.configure do |config|
-  # some (optional) config here
-  #config.fixture_path = "spec/fixtures"
-end
-
 load 'fixtures/schema.rb'
-
 
 root_dir = File.dirname(__FILE__)
 
@@ -43,7 +26,3 @@ Dir["#{root_dir}/fixtures/app/models/**/*.rb"].each { |f| require f}
 
 # load controllers
 Dir["#{root_dir}/fixtures/app/controllers/**/*.rb"].each { |f| require f}
-
-SimpleCov.at_exit do
-  SimpleCov.result.format!
-end
