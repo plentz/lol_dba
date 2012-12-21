@@ -33,7 +33,6 @@ describe "Collect indexes based on associations:" do
 
   it "find two combinations for the combined index for has_and_belongs_to_many" do
     @relationship_indexes["companies_freelancers"].should include(["freelancer_id", "company_id"])
-    @relationship_indexes["companies_freelancers"].should include(["company_id", "freelancer_id"])
     @relationship_indexes["purchases"].should include(["present_id", "buyer_id"])
     @relationship_indexes["purchases"].should include(["buyer_id", "present_id"])
   end
@@ -43,7 +42,7 @@ describe "Collect indexes based on associations:" do
   end
 
   it "find indexes for has_many :through" do
-    @relationship_indexes["billable_weeks"].should include(["remote_worker_id", "timesheet_id"])
+    @relationship_indexes["billable_weeks"].should include(["timesheet_id", "remote_worker_id"])
   end
 
   it "find indexes for has_many :through with source and foreign key" do
@@ -51,7 +50,6 @@ describe "Collect indexes based on associations:" do
   end
 
   it "find two combinations for the combined index for has_many :through" do
-    @relationship_indexes["billable_weeks"].should include(["remote_worker_id", "timesheet_id"])
     @relationship_indexes["billable_weeks"].should include(["timesheet_id", "remote_worker_id"])
     @relationship_indexes["complex_billable_week"].should include(["freelancer_id", "id_complex_timesheet"])
     @relationship_indexes["complex_billable_week"].should include(["id_complex_timesheet", "freelancer_id"])
