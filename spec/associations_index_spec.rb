@@ -33,7 +33,6 @@ describe "Collect indexes based on associations:" do
 
   it "find two combinations for the combined index for has_and_belongs_to_many" do
     relationship_indexes["companies_freelancers"].should include(["freelancer_id", "company_id"])
-    relationship_indexes["purchases"].should include(["present_id", "buyer_id"])
     relationship_indexes["purchases"].should include(["buyer_id", "present_id"])
   end
 
