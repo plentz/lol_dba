@@ -1,5 +1,4 @@
 language: ruby
-script: "bundle exec rake test"
 rvm:
   - 1.8.7
   - 1.9.2
@@ -7,6 +6,7 @@ rvm:
   - ree
 gemfile:
   - Gemfile
+script: "bundle exec rake test"
 notifications:
   recipients:
     - diego@plentz.org
