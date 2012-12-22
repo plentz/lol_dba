@@ -35,7 +35,7 @@ About primary_key
 -----------------
 >The primary key is always indexed. This is generally true for all storage engines that at all supports indices.
 
-For this reason, no longer displays a gem suggestions about adding indexes to primary keys.
+For this reason, we no longer suggest to add indexes to primary keys.
 
 Tests
 -----
