@@ -6,7 +6,7 @@ rvm:
   - ree
 gemfile:
   - Gemfile
-script: "bundle exec rake test"
+script: "bundle exec rake"
 notifications:
   recipients:
     - diego@plentz.org
