@@ -31,18 +31,12 @@ describe "Collect indexes based on associations:" do
     relationship_indexes["purchases"].should include(["present_id", "buyer_id"])
   end
 
-  it "find two combinations for the combined index for has_and_belongs_to_many" do
-    relationship_indexes["companies_freelancers"].should include(["freelancer_id", "company_id"])
-    relationship_indexes["purchases"].should include(["buyer_id", "present_id"])
-  end
-
   it "do not add an already existing index" do
     relationship_indexes["companies"].should_not include("country_id")
   end
 
   it "find indexes for has_many :through" do
     relationship_indexes["billable_weeks"].should include(["remote_worker_id", "timesheet_id"])
-    relationship_indexes["complex_billable_week"].should include(["freelancer_id", "id_complex_timesheet"])
   end
 
   it "find indexes for has_many :through with source and foreign key" do
