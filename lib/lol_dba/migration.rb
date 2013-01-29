@@ -20,7 +20,7 @@ module LolDba
     end
 
     def migration_class
-      name.camelize.constantize
+      name.camelize.split(".")[0].constantize
     end
 
     def up
