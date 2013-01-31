@@ -20,6 +20,7 @@ module LolDba
         connection.class.send(:define_method, :tables) { |*args| [] }
         connection.class.send(:define_method, :select_all) { |*args| [] }
         connection.class.send(:define_method, :indexes) { |*args| [] }
+        connection.class.send(:define_method, :index_name_exists?) { |*args| args[2] } #returns always the default(args[2])
       end
 
       def save_original_methods
