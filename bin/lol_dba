@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+
+if File.exists?(File.join(File.expand_path('../../', __FILE__), '.git'))
+  $:.unshift(File.expand_path('../../lib', __FILE__))
+end
+
+require 'lol_dba'
+require 'lol_dba/cli'
+
+LolDba::CLI.start
