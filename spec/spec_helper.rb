@@ -21,6 +21,9 @@ load 'fixtures/schema.rb'
 
 root_dir = File.dirname(__FILE__)
 
+# Add our models to ruby load path
+$:.unshift("#{root_dir}/fixtures/app/models")
+
 # Load models
 Dir["#{root_dir}/fixtures/app/models/**/*.rb"].each { |f| require f}
 
