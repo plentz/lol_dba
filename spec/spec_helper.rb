@@ -21,6 +21,9 @@ load 'fixtures/schema.rb'
 
 root_dir = File.dirname(__FILE__)
 
+# Add our models to ruby load path
+$:.unshift("#{root_dir}/fixtures/app/models")
+
 # Load models
 require 'fixtures/app/models/address.rb'
 require 'fixtures/app/models/billable_week.rb'
