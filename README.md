@@ -2,27 +2,33 @@
 
 lol_dba is a small package of rake tasks that scan your application models and displays a list of columns that probably should be indexed. Also, it can generate .sql migration scripts. Most of the code come from rails_indexes and migration_sql_generator.
 
-### Installation
+### Quick example
 
-Add lol_dba to your Gemfile:
+To use lol_dba in the easiest way possible you have to do two things:
+
+	gem install lol_dba
+
+Then choose one of the follogin commands:
+
+* ```lol_dba db:find_indexes```: display a migration for adding/removing all necessary indexes based on associations
+* ```lol_dba db:migrate_sql```: generate .sql files for all your migrations inside db/migrate_sql folder.
+
+### Not-so-quick example
+
+If you want to use lol_dba with rake, you should do a few more steps:
+
+Add lol_dba to your Gemfile
 
     gem "lol_dba"
 
-and install gem
+Run the install command
 
     bundle install
 
-### Usage
+Use it the same way you use other rake commands
 
-Display a migration for adding/removing all necessary indexes based on associations:
-
-    rake db:find_indexes
-
-Generate .sql files for all your migrations inside db/migrate_sql folder:
-
-    rake db:migrate_sql
-
-Note that create an index in a big database may take a long time.
+	rake db:find_indexes
+	rake db:migrate_sql
 
 ### Compatibility
 
@@ -36,8 +42,9 @@ For this reason, we no longer suggest to add indexes to primary keys.
 
 ### Tests
 
-    bundle install
-    rake
+To run lol_dba tests, just clone the repo and run:
+
+    bundle install && rake
 
 to run the tests.
 
@@ -53,6 +60,7 @@ All feedback, bug reports and thoughts on this gratefully received.
 * [Jay Fields](http://jayfields.com/)
 * [Muness Alrubaie](http://muness.blogspot.com/)
 * [Vladimir Sharshov](https://github.com/warpc)
+* [Fabio Rehm](http://fabiorehm.com/)
 
 ### License
 
