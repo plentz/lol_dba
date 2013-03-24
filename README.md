@@ -8,10 +8,15 @@ To use lol_dba in the easiest way possible you have to do two things:
 
 	gem install lol_dba
 
-Then choose one of the follogin commands:
+Then run one of the following commands...
 
-* ```lol_dba db:find_indexes```: display a migration for adding/removing all necessary indexes based on associations
-* ```lol_dba db:migrate_sql```: generate .sql files for all your migrations inside db/migrate_sql folder.
+To display a migration for adding/removing all necessary indexes based on associations:
+
+	lol_dba db:find_indexes
+
+To generate .sql files for all your migrations inside db/migrate_sql folder:
+
+	lol_dba db:migrate_sql
 
 ### Not-so-quick example
 
