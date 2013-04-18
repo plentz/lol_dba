@@ -26,8 +26,11 @@ module LolDba
           else
             file << string
             file << ";\n"
+          end
+        }
       end
-          }
+      
     end
+    
   end
 end
