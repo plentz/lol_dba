@@ -21,6 +21,9 @@ module LolDba
         connection.class.send(:define_method, :select_all) { |*args| [] }
         connection.class.send(:define_method, :indexes) { |*args| [] }
         connection.class.send(:define_method, :index_name_exists?) { |*args| args[2] } #returns always the default(args[2])
+        if defined?(Mytrilogy)
+          Mytrilogy::MysqlMigrations.lol_dba_mode = true
+      end
       end
 
       def save_original_methods
@@ -33,6 +36,9 @@ module LolDba
         methods_to_modify.each do |method_name|
           connection.class.send(:alias_method, method_name, "orig_#{method_name}".to_sym)
         end
+        if defined?(Mytrilogy)
+          Mytrilogy::MysqlMigrations.lol_dba_mode = false
+      end
       end
     
       def generate_instead_of_executing(&block)
@@ -43,11 +49,14 @@ module LolDba
       end
     
       def migrations
-        Dir.glob(File.join(Rails.root, "db", "migrate", '*.rb'))
+        #Dir.glob(File.join(Rails.root, "db", "migrate", '*.rb'))
+        am = ActiveRecord::Migrator.new(:up,  ActiveRecord::Migrator.migrations_paths)
+        am.pending_migrations.collect {|pm| pm.filename }
       end
         
       def generate
-        generate_instead_of_executing { migrations.each { |file| up_and_down(file) } }
+        migs = migrations
+        generate_instead_of_executing { migs.each { |file| up_and_down(file) } }
       end
     
       def up_and_down(file)
