@@ -17,8 +17,20 @@ module LolDba
       end
   
       def write(string)
-        File.open(path, 'a') { |file| file << string; file << ";\n" }
+        File.open(path, 'a') { |file|
+          # if has semi-colons switch the delimiter
+          if string[";"] && ! string["DELIMITER"]
+            file << "DELIMITER $$\n"
+            file << string
+            file << "$$\nDELIMITER ;\n"
+          else
+            file << string
+            file << ";\n"
+          end
+        }
       end
+      
     end
+    
   end
 end
