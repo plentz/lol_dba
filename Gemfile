@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
-gem 'activerecord', '3.2.14'
-gem 'actionpack', '3.2.14'
-gem 'railties', '3.2.14'
+gem 'activerecord'
+gem 'actionpack'
+gem 'railties'
 gem 'rspec-rails'
 gem 'sqlite3'
