@@ -11,7 +11,7 @@ ActiveRecord::Base.establish_connection(
   :database => ":memory:"
 )
 
-class Rails
+module Rails
   def self.root
     "spec/fixtures/"
   end
