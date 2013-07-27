@@ -7,13 +7,25 @@ module LolDba
       end
 
       def methods_to_modify
-        [:execute, :do_execute, :rename_column, :change_column, :column_for, :tables, :indexes, :select_all] & connection.class.methods
+        [:execute, :do_execute, :rename_column, :change_column, :column_for, :tables, :indexes, :select_all] & connection.methods
       end
-    
+
       def redefine_execute_methods
         save_original_methods
-        connection.class.send(:define_method, :execute) { |*args| Writer.write(args.first) }
-        connection.class.send(:define_method, :do_execute) { |*args| Writer.write(args.first) }
+        connection.class.send(:define_method, :execute) { |*args|
+          if args.first =~ /SELECT "schema_migrations"."version"/ || args.first =~ /^SHOW/
+            self.orig_execute(*args)
+          else
+            Writer.write(to_sql(args.first, args.last))
+          end
+        }
+        connection.class.send(:define_method, :do_execute) { |*args|
+          if args.first =~ /SELECT "schema_migrations"."version"/ || args.first =~ /^SHOW/
+             self.orig_do_execute(*args)
+          else
+            Writer.write(to_sql(args.first, args.last))
+          end
+        }
         connection.class.send(:define_method, :column_for) { |*args| args.last }
         connection.class.send(:define_method, :change_column) { |*args| [] }
         connection.class.send(:define_method, :rename_column) { |*args| [] }
@@ -31,7 +43,7 @@ module LolDba
         
       def reset_methods
         methods_to_modify.each do |method_name|
-          connection.class.send(:alias_method, method_name, "orig_#{method_name}".to_sym)
+          connection.class.send(:alias_method, method_name, "orig_#{method_name}".to_sym) rescue nil
         end
       end
     
@@ -42,12 +54,29 @@ module LolDba
         reset_methods
       end
     
-      def migrations
-        Dir.glob(File.join(Rails.root, "db", "migrate", '*.rb'))
+      def migrations(which)
+        migrator = ActiveRecord::Migrator.new(:up, ActiveRecord::Migrator.migrations_path)
+        if which == "all"
+          migrator.migrations.collect { |m| m.filename }
+        elsif which == "pending"
+          pending = migrator.pending_migrations
+          if pending.empty?
+            puts "No pending migrations."
+            exit
+          end
+          migrator.pending_migrations.collect { |m| m.filename }
+        else
+          if migration = migrator.migrations.find {|m| m.version == which.to_i}
+            [migration.filename]
+          else
+            puts "There are no migrations for version #{which}."
+            exit
+          end
+        end
       end
         
-      def generate
-        generate_instead_of_executing { migrations.each { |file| up_and_down(file) } }
+      def generate(which)
+        generate_instead_of_executing { migrations(which).each { |file| up_and_down(file) } }
       end
     
       def up_and_down(file)

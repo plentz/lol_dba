@@ -14,9 +14,11 @@ To display a migration for adding/removing all necessary indexes based on associ
 
 	lol_dba db:find_indexes
 
-To generate .sql files for all your migrations inside db/migrate_sql folder:
+To generate .sql files for your migrations inside db/migrate_sql folder:
 
-	lol_dba db:migrate_sql
+	lol_dba db:migrate_sql # defaults to all migrations
+	lol_dba db:migrate_sql[pending] # only pending migrations
+	lol_dba db:migrate_sql[20120221205526] # generate sql only for migration 20120221205526
 
 ### Not-so-quick example
 
@@ -33,7 +35,9 @@ Run the install command
 Use it the same way you use other rake commands
 
 	rake db:find_indexes
-	rake db:migrate_sql
+	rake db:migrate_sql # defaults to all migrations
+	rake db:migrate_sql[pending] # only pending migrations
+	rake db:migrate_sql[20120221205526] # generate sql only for migration 20120221205526
 
 ### Compatibility
 

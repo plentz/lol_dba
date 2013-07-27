@@ -6,9 +6,10 @@ namespace :db do
   task :find_indexes => :environment do
     LolDba.simple_migration
   end
-  desc "Generate .sql files for all your migrations inside db/migrate_sql folder"
-  task :migrate_sql => :environment do
-    LolDba::SqlGenerator.generate
+  desc "Generate .sql files for your migrations inside db/migrate_sql folder"
+  task :migrate_sql, [:which] => :environment do |t, args|
+    args.with_defaults(:which => 'all')
+    LolDba::SqlGenerator.generate(args[:which])
   end
   
 end

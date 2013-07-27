@@ -1,14 +1,18 @@
 require 'optparse'
+require 'lol_dba/sql_generator'
 
 module LolDba
   class CLI
 
     class << self
       def start
-        options = {:format => 'migration'}
+        options = {}
         OptionParser.new do |opts|
-          opts.on("-f", '--format=[FORMAT]', 'Specify the format to be used (migration or sql), defaults to migration.') { |v| options[:format] = v }
           opts.on('-d', '--debug', 'Show stack traces when an error occurs.') { |v| options[:debug] = v }
+          opts.on_tail("-v", "--version", "Show version") do
+            puts LolDba::VERSION
+            exit
+          end
         end.parse!
         new(Dir.pwd, options).start
       end
@@ -20,34 +24,25 @@ module LolDba
 
     def start
       load_application
-      validate_format!
-      send("generate_#{@options[:format]}")
+      arg = ARGV.first
+      if arg =~ /db:find_indexes/
+        LolDba.simple_migration
+      elsif arg !~ /\[/
+        LolDba::SqlGenerator.generate("all")
+      else
+        which = arg.match(/.*\[(.*)\].*/).captures[0]
+        LolDba::SqlGenerator.generate(which)
+      end
     rescue Exception => e
-      $stderr.puts "Failed: #{e.class}: #{e.message}"
+      $stderr.puts "Failed: #{e.class}: #{e.message}" if @options[:debug]
       $stderr.puts e.backtrace.map { |t| "    from #{t}" } if @options[:debug]
     end
 
     protected
 
-    def validate_format!
-      unless self.respond_to?("generate_#{@options[:format]}")
-        $stderr.puts "Unknown format: #{@options[:format]}"
-        exit 1
-      end
-    end
-
     # Tks to https://github.com/voormedia/rails-erd/blob/master/lib/rails_erd/cli.rb
     def load_application
-      $stderr.puts "Loading application in '#{File.basename(@path)}'..."
       require "#{@path}/config/environment"
-    end
-
-    def generate_sql
-      LolDba::SqlGenerator.generate
-    end
-
-    def generate_migration
-      LolDba.simple_migration
     end
   end
 end
