@@ -17,6 +17,7 @@ module LolDba
       end
   
       def write(string)
+        return if file_name.nil?
         File.open(path, 'a') { |file| file << string; file << ";\n" }
       end
     end
