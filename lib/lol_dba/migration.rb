@@ -4,7 +4,7 @@ module LolDba
 
     def initialize(migration_file)
       self.full_name = File.basename(migration_file, ".rb")
-      require Rails.root + "db/migrate/#{full_name}.rb"
+      require Rails.root.join(migration_file)
     end
 
     def number
