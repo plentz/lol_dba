@@ -55,7 +55,12 @@ module LolDba
       end
     
       def migrations(which)
-        migrator = ActiveRecord::Migrator.new(:up, ActiveRecord::Migrator.migrations_path)
+        migrator = nil
+        if ActiveRecord.version.version =~ /^4./
+          migrator = ActiveRecord::Migrator.new(:up, ActiveRecord::Migrator.migrations(ActiveRecord::Migrator.migrations_path))
+        else
+          migrator = ActiveRecord::Migrator.new(:up, ActiveRecord::Migrator.migrations_path)
+        end
         if which == "all"
           migrator.migrations.collect { |m| m.filename }
         elsif which == "pending"
