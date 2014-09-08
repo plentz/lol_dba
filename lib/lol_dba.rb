@@ -98,7 +98,7 @@ EOM
             if reflection_options.options.has_key?(:polymorphic) && (reflection_options.options[:polymorphic] == true)
               poly_type = "#{reflection_options.name.to_s}_type"
               poly_id = "#{reflection_options.name.to_s}_id"
-              
+
               @index_migrations[@table_name.to_s] += [[poly_type, poly_id].sort] unless @index_migrations[@table_name.to_s].include?([poly_type, poly_id].sort)
             else
               foreign_key = reflection_options.options[:foreign_key] ||= reflection_options.respond_to?(:primary_key_name) ? reflection_options.primary_key_name : reflection_options.foreign_key
