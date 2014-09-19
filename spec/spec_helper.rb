@@ -16,7 +16,7 @@ module Rails
     "spec/fixtures/"
   end
 end
-
+Dir.glob("#{Rails.root}/app/models/*.rb").sort.each { |file| require_dependency file }
 load 'fixtures/schema.rb'
 
 root_dir = File.dirname(__FILE__)
