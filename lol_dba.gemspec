@@ -18,6 +18,7 @@ Gem::Specification.new do |s|
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.require_paths = ["lib", "lib/lol_dba"]
 
+  s.required_ruby_version = ">= 1.9.1"
   s.add_dependency "activerecord", ">= 3.0", "< 5.0"
   s.add_dependency "actionpack", ">= 3.0", "< 5.0"
   s.add_dependency "railties", ">= 3.0", "< 5.0"
