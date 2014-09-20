@@ -1,6 +1,4 @@
-require 'active_record'
-require 'active_support'
-require 'action_controller'
+require 'rails/all'
 require 'lol_dba'
 require 'rspec/rails'
 
