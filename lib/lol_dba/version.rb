@@ -1,3 +1,3 @@
 module LolDba
-  VERSION = "1.6.1" unless defined? LolDba::VERSION
+  VERSION = "1.6.2" unless defined? LolDba::VERSION
 end
