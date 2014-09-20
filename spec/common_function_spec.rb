@@ -7,13 +7,11 @@ describe "Function form_migration_content:" do
   end
 
   it "print migration skeleton with set name" do
-    #$stdout.should_receive(:puts).with(/TestMigration/i)
     migration = LolDba.form_migration_content("TestMigration", @add)
     expect(migration).to match(/class TestMigration/i)
   end
 
   it "print migration with add_keys params" do
-  #  $stdout.should_receive(:puts).with(/add_index :report, :_id_test_plan/i)
     migration = LolDba.form_migration_content("TestMigration", @add)
     expect(migration).to match(/add_index :report, :_id_test_plan/i)
   end
