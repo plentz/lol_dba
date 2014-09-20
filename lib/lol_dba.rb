@@ -74,7 +74,7 @@ EOM
   end
 
   def self.check_for_indexes(migration_format = false)
-    Dir.glob(Rails.root + "app/models/**/*.rb").sort.each {|file| require file }
+    Rails.application.eager_load! unless ENV["RAILS_ENV"] == 'test'
 
     model_classes = []
     ObjectSpace.each_object(Module) do |obj|
