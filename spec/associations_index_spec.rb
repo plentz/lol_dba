@@ -7,64 +7,64 @@ describe "Collect indexes based on associations:" do
   let(:warning_messages){ lol_dba[1] }
 
   it "find relationship indexes" do
-    relationship_indexes.should_not be_empty
+    expect(relationship_indexes).not_to be_empty
 
-    relationship_indexes.should have_key("companies")
-    relationship_indexes.should have_key("companies_freelancers")
-    relationship_indexes.should have_key("addresses")
-    relationship_indexes.should have_key("purchases")
+    expect(relationship_indexes).to have_key("companies")
+    expect(relationship_indexes).to have_key("companies_freelancers")
+    expect(relationship_indexes).to have_key("addresses")
+    expect(relationship_indexes).to have_key("purchases")
   end
 
   it "find indexes for belongs_to" do
-    relationship_indexes["addresses"].should include("country_id")
+    expect(relationship_indexes["addresses"]).to include("country_id")
   end
 
   it "find indexes for belongs_to with custom foreign key" do
-    relationship_indexes["companies"].should include("owner_id")
+    expect(relationship_indexes["companies"]).to include("owner_id")
   end
 
   it "find indexes for has_and_belongs_to_many" do
-    relationship_indexes["companies_freelancers"].should include(["freelancer_id", "company_id"])
+    expect(relationship_indexes["companies_freelancers"]).to include(["freelancer_id", "company_id"])
   end
 
   it "find indexes for has_and_belongs_to_many with custom join_table, primary and foreign keys" do
-    relationship_indexes["purchases"].should include(["present_id", "buyer_id"])
+    expect(relationship_indexes["purchases"]).to include(["present_id", "buyer_id"])
   end
 
   it "do not add an already existing index" do
-    relationship_indexes["companies"].should_not include("country_id")
+    expect(relationship_indexes["companies"]).not_to include("country_id")
   end
 
   it "find indexes for has_many :through" do
-    relationship_indexes["billable_weeks"].should include(["remote_worker_id", "timesheet_id"])
+    expect(relationship_indexes["billable_weeks"]).to include(["remote_worker_id", "timesheet_id"])
   end
 
   it "find indexes for has_many :through with source and foreign key" do
-    relationship_indexes["complex_billable_week"].should include(["freelancer_id", "id_complex_timesheet"])
+    expect(relationship_indexes["complex_billable_week"]).to include(["freelancer_id", "id_complex_timesheet"])
   end
 
   it "do not include wrong class" do
-    relationship_indexes["wrongs"].should be_nil
-    relationship_indexes["addresses_wrongs"].should be_nil
+    expect(relationship_indexes["wrongs"]).to be_nil
+    expect(relationship_indexes["addresses_wrongs"]).to be_nil
   end
 
   it "have warnings(non-existent table) on test data" do
-    warning_messages.should_not be_empty
-    warning_messages.should =~ /\'wrongs\'/
-    warning_messages.should =~ /\'addresses_wrongs\'/
+    expect(warning_messages).not_to be_empty
+    expect(warning_messages).to match(/\'wrongs\'/)
+    expect(warning_messages).to match(/\'addresses_wrongs\'/)
   end
 
   it "find indexes for STI" do
-    relationship_indexes["users"].should include(["id", "type"])
+    expect(relationship_indexes["users"]).to include(["id", "type"])
   end
 
   it "find indexes for STI with custom inheritance column" do
-    relationship_indexes["freelancers"].should include(["id", "worker_type"])
+    expect(relationship_indexes["freelancers"]).to include(["id", "worker_type"])
   end
 
   it "find indexes, than use custom class name option in association" do
-    relationship_indexes["employers_freelancers"].should be_nil
-    relationship_indexes["companies_freelancers"].should include(["freelancer_id", "company_id"])
+    expect(relationship_indexes["employers_freelancers"]).to be_nil
+    expect(relationship_indexes["companies_freelancers"]).to include(["freelancer_id", "company_id"])
   end
 
 end
