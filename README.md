@@ -70,6 +70,10 @@ All feedback, bug reports and thoughts on this gratefully received.
 * [Muness Alrubaie](http://muness.blogspot.com/)
 * [Vladimir Sharshov](https://github.com/warpc)
 * [Fabio Rehm](http://fabiorehm.com/)
+* [Emanuel Imhof](http://m43nu.ch)
+* [Adrian Hooper](https://twitter.com/PaReeOhNos)
+* [Ray Zane](https://github.com/rzane)
+* [Grant Gongaware](https://github.com/ggongaware)
 
 ### License
 
