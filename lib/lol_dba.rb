@@ -118,17 +118,17 @@ EOM
             # has_many tables are threaten by the other side of the relation
             next unless reflection_options.options[:through]
 
-            through_class = class_name.reflections[reflection_options.options[:through]].klass
+            through_class = class_name.reflections[reflection_options.options[:through].to_s].klass
             table_name = through_class.table_name
 
             foreign_key = get_through_foreign_key(class_name, reflection_options)
 
             if reflection_options.options[:source]
-              association_class = through_class.reflections[reflection_options.options[:source]].klass
+              association_class = through_class.reflections[reflection_options.options[:source].to_s].klass
               association_foreign_key = get_through_foreign_key(association_class, reflection_options)
             else
               # go to joining model through has_many and find belongs_to
-              blg_to_reflection = class_name.reflections[reflection_options.options[:through]]
+              blg_to_reflection = class_name.reflections[reflection_options.options[:through].to_s]
               if blg_to_reflection.options[:class_name]
                 # has_many :class_name
                 blg_to_class = blg_to_reflection.options[:class_name].constantize
