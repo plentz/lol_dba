@@ -25,7 +25,7 @@ describe "Collect indexes based on associations:" do
 
   it "find indexes for has_and_belongs_to_many" do
     expect(relationship_indexes["companies_freelancers"]).to include(["company_id", "freelancer_id"])
-    expect(relationship_indexes["companies_freelancers"]).not_to include(["company_id", "freelancer_id"])
+    expect(relationship_indexes["companies_freelancers"]).not_to include(["freelancer_id", "company_id"])
   end
 
   it "find indexes for has_and_belongs_to_many with custom join_table, primary and foreign keys" do
