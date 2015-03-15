@@ -111,7 +111,7 @@ EOM
 
             foreign_key = get_through_foreign_key(class_name, reflection_options)
 
-            composite_keys = [association_foreign_key, foreign_key]
+            composite_keys = [association_foreign_key, foreign_key].sort
             @index_migrations[table_name.to_s] += [composite_keys] unless @index_migrations[table_name].include?(composite_keys)
           when :has_many
             # has_many tables are threaten by the other side of the relation

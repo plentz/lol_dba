@@ -24,11 +24,13 @@ describe "Collect indexes based on associations:" do
   end
 
   it "find indexes for has_and_belongs_to_many" do
-    expect(relationship_indexes["companies_freelancers"]).to include(["freelancer_id", "company_id"])
+    expect(relationship_indexes["companies_freelancers"]).to include(["company_id", "freelancer_id"])
+    expect(relationship_indexes["companies_freelancers"]).not_to include(["company_id", "freelancer_id"])
   end
 
   it "find indexes for has_and_belongs_to_many with custom join_table, primary and foreign keys" do
-    expect(relationship_indexes["purchases"]).to include(["present_id", "buyer_id"])
+    expect(relationship_indexes["purchases"]).to include(["buyer_id", "present_id"])
+    expect(relationship_indexes["purchases"]).not_to include(["present_id", "buyer_id"])
   end
 
   it "do not add an already existing index" do
@@ -64,7 +66,8 @@ describe "Collect indexes based on associations:" do
 
   it "find indexes, than use custom class name option in association" do
     expect(relationship_indexes["employers_freelancers"]).to be_nil
-    expect(relationship_indexes["companies_freelancers"]).to include(["freelancer_id", "company_id"])
+    expect(relationship_indexes["companies_freelancers"]).to include(["company_id", "freelancer_id"])
+    expect(relationship_indexes["companies_freelancers"]).not_to include(["freelancer_id", "company_id"])
   end
 
 end
