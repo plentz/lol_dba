@@ -28,8 +28,6 @@ EOM
     # Guess foreign key?
     if reflection.options[:foreign_key]
       association_foreign_key = reflection.options[:foreign_key]
-    elsif reflection.options[:class_name]
-      association_foreign_key = reflection.options[:class_name].foreign_key
     else
       association_foreign_key = "#{target_class.name.tableize.singularize}_id"
     end

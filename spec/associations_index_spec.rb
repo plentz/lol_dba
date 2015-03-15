@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "Collect indexes based on associations:" do
 
-  let!(:lol_dba){ LolDba.check_for_indexes }
+  let(:lol_dba){ LolDba.check_for_indexes }
   let(:relationship_indexes){ lol_dba[0] }
   let(:warning_messages){ lol_dba[1] }
 
@@ -39,6 +39,7 @@ describe "Collect indexes based on associations:" do
 
   it "find indexes for has_many :through" do
     expect(relationship_indexes["billable_weeks"]).to include(["remote_worker_id", "timesheet_id"])
+    expect(relationship_indexes["billable_weeks"]).not_to include(["billable_week_id", "remote_worker_id"])
   end
 
   it "find indexes for has_many :through with source and foreign key" do
