@@ -74,6 +74,7 @@ All feedback, bug reports and thoughts on this gratefully received.
 * [Adrian Hooper](https://twitter.com/PaReeOhNos)
 * [Ray Zane](https://github.com/rzane)
 * [Grant Gongaware](https://github.com/ggongaware)
+* [Przemysław “Szeryf” Kowalczyk](https://szeryf.wordpress.com)
 * [Philipp Weissensteiner](http://philippweissensteiner.com)
 
 ### License
