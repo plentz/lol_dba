@@ -33,6 +33,10 @@ describe "Collect indexes based on associations:" do
     expect(relationship_indexes["purchases"]).not_to include(["present_id", "buyer_id"])
   end
 
+  it "find indexes for has_and_belongs_to_many but don't create the left_side index" do
+    expect(relationship_indexes["purchases"]).not_to include("left_side_id")
+  end
+
   it "do not add an already existing index" do
     expect(relationship_indexes["companies"]).not_to include("country_id")
   end

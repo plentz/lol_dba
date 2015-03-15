@@ -7,11 +7,4 @@ class User < ActiveRecord::Base
 
   validates_uniqueness_of :name
 
-  def search_via_email(email = "user@domain.com")
-    self.find_by_email(email)
-  end
-
-  def search_via_email_and_name(email, name)
-    self.find_by_email_and_name(email, name)
-  end
 end
