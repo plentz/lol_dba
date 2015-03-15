@@ -102,7 +102,7 @@ EOM
               @index_migrations[@table_name] += [[poly_type, poly_id].sort] unless @index_migrations[@table_name].include?([poly_type, poly_id].sort)
             else
               foreign_key = reflection_options.options[:foreign_key] ||= reflection_options.respond_to?(:primary_key_name) ? reflection_options.primary_key_name : reflection_options.foreign_key
-              @index_migrations[@table_name] += [foreign_key] unless @index_migrations[@table_name].include?(foreign_key)
+              @index_migrations[@table_name] += [foreign_key.to_s] unless @index_migrations[@table_name].include?(foreign_key)
             end
           when :has_and_belongs_to_many
             table_name = reflection_options.options[:join_table] ||= [class_name.table_name, reflection_name.to_s].sort.join('_')
