@@ -76,6 +76,7 @@ All feedback, bug reports and thoughts on this gratefully received.
 * [Grant Gongaware](https://github.com/ggongaware)
 * [Przemysław “Szeryf” Kowalczyk](https://szeryf.wordpress.com)
 * [Philipp Weissensteiner](http://philippweissensteiner.com)
+* [Leung Ho Kuen](https://twitter.com/PikachuEXE)
 
 ### License
 
