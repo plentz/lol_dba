@@ -1,5 +1,5 @@
 PATH
-  remote: .
+  remote: ../
   specs:
     lol_dba (1.6.6)
       actionpack (>= 3.0, < 5.0)
@@ -135,9 +135,12 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  actionpack (~> 4.2.0)
+  activerecord (~> 4.2.0)
   appraisal (~> 1.0)
   lol_dba!
   rails
+  railties (~> 4.2.0)
   rspec-rails
   sqlite3
   test-unit
