@@ -3,7 +3,7 @@
 source "https://rubygems.org"
 
 gem "rails"
-gem "rspec-rails"
+gem "rspec-rails", "~> 3.0.0"
 gem "sqlite3"
 gem "activerecord", "~> 4.1.9"
 gem "actionpack", "~> 4.1.9"

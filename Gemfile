@@ -1,7 +1,7 @@
-source 'https://rubygems.org'
+source "https://rubygems.org"
 
 gemspec
 
-gem 'rails'
-gem 'rspec-rails'
-gem 'sqlite3'
+gem "rails"
+gem "rspec-rails", "~> 3.0.0"
+gem "sqlite3"
