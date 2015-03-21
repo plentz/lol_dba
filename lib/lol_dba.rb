@@ -114,31 +114,21 @@ EOM
           when :has_many
             # has_many tables are threaten by the other side of the relation
             next unless reflection_options.options[:through]
-            through_class = class_name.reflections[reflection_options.options[:through].to_s].klass
+            through_class = class_name.reflections.stringify_keys[reflection_options.options[:through].to_s].klass
             table_name = through_class.table_name
 
             foreign_key = get_through_foreign_key(class_name, reflection_options)
 
             if reflection_options.options[:source]
-              association_class = through_class.reflections[reflection_options.options[:source].to_s].klass
+              association_class = through_class.reflections.stringify_keys[reflection_options.options[:source].to_s].klass
               association_foreign_key = get_through_foreign_key(association_class, reflection_options)
             else
               # go to joining model through has_many and find belongs_to
-              blg_to_reflection = class_name.reflections[reflection_options.options[:through].to_s]
-              if blg_to_reflection.options[:class_name]
-                # has_many :class_name
-                blg_to_class = blg_to_reflection.options[:class_name].constantize
-              else
-                # has_many
-                blg_to_class = blg_to_reflection.name.to_s.singularize.camelize.constantize
-              end
-
-              #multiple level :through relation, can be ignored for now(it will be checked in the right relation)
-              next if blg_to_class.reflections[reflection_name.to_s.singularize.to_s].nil?
-
+              blg_to_reflection = class_name.reflections.stringify_keys[reflection_options.options[:through].to_s]
+              blg_to_class = blg_to_reflection.class_name.constantize
 
               # get foreign_key from belongs_to
-              association_foreign_key = blg_to_class.reflections[reflection_name.to_s.singularize.to_s].options[:foreign_key]
+              association_foreign_key = blg_to_class.reflections.stringify_keys[reflection_name.to_s.singularize.to_s].options[:foreign_key]
             end
 
             #FIXME currently we don't support :through => :another_regular_has_many_and_non_through_relation
