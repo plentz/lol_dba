@@ -77,6 +77,7 @@ All feedback, bug reports and thoughts on this gratefully received.
 * [Przemysław “Szeryf” Kowalczyk](https://szeryf.wordpress.com)
 * [Philipp Weissensteiner](http://philippweissensteiner.com)
 * [Leung Ho Kuen](https://twitter.com/PikachuEXE)
+* [Lucas Mazza](https://twitter.com/lucasmazza)
 
 ### License
 
