@@ -139,4 +139,4 @@ DEPENDENCIES
   rails
   rspec-rails (~> 3.0.0)
   sqlite3
-  test-unit
+  test-unit (~> 3.0)

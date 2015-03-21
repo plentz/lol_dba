@@ -117,4 +117,4 @@ DEPENDENCIES
   railties (~> 4.1.9)
   rspec-rails (~> 3.0.0)
   sqlite3
-  test-unit
+  test-unit (~> 3.0)
