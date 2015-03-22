@@ -86,7 +86,7 @@ EOM
     model_classes.each do |class_name|
       unless class_name.descends_from_active_record?
         index_name = [class_name.inheritance_column, class_name.base_class.primary_key].sort
-        @index_migrations[class_name.base_class.table_name] += [index_name] unless @index_migrations[class_name.base_class.table_name].include?(index_name)
+        @index_migrations[class_name.base_class.table_name] += [index_name]
       end
       reflections = class_name.reflections.stringify_keys
       reflections.each_pair do |reflection_name, reflection_options|
@@ -138,7 +138,7 @@ EOM
             index_name = [[association_foreign_key.to_s, foreign_key.to_s].sort]
           end
 
-          unless index_name == "" || @index_migrations[table_name].include?(index_name) || reflection_options.options.include?(:class)
+          unless index_name == "" || reflection_options.options.include?(:class)
             @index_migrations[table_name] += index_name
           end
 
