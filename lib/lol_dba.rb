@@ -85,7 +85,8 @@ EOM
 
     model_classes.each do |class_name|
       unless class_name.descends_from_active_record?
-        @index_migrations[class_name.base_class.table_name] += [[class_name.inheritance_column, class_name.base_class.primary_key].sort] unless @index_migrations[class_name.base_class.table_name].include?([class_name.inheritance_column, class_name.base_class.primary_key].sort)
+        index_name = [class_name.inheritance_column, class_name.base_class.primary_key].sort
+        @index_migrations[class_name.base_class.table_name] += [index_name] unless @index_migrations[class_name.base_class.table_name].include?(index_name)
       end
       reflections = class_name.reflections.stringify_keys
       reflections.each_pair do |reflection_name, reflection_options|
