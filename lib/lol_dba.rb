@@ -87,7 +87,8 @@ EOM
       unless class_name.descends_from_active_record?
         @index_migrations[class_name.base_class.table_name] += [[class_name.inheritance_column, class_name.base_class.primary_key].sort] unless @index_migrations[class_name.base_class.table_name].include?([class_name.inheritance_column, class_name.base_class.primary_key].sort)
       end
-      class_name.reflections.each_pair do |reflection_name, reflection_options|
+      reflections = class_name.reflections.stringify_keys
+      reflections.each_pair do |reflection_name, reflection_options|
         begin
           case reflection_options.macro
           when :belongs_to
@@ -114,7 +115,7 @@ EOM
           when :has_many
             # has_many tables are threaten by the other side of the relation
             next unless reflection_options.options[:through]
-            through_class = class_name.reflections.stringify_keys[reflection_options.options[:through].to_s].klass
+            through_class = reflections[reflection_options.options[:through].to_s].klass
             table_name = through_class.table_name
 
             foreign_key = get_through_foreign_key(class_name, reflection_options)
@@ -124,11 +125,11 @@ EOM
               association_foreign_key = get_through_foreign_key(association_class, reflection_options)
             else
               # go to joining model through has_many and find belongs_to
-              blg_to_reflection = class_name.reflections.stringify_keys[reflection_options.options[:through].to_s]
+              blg_to_reflection = reflections[reflection_options.options[:through].to_s]
               blg_to_class = blg_to_reflection.class_name.constantize
 
               # get foreign_key from belongs_to
-              association_foreign_key = blg_to_class.reflections.stringify_keys[reflection_name.to_s.singularize.to_s].options[:foreign_key]
+              association_foreign_key = blg_to_class.reflections.stringify_keys[reflection_name.singularize].options[:foreign_key]
             end
 
             #FIXME currently we don't support :through => :another_regular_has_many_and_non_through_relation
