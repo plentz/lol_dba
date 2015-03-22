@@ -103,7 +103,7 @@ EOM
               index_name = [[poly_type, poly_id].sort]
             else
               foreign_key = reflection_options.options[:foreign_key] ||= reflection_options.respond_to?(:primary_key_name) ? reflection_options.primary_key_name : reflection_options.foreign_key
-              index_name = [foreign_key.to_s]
+              index_name = foreign_key.to_s
             end
           when :has_and_belongs_to_many
             table_name = reflection_options.options[:join_table] ||= [class_name.table_name, reflection_name.to_s].sort.join('_')
@@ -112,7 +112,7 @@ EOM
 
             foreign_key = get_through_foreign_key(class_name, reflection_options)
 
-            index_name = [[association_foreign_key, foreign_key].sort]
+            index_name = [association_foreign_key, foreign_key].sort
           when :has_many
             # has_many tables are threaten by the other side of the relation
             next unless reflection_options.options[:through]
@@ -135,11 +135,11 @@ EOM
 
             #FIXME currently we don't support :through => :another_regular_has_many_and_non_through_relation
             next if association_foreign_key.nil?
-            index_name = [[association_foreign_key.to_s, foreign_key.to_s].sort]
+            index_name = [association_foreign_key.to_s, foreign_key.to_s].sort
           end
 
           unless index_name == "" || reflection_options.options.include?(:class)
-            @index_migrations[table_name] += index_name
+            @index_migrations[table_name] += [index_name]
           end
 
         rescue Exception => e
