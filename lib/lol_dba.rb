@@ -18,10 +18,10 @@ EOM
   end
 
   def self.get_through_foreign_key(target_class, reflection_options)
-    if target_class.reflections[reflection_options.options[:through].to_s]
-      # has_many :through
-      reflection = target_class.reflections[reflection_options.options[:through].to_s]
-    else
+    # has_many :through
+    reflection = target_class.reflections[reflection_options.options[:through].to_s]
+
+    unless reflection
       # has_and_belongs_to_many
       reflection = reflection_options
     end
@@ -126,11 +126,7 @@ EOM
               association_foreign_key = get_through_foreign_key(association_class, reflection_options)
             else
               # go to joining model through has_many and find belongs_to
-              blg_to_reflection = reflections[reflection_options.options[:through].to_s]
-              blg_to_class = blg_to_reflection.class_name.constantize
-
-              # get foreign_key from belongs_to
-              association_foreign_key = blg_to_class.reflections.stringify_keys[reflection_name.singularize].options[:foreign_key]
+              association_foreign_key = through_class.reflections.stringify_keys[reflection_name.singularize].options[:foreign_key]
             end
 
             #FIXME currently we don't support :through => :another_regular_has_many_and_non_through_relation
