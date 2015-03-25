@@ -24,5 +24,4 @@ Gem::Specification.new do |s|
   s.add_dependency "railties", ">= 3.0", "< 5.0"
 
   s.add_development_dependency "appraisal", "~> 1.0"
-  s.add_development_dependency "test-unit", "~> 3.0"
 end
