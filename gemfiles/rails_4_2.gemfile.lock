@@ -140,6 +140,6 @@ DEPENDENCIES
   lol_dba!
   rails
   railties (~> 4.2.0)
-  rspec-rails (~> 3.0.0)
+  rspec-rails
   sqlite3
-  test-unit (~> 3.0)
+  test-unit
