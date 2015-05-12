@@ -72,7 +72,7 @@ ActiveRecord::Schema.define do
     t.column "user_id", :integer
   end
 
-  create_table "favourites", force: true do |t|
+  create_table "favourites", :force => true do |t|
     t.column "user_id", :integer
     t.column "favourable_id", :integer
     t.column "favourable_type", :string
