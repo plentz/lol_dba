@@ -66,4 +66,17 @@ ActiveRecord::Schema.define do
   create_table "countries", :force => true do |t|
     t.column "name", :string
   end
+
+  create_table "components", force: :cascade do |t|
+  end
+
+  create_table "group_components", force: :cascade do |t|
+    t.column "group_id",   :integer
+    t.column "component_id", :integer
+  end
+
+  create_table "groups", force: :cascade do |t|
+  end
+
+
 end

@@ -115,18 +115,18 @@ EOM
             index_name = [association_foreign_key, foreign_key].sort
           when :has_many
             # has_many tables are threaten by the other side of the relation
-            next unless reflection_options.options[:through]
+            next unless reflection_options.options[:through] && reflections[reflection_options.options[:through].to_s]
             through_class = reflections[reflection_options.options[:through].to_s].klass
             table_name = through_class.table_name
 
             foreign_key = get_through_foreign_key(class_name, reflection_options)
 
-            if reflection_options.options[:source]
-              association_class = through_class.reflections.stringify_keys[reflection_options.options[:source].to_s].klass
+            if source = reflection_options.options[:source]
+              association_class = through_class.reflections.stringify_keys[source.to_s].klass
               association_foreign_key = get_through_foreign_key(association_class, reflection_options)
-            else
+            elsif through_reflections = through_class.reflections.stringify_keys[reflection_name.singularize]
               # go to joining model through has_many and find belongs_to
-              association_foreign_key = through_class.reflections.stringify_keys[reflection_name.singularize].options[:foreign_key]
+              association_foreign_key = through_reflections.options[:foreign_key]
             end
 
             #FIXME currently we don't support :through => :another_regular_has_many_and_non_through_relation
