@@ -78,6 +78,8 @@ All feedback, bug reports and thoughts on this gratefully received.
 * [Philipp Weissensteiner](http://philippweissensteiner.com)
 * [Leung Ho Kuen](https://twitter.com/PikachuEXE)
 * [Lucas Mazza](https://twitter.com/lucasmazza)
+* [Larry Reaves](https://github.com/yrral86)
+* [James Bowles](https://github.com/jamesbowles)
 
 ### License
 
