@@ -72,7 +72,9 @@ EOM
   end
 
   def self.check_for_indexes(migration_format = false)
-    Rails.application.eager_load! unless Rails.env.test?
+    if defined?(Rails) && !Rails.env.test?
+      Rails.application.eager_load!
+    end
 
     model_classes = []
     ObjectSpace.each_object(Module) do |obj|
