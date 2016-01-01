@@ -61,7 +61,7 @@ EOM
         next if key.blank?
         next if key_exists?(table_name,key)
         if key.is_a?(Array)
-          keys = key.collect {|k| ":#{k}"}
+          keys = key.flatten.collect {|k| ":#{k}"}
           add << "add_index :#{table_name}, [#{keys.join(', ')}]"
         else
           add << "add_index :#{table_name}, :#{key}"
