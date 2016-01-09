@@ -19,6 +19,10 @@ describe "Collect indexes based on associations:" do
     expect(relationship_indexes["addresses"]).to include("country_id")
   end
 
+  it "find indexes for polymorphic belongs_to" do
+    expect(relationship_indexes["addresses"]).to include(["addressable_id", "addressable_type"])
+  end
+
   it "find indexes for belongs_to with custom foreign key" do
     expect(relationship_indexes["companies"]).to include("owner_id")
   end

@@ -100,7 +100,7 @@ EOM
               poly_type = "#{reflection_options.name.to_s}_type"
               poly_id = "#{reflection_options.name.to_s}_id"
 
-              index_name = [[poly_type, poly_id].sort]
+              index_name = [poly_type, poly_id].sort
             else
               foreign_key = reflection_options.options[:foreign_key] ||= reflection_options.respond_to?(:primary_key_name) ? reflection_options.primary_key_name : reflection_options.foreign_key
               index_name = foreign_key.to_s
