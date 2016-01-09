@@ -41,7 +41,7 @@ Use it the same way you use other rake commands
 
 ### Compatibility
 
-Compatible with Ruby 2.x and Rails 3.x, 4.x.
+Compatible with Ruby 2.x and Rails 3.x, 4.x, 5.x.
 
 ### About primary_key
 
@@ -54,8 +54,6 @@ For this reason, we no longer suggest to add indexes to primary keys.
 To run lol_dba tests, just clone the repo and run:
 
     bundle install && rake
-
-to run the tests.
 
 ### Feedback
 
@@ -80,6 +78,8 @@ All feedback, bug reports and thoughts on this gratefully received.
 * [Lucas Mazza](https://twitter.com/lucasmazza)
 * [Larry Reaves](https://github.com/yrral86)
 * [James Bowles](https://github.com/jamesbowles)
+* [Anderson Pierre Cardoso](https://github.com/andersoncardoso)
+* [James Bowler](https://github.com/jamesbowles)
 
 ### License
 
