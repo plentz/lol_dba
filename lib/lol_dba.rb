@@ -112,7 +112,7 @@ EOM
 
             foreign_key = get_through_foreign_key(class_name, reflection_options)
 
-            index_name = [association_foreign_key, foreign_key].sort
+            index_name = [association_foreign_key, foreign_key].map(&:to_s).sort
           when :has_many
             # has_many tables are threaten by the other side of the relation
             next unless reflection_options.options[:through] && reflections[reflection_options.options[:through].to_s]
@@ -131,7 +131,7 @@ EOM
 
             #FIXME currently we don't support :through => :another_regular_has_many_and_non_through_relation
             next if association_foreign_key.nil?
-            index_name = [association_foreign_key.to_s, foreign_key.to_s].sort
+            index_name = [association_foreign_key, foreign_key].map(&:to_s).sort
           end
 
           unless index_name == "" || reflection_options.options.include?(:class)
