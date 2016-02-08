@@ -184,7 +184,7 @@ EOM
   end
 
   def self.current_indexes
-    ActiveRecord::Base.connection.tables.each { |table|
+    ActiveRecord::Base.connection.tables.each do |table|
       puts "\nTABLE: #{table}"
 
       table_indexes = ActiveRecord::Base.connection.indexes(table).map(&:columns)
@@ -196,7 +196,7 @@ EOM
           puts "\t> #{cols}"
         end
       end
-    }
+    end
 
     puts "\nNOTE: ALL TABLES PRIMARY KEYS ARE INDEXED BY DEFAULT."
   end
