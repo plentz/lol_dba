@@ -27,6 +27,8 @@ module LolDba
       arg = ARGV.first
       if arg =~ /db:find_indexes/
         LolDba.simple_migration
+      elsif arg =~ /db:current_indexes/
+        LolDba.current_indexes
       elsif arg !~ /\[/
         LolDba::SqlGenerator.generate("all")
       else
