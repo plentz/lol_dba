@@ -35,6 +35,7 @@ Run the install command
 Use it the same way you use other rake commands
 
 	rake db:find_indexes
+	rake db:current_indexes # lists the db's current indexes
 	rake db:migrate_sql # defaults to all migrations
 	rake db:migrate_sql[pending] # only pending migrations
 	rake db:migrate_sql[20120221205526] # generate sql only for migration 20120221205526
