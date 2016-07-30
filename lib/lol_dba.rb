@@ -33,13 +33,17 @@ EOM
     end
   end
 
+  def self.tables
+    ::ActiveRecord::VERSION::MAJOR >= 5 ? ActiveRecord::Base.connection.data_sources : ActiveRecord::Base.connection.tables
+  end
+
   def self.validate_and_sort_indexes(indexes_required)
     missing_indexes = {}
     warning_messages = ""
     indexes_required.each do |table_name, foreign_keys|
       next if foreign_keys.blank?
       begin
-        if ActiveRecord::Base.connection.tables.include?(table_name.to_s)
+        if tables.include?(table_name.to_s)
           existing_indexes = ActiveRecord::Base.connection.indexes(table_name.to_sym).collect {|index| index.columns.size > 1 ? index.columns : index.columns.first}
           existing_indexes += Array(ActiveRecord::Base.connection.primary_key(table_name.to_s))
           keys_to_add = foreign_keys.uniq - existing_indexes
