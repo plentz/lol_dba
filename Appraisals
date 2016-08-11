@@ -20,7 +20,7 @@ appraise "rails_4_1" do
 end
 
 appraise "rails_4_2" do
-  version = "~> 4.2.0"
+  version = "~> 4.2.3"
   gem 'activerecord', version
   gem 'actionpack', version
   gem 'railties', version
