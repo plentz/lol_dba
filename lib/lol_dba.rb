@@ -21,15 +21,14 @@ EOM
     # has_many :through
     reflection = target_class.reflections[reflection_options.options[:through].to_s]
 
-    unless reflection
-      # has_and_belongs_to_many
-      reflection = reflection_options
-    end
+    # has_and_belongs_to_many
+    reflection = reflection_options unless reflection
+
     # Guess foreign key?
     if reflection.options[:foreign_key]
-      association_foreign_key = reflection.options[:foreign_key]
+      reflection.options[:foreign_key]
     else
-      association_foreign_key = "#{target_class.name.tableize.singularize}_id"
+      "#{target_class.name.tableize.singularize}_id"
     end
   end
 
@@ -117,7 +116,6 @@ EOM
             association_foreign_key = reflection_options.options[:association_foreign_key] ||= "#{reflection_name.to_s.singularize}_id"
 
             foreign_key = get_through_foreign_key(class_name, reflection_options)
-
             index_name = [association_foreign_key, foreign_key].map(&:to_s).sort
           when :has_many
             # has_many tables are threaten by the other side of the relation
@@ -156,7 +154,6 @@ EOM
         end
       end # case end
     end # each_pair end
-
     missing_indexes, warning_messages = validate_and_sort_indexes(@index_migrations)
 
   end
