@@ -127,8 +127,9 @@ EOM
             foreign_key = get_through_foreign_key(class_name, reflection_options)
 
             if source = reflection_options.options[:source]
-              association_class = through_class.reflections.stringify_keys[source.to_s].klass
-              association_foreign_key = get_through_foreign_key(association_class, reflection_options)
+              association_reflection = through_class.reflections.stringify_keys[source.to_s]
+              next if association_reflection.options[:polymorphic]
+              association_foreign_key = get_through_foreign_key(association_reflection.klass, reflection_options)
             elsif through_reflections = through_class.reflections.stringify_keys[reflection_name.singularize]
               # go to joining model through has_many and find belongs_to
               association_foreign_key = through_reflections.options[:foreign_key]
