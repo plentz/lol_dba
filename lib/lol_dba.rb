@@ -21,16 +21,19 @@ EOM
     # has_many :through
     reflection = target_class.reflections[reflection_options.options[:through].to_s]
 
-    unless reflection
-      # has_and_belongs_to_many
-      reflection = reflection_options
-    end
+    # has_and_belongs_to_many
+    reflection = reflection_options unless reflection
+
     # Guess foreign key?
     if reflection.options[:foreign_key]
-      association_foreign_key = reflection.options[:foreign_key]
+      reflection.options[:foreign_key]
     else
-      association_foreign_key = "#{target_class.name.tableize.singularize}_id"
+      "#{target_class.name.tableize.singularize}_id"
     end
+  end
+
+  def self.tables
+    ::ActiveRecord::VERSION::MAJOR >= 5 ? ActiveRecord::Base.connection.data_sources : ActiveRecord::Base.connection.tables
   end
 
   def self.validate_and_sort_indexes(indexes_required)
@@ -39,7 +42,7 @@ EOM
     indexes_required.each do |table_name, foreign_keys|
       next if foreign_keys.blank?
       begin
-        if ActiveRecord::Base.connection.tables.include?(table_name.to_s)
+        if tables.include?(table_name.to_s)
           existing_indexes = ActiveRecord::Base.connection.indexes(table_name.to_sym).collect {|index| index.columns.size > 1 ? index.columns : index.columns.first}
           existing_indexes += Array(ActiveRecord::Base.connection.primary_key(table_name.to_s))
           keys_to_add = foreign_keys.uniq - existing_indexes
@@ -101,19 +104,19 @@ EOM
             if reflection_options.options[:polymorphic]
               poly_type = "#{reflection_options.name.to_s}_type"
               poly_id = "#{reflection_options.name.to_s}_id"
-
               index_name = [poly_type, poly_id].sort
             else
-              foreign_key = reflection_options.options[:foreign_key] ||= reflection_options.respond_to?(:primary_key_name) ? reflection_options.primary_key_name : reflection_options.foreign_key
+              foreign_key = reflection_options.options[:foreign_key]
+              foreign_key ||= reflection_options.respond_to?(:primary_key_name) ? reflection_options.primary_key_name : reflection_options.foreign_key
+              next if foreign_key == "left_side_id" # not a clue why rails 4.1+ creates this left_side_id thing
               index_name = foreign_key.to_s
             end
           when :has_and_belongs_to_many
-            table_name = reflection_options.options[:join_table] ||= [class_name.table_name, reflection_name.to_s].sort.join('_')
-
+            table_name = reflection_options.options[:join_table]
+            table_name ||= [class_name.table_name, reflection_name.to_s].sort.join('_')
             association_foreign_key = reflection_options.options[:association_foreign_key] ||= "#{reflection_name.to_s.singularize}_id"
 
             foreign_key = get_through_foreign_key(class_name, reflection_options)
-
             index_name = [association_foreign_key, foreign_key].map(&:to_s).sort
           when :has_many
             # has_many tables are threaten by the other side of the relation
@@ -137,7 +140,7 @@ EOM
           end
 
           unless index_name == "" || reflection_options.options.include?(:class)
-            @index_migrations[table_name] += [index_name]
+            @index_migrations[table_name.to_s] += [index_name]
           end
 
         rescue Exception => e
@@ -152,7 +155,6 @@ EOM
         end
       end # case end
     end # each_pair end
-
     missing_indexes, warning_messages = validate_and_sort_indexes(@index_migrations)
 
   end
