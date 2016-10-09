@@ -104,15 +104,16 @@ EOM
             if reflection_options.options[:polymorphic]
               poly_type = "#{reflection_options.name.to_s}_type"
               poly_id = "#{reflection_options.name.to_s}_id"
-
               index_name = [poly_type, poly_id].sort
             else
-              foreign_key = reflection_options.options[:foreign_key] ||= reflection_options.respond_to?(:primary_key_name) ? reflection_options.primary_key_name : reflection_options.foreign_key
+              foreign_key = reflection_options.options[:foreign_key]
+              foreign_key ||= reflection_options.respond_to?(:primary_key_name) ? reflection_options.primary_key_name : reflection_options.foreign_key
+              next if foreign_key == "left_side_id" # not a clue why rails 4.1+ creates this left_side_id thing
               index_name = foreign_key.to_s
             end
           when :has_and_belongs_to_many
-            table_name = reflection_options.options[:join_table] ||= [class_name.table_name, reflection_name.to_s].sort.join('_')
-
+            table_name = reflection_options.options[:join_table]
+            table_name ||= [class_name.table_name, reflection_name.to_s].sort.join('_')
             association_foreign_key = reflection_options.options[:association_foreign_key] ||= "#{reflection_name.to_s.singularize}_id"
 
             foreign_key = get_through_foreign_key(class_name, reflection_options)
@@ -139,7 +140,7 @@ EOM
           end
 
           unless index_name == "" || reflection_options.options.include?(:class)
-            @index_migrations[table_name] += [index_name]
+            @index_migrations[table_name.to_s] += [index_name]
           end
 
         rescue Exception => e
