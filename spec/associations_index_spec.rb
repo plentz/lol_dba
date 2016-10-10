@@ -19,6 +19,7 @@ describe "Collect indexes based on associations:" do
 
   it "find indexes for belongs_to" do
     expect(@relationship_indexes["addresses"]).to include("country_id")
+    expect(@relationship_indexes["favourites"]).to include("user_id")
   end
 
   it "find indexes for polymorphic belongs_to" do
@@ -80,8 +81,7 @@ describe "Collect indexes based on associations:" do
     expect(@relationship_indexes["companies_freelancers"]).not_to include(["freelancer_id", "company_id"])
   end
 
-  it "HABTM with polymorphic relationship" do
-    expect(@relationship_indexes["favourites"]).to include("user_id")
+  it "create index for HABTM with polymorphic relationship" do
     expect(@relationship_indexes["favourites"]).to include(["favourable_id", "favourable_type"])
     expect(@relationship_indexes["favourites"]).not_to include(["project_id", "user_id"])
     expect(@relationship_indexes["favourites"]).not_to include(["project_id", "worker_user_id"])
