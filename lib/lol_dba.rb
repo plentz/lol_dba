@@ -11,7 +11,7 @@ module LolDba
 
     class #{migration_name} < ActiveRecord::Migration
       def change
-        #{index_array.uniq.join("\n        ")}
+        #{index_array.sort.uniq.join("\n        ")}
       end
     end
 EOM
