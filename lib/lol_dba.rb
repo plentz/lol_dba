@@ -119,20 +119,22 @@ EOM
             foreign_key = get_through_foreign_key(class_name, reflection_options)
             index_name = [association_foreign_key, foreign_key].map(&:to_s).sort
           when :has_many
-            # has_many tables are threaten by the other side of the relation
-            next unless reflection_options.options[:through] && reflections[reflection_options.options[:through].to_s]
-            through_class = reflections[reflection_options.options[:through].to_s].klass
+            through = reflection_options.options[:through]
+            next unless through && reflections[through.to_s] # has_many tables are threaten by the other side of the relation
+
+            through_class = reflections[through.to_s].klass
             table_name = through_class.table_name
 
             foreign_key = get_through_foreign_key(class_name, reflection_options)
 
+            through_reflections = through_class.reflections.stringify_keys
             if source = reflection_options.options[:source]
-              association_reflection = through_class.reflections.stringify_keys[source.to_s]
+              association_reflection = through_reflections[source.to_s]
               next if association_reflection.options[:polymorphic]
               association_foreign_key = get_through_foreign_key(association_reflection.klass, reflection_options)
-            elsif through_reflections = through_class.reflections.stringify_keys[reflection_name.singularize]
+            elsif belongs_to_reflections = through_reflections[reflection_name.singularize]
               # go to joining model through has_many and find belongs_to
-              association_foreign_key = through_reflections.options[:foreign_key]
+              association_foreign_key = belongs_to_reflections.options[:foreign_key]
             end
 
             #FIXME currently we don't support :through => :another_regular_has_many_and_non_through_relation
