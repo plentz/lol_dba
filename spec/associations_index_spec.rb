@@ -54,17 +54,13 @@ describe "Collect indexes based on associations:" do
 
   it "find indexes for has_many :through with source and foreign key" do
     expect(@relationship_indexes["complex_billable_week"]).to include(["freelancer_id", "id_complex_timesheet"])
+    expect(@relationship_indexes["complex_billable_week"]).not_to include(["id_complex_timesheet", "worker_id"])
+    expect(@relationship_indexes["complex_billable_week"]).not_to include(["complex_billable_week_id", "id_complex_timesheet"])
   end
 
   it "do not include wrong class" do
     expect(@relationship_indexes["wrongs"]).to be_nil
     expect(@relationship_indexes["addresses_wrongs"]).to be_nil
-  end
-
-  it "have warnings(non-existent table) on test data" do
-    expect(@warning_messages).not_to be_empty
-    expect(@warning_messages).to match(/\'wrongs\'/)
-    expect(@warning_messages).to match(/\'addresses_wrongs\'/)
   end
 
   it "find indexes for STI" do
@@ -85,5 +81,11 @@ describe "Collect indexes based on associations:" do
     expect(@relationship_indexes["favourites"]).to include(["favourable_id", "favourable_type"])
     expect(@relationship_indexes["favourites"]).not_to include(["project_id", "user_id"])
     expect(@relationship_indexes["favourites"]).not_to include(["project_id", "worker_user_id"])
+  end
+
+  it "have warnings(non-existent table) on test data" do
+    expect(@warning_messages).not_to be_empty
+    expect(@warning_messages).to match(/\'wrongs\'/)
+    expect(@warning_messages).to match(/\'addresses_wrongs\'/)
   end
 end
