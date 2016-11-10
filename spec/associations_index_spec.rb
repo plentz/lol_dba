@@ -5,7 +5,7 @@ describe "Collect indexes based on associations:" do
   before :all do
     lol_dba = LolDba.check_for_indexes
     @relationship_indexes = lol_dba[0]
-    @warning_messages = lol_dba[1]
+    @warning_messages = lol_dba[1].split("\n")
   end
 
   it "find relationship indexes" do
@@ -62,9 +62,9 @@ describe "Collect indexes based on associations:" do
   end
 
   it "have warnings(non-existent table) on test data" do
-    expect(@warning_messages).not_to be_empty
-    expect(@warning_messages).to match(/\'wrongs\'/)
-    expect(@warning_messages).to match(/\'addresses_wrongs\'/)
+    expect(@warning_messages).to have(2).items
+    expect(@warning_messages).to include("BUG: table 'wrongs' does not exist, please report this bug.")
+    expect(@warning_messages).to include("BUG: table 'addresses_wrongs' does not exist, please report this bug.")
   end
 
   it "find indexes for STI" do

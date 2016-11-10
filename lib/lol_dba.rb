@@ -48,7 +48,7 @@ EOM
           keys_to_add = foreign_keys.uniq - existing_indexes
           missing_indexes[table_name] = keys_to_add unless keys_to_add.empty?
         else
-          warning_messages << "BUG: table '#{table_name.to_s}' does not exist, please report this bug.\n    "
+          warning_messages << "BUG: table '#{table_name.to_s}' does not exist, please report this bug.\n"
         end
       rescue Exception => e
         puts "ERROR: #{e}"
