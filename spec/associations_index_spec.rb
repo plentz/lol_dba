@@ -62,9 +62,11 @@ describe "Collect indexes based on associations:" do
   end
 
   it "have warnings(non-existent table) on test data" do
-    expect(@warning_messages).to have(2).items
-    expect(@warning_messages).to include("BUG: table 'wrongs' does not exist, please report this bug.")
-    expect(@warning_messages).to include("BUG: table 'addresses_wrongs' does not exist, please report this bug.")
+    expected_warnings = [
+      "BUG: table 'wrongs' does not exist, please report this bug.",
+      "BUG: table 'addresses_wrongs' does not exist, please report this bug."
+    ]
+    expect(@warning_messages).to match_array(expected_warnings)
   end
 
   it "find indexes for STI" do

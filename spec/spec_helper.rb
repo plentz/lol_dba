@@ -1,7 +1,6 @@
 require 'rails/all'
 require 'lol_dba'
 require 'rspec/rails'
-require 'rspec/collection_matchers'
 
 ENV["RAILS_ENV"] ||= 'test'
 

@@ -99,8 +99,6 @@ GEM
       rake (>= 0.8.7)
       thor (>= 0.18.1, < 2.0)
     rake (11.3.0)
-    rspec-collection_matchers (1.1.2)
-      rspec-expectations (>= 2.99.0.beta1)
     rspec-core (3.5.4)
       rspec-support (~> 3.5.0)
     rspec-expectations (3.5.0)
@@ -143,7 +141,6 @@ DEPENDENCIES
   appraisal (~> 1.0)
   lol_dba!
   rails
-  rspec-collection_matchers
   rspec-rails
   sqlite3
   test-unit
