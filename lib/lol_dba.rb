@@ -112,8 +112,7 @@ EOM
               index_name = foreign_key.to_s
             end
           when :has_and_belongs_to_many
-            table_name = reflection_options.options[:join_table]
-            table_name ||= [class_name.table_name, reflection_name.to_s].sort.join('_')
+            table_name = reflection_options.join_table
             association_foreign_key = reflection_options.options[:association_foreign_key] ||= "#{reflection_name.to_s.singularize}_id"
 
             foreign_key = get_through_foreign_key(class_name, reflection_options)

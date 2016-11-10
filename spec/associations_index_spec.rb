@@ -75,6 +75,12 @@ describe "Collect indexes based on associations:" do
     expect(@relationship_indexes["freelancers"]).to include(["id", "worker_type"])
   end
 
+  it "finds the right join table for HABTM for an STI subclass" do
+    expect(@relationship_indexes).not_to have_key('companies_worker_users')
+    expect(@relationship_indexes).to have_key('companies_users')
+    expect(@relationship_indexes["companies_users"]).to include(["company_id", "user_id"])
+  end
+
   it "find indexes, than use custom class name option in association" do
     expect(@relationship_indexes["employers_freelancers"]).to be_nil
     expect(@relationship_indexes["companies_freelancers"]).to include(["company_id", "freelancer_id"])
