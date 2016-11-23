@@ -56,7 +56,7 @@ module LolDba
     
       def migrations(which)
         migrator = nil
-        if ActiveRecord.version.version =~ /^4./
+        if ActiveRecord.respond_to?(:version) && ActiveRecord.version.version =~ /^4./
           migrator = ActiveRecord::Migrator.new(:up, ActiveRecord::Migrator.migrations(ActiveRecord::Migrator.migrations_path))
         else
           migrator = ActiveRecord::Migrator.new(:up, ActiveRecord::Migrator.migrations_path)
