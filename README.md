@@ -45,7 +45,7 @@ Compatible with Ruby 2.x and Rails 3.x, 4.x, 5.x.
 
 ### About primary_key
 
->The primary key is always indexed. This is generally true for all storage engines that at all supports indices.
+>The primary key is always indexed. This is generally true for all storage engines that at all supports indexes.
 
 For this reason, we no longer suggest to add indexes to primary keys.
 
@@ -54,32 +54,6 @@ For this reason, we no longer suggest to add indexes to primary keys.
 To run lol_dba tests, just clone the repo and run:
 
     bundle install && rake
-
-### Feedback
-
-All feedback, bug reports and thoughts on this gratefully received.
-
-### Contributors
-
-* [Diego Plentz](http://plentz.org)
-* [Elad Meidar](http://blog.eizesus.com)
-* [Eric Davis](http://littlestreamsoftware.com)
-* [Jay Fields](http://jayfields.com/)
-* [Muness Alrubaie](http://muness.blogspot.com/)
-* [Vladimir Sharshov](https://github.com/warpc)
-* [Fabio Rehm](http://fabiorehm.com/)
-* [Emanuel Imhof](http://m43nu.ch)
-* [Adrian Hooper](https://twitter.com/PaReeOhNos)
-* [Ray Zane](https://github.com/rzane)
-* [Grant Gongaware](https://github.com/ggongaware)
-* [Przemysław “Szeryf” Kowalczyk](https://szeryf.wordpress.com)
-* [Philipp Weissensteiner](http://philippweissensteiner.com)
-* [Leung Ho Kuen](https://twitter.com/PikachuEXE)
-* [Lucas Mazza](https://twitter.com/lucasmazza)
-* [Larry Reaves](https://github.com/yrral86)
-* [James Bowles](https://github.com/jamesbowles)
-* [Anderson Pierre Cardoso](https://github.com/andersoncardoso)
-* [James Bowler](https://github.com/jamesbowles)
 
 ### License
 
