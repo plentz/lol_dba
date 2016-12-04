@@ -6,7 +6,7 @@ module LolDba
 
   def self.form_migration_content(migration_name, index_array)
     migration = <<EOM
-* run `rails g migration AddMissingIndexes` and add the following content:
+* run `rails g migration #{migration_name}` and add the following content:
 
 
     class #{migration_name} < ActiveRecord::Migration
