@@ -22,7 +22,7 @@ EOM
     reflection = target_class.reflections[reflection_options.options[:through].to_s]
 
     # has_and_belongs_to_many
-    reflection = reflection_options unless reflection
+    reflection ||= reflection_options
 
     # Guess foreign key?
     if reflection.options[:foreign_key]
@@ -125,7 +125,7 @@ EOM
             through_class = reflections[through.to_s].klass
             table_name = through_class.table_name
 
-            foreign_key = get_through_foreign_key(class_name, reflection_options)
+            foreign_key = get_through_foreign_key(through_class, reflections[through.to_s])
 
             through_reflections = through_class.reflections.stringify_keys
             if source = reflection_options.options[:source]
@@ -141,6 +141,23 @@ EOM
             next if association_foreign_key.nil?
             index_name = [association_foreign_key, foreign_key].map(&:to_s).sort
           end
+          #if reflection_options.macro == :has_many && class_name.to_s == "Freelancer"
+          #  puts "**********"
+          #  puts "#{class_name.to_s}.rb # #{reflection_options.name}, through: #{reflection_options.options[:through]}, source: #{reflection_options.options[:source]}"
+          #  puts "index: #{table_name}.#{index_name}"
+          #  puts "foreign_key: #{foreign_key}, association_foreign_key: #{association_foreign_key}"
+          #  puts "############"
+          #  puts "reflection_options: " + reflection_options.inspect
+          #  puts "-"
+          #  puts "through:" + reflections[through.to_s].inspect
+          #  puts "-"
+          #  puts "through_reflections[reflection_name.singularize]: #{through_reflections[reflection_name.singularize].inspect}"
+          #  puts "-"
+          #  puts "through_class.reflections.stringify_keys: #{through_class.reflections.stringify_keys.keys}"
+          #  puts "-"
+          #  puts "reflections[through.to_s].options[:polymorphic]: #{reflections[through.to_s].options[:polymorphic]}"
+          #  puts "----------"
+          #end
 
           unless index_name == "" || reflection_options.options.include?(:class)
             @index_migrations[table_name.to_s] += [index_name]
