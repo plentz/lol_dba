@@ -3,8 +3,9 @@
 sudo: false
 language: ruby
 rvm:
-  - 2.3
-  - 2.4
+  - 2.2.6
+  - 2.3.3
+  - 2.4.0
   - ruby-head
 gemfile:
   - gemfiles/rails_3_2.gemfile
