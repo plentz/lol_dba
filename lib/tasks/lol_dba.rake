@@ -11,5 +11,8 @@ namespace :db do
     args.with_defaults(:which => 'all')
     LolDba::SqlGenerator.generate(args[:which])
   end
-  
+  desc "Display current db indexes"
+  task :current_indexes => :environment do
+    LolDba.current_indexes
+  end
 end

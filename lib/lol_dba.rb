@@ -187,4 +187,22 @@ EOM
 
     puts_migration_content("AddMissingIndexes", missing_indexes, warning_messages)
   end
+
+  def self.current_indexes
+    ActiveRecord::Base.connection.tables.each do |table|
+      puts "\nTABLE: #{table}"
+
+      table_indexes = ActiveRecord::Base.connection.indexes(table).map(&:columns)
+
+      if table_indexes.empty?
+        puts "\tNo INDEXES"
+      else
+        table_indexes.each do |cols|
+          puts "\t> #{cols}"
+        end
+      end
+    end
+
+    puts "\nNOTE: ALL TABLES PRIMARY KEYS ARE INDEXED BY DEFAULT."
+  end
 end
