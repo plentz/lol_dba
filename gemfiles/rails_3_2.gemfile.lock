@@ -9,9 +9,6 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    actionmailer (3.2.22.5)
-      actionpack (= 3.2.22.5)
-      mail (~> 2.5.4)
     actionpack (3.2.22.5)
       activemodel (= 3.2.22.5)
       activesupport (= 3.2.22.5)
@@ -30,9 +27,6 @@ GEM
       activesupport (= 3.2.22.5)
       arel (~> 3.0.2)
       tzinfo (~> 0.3.29)
-    activeresource (3.2.22.5)
-      activemodel (= 3.2.22.5)
-      activesupport (= 3.2.22.5)
     activesupport (3.2.22.5)
       i18n (~> 0.6, >= 0.6.4)
       multi_json (~> 1.0)
@@ -48,12 +42,7 @@ GEM
     i18n (0.8.1)
     journey (1.0.4)
     json (1.8.6)
-    mail (2.5.4)
-      mime-types (~> 1.16)
-      treetop (~> 1.4.8)
-    mime-types (1.25.1)
     multi_json (1.12.1)
-    polyglot (0.3.5)
     power_assert (1.0.1)
     rack (1.4.7)
     rack-cache (1.7.0)
@@ -62,14 +51,6 @@ GEM
       rack
     rack-test (0.6.3)
       rack (>= 1.0)
-    rails (3.2.22.5)
-      actionmailer (= 3.2.22.5)
-      actionpack (= 3.2.22.5)
-      activerecord (= 3.2.22.5)
-      activeresource (= 3.2.22.5)
-      activesupport (= 3.2.22.5)
-      bundler (~> 1.0)
-      railties (= 3.2.22.5)
     railties (3.2.22.5)
       actionpack (= 3.2.22.5)
       activesupport (= 3.2.22.5)
@@ -107,10 +88,7 @@ GEM
       power_assert
     thor (0.19.4)
     tilt (1.4.1)
-    treetop (1.4.15)
-      polyglot
-      polyglot (>= 0.3.1)
-    tzinfo (0.3.52)
+    tzinfo (0.3.53)
 
 PLATFORMS
   ruby
@@ -120,7 +98,6 @@ DEPENDENCIES
   activerecord (~> 3.2.21)
   appraisal (~> 1.0)
   lol_dba!
-  rails
   railties (~> 3.2.21)
   rspec-rails
   sqlite3

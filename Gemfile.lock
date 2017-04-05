@@ -48,7 +48,7 @@ GEM
     method_source (0.8.2)
     mini_portile2 (2.1.0)
     minitest (5.10.1)
-    nokogiri (1.7.0.1)
+    nokogiri (1.7.1)
       mini_portile2 (~> 2.1.0)
     power_assert (1.0.1)
     rack (2.0.1)
@@ -88,7 +88,7 @@ GEM
       power_assert
     thor (0.19.4)
     thread_safe (0.3.6)
-    tzinfo (1.2.2)
+    tzinfo (1.2.3)
       thread_safe (~> 0.1)
 
 PLATFORMS
