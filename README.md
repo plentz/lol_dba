@@ -1,4 +1,4 @@
-#lol_dba [![travis](https://api.travis-ci.org/plentz/lol_dba.png?branch=master)](https://travis-ci.org/plentz/lol_dba)
+# lol_dba [![travis](https://api.travis-ci.org/plentz/lol_dba.png?branch=master)](https://travis-ci.org/plentz/lol_dba)
 
 lol_dba is a small package of rake tasks that scan your application models and displays a list of columns that probably should be indexed. Also, it can generate .sql migration scripts. Most of the initial code came from [rails_indexes](https://github.com/warpc/rails_indexes) and [migration_sql_generator](https://github.com/muness/migration_sql_generator).
 
