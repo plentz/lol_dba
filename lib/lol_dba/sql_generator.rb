@@ -1,7 +1,7 @@
 module LolDba
   class SqlGenerator
     class << self
-    
+
       def connection
         ActiveRecord::Base.connection
       end
@@ -40,23 +40,23 @@ module LolDba
           connection.class.send(:alias_method, "orig_#{method_name}".to_sym, method_name)
         end
       end
-        
+
       def reset_methods
         methods_to_modify.each do |method_name|
           connection.class.send(:alias_method, method_name, "orig_#{method_name}".to_sym) rescue nil
         end
       end
-    
+
       def generate_instead_of_executing(&block)
         LolDba::Writer.reset
         redefine_execute_methods
         yield
         reset_methods
       end
-    
+
       def migrations(which)
         migrator = nil
-        if ::ActiveRecord::VERSION::MAJOR =~ /^4./
+        if ::ActiveRecord::VERSION::MAJOR == 4
           migrator = ActiveRecord::Migrator.new(:up, ActiveRecord::Migrator.migrations(ActiveRecord::Migrator.migrations_path))
         else
           migrator = ActiveRecord::Migrator.new(:up, ActiveRecord::Migrator.migrations_path)
@@ -79,11 +79,11 @@ module LolDba
           end
         end
       end
-        
+
       def generate(which)
         generate_instead_of_executing { migrations(which).each { |file| up_and_down(file) } }
       end
-    
+
       def up_and_down(file)
         migration = LolDba::Migration.new(file)
         LolDba::Writer.file_name = "#{migration}.sql"
