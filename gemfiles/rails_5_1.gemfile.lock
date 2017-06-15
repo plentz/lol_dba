@@ -95,11 +95,11 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  actionpack (~> 5.0)
-  activerecord (~> 5.0)
+  actionpack (~> 5.1)
+  activerecord (~> 5.1)
   appraisal
   lol_dba!
-  railties (~> 5.0)
+  railties (~> 5.1)
   rspec-rails
   sqlite3
   test-unit

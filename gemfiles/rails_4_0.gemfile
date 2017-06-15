@@ -9,4 +9,4 @@ gem "rspec-rails"
 gem "test-unit"
 gem "sqlite3"
 
-gemspec :path => "../"
+gemspec path: "../"

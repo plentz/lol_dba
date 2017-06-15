@@ -3,9 +3,9 @@
 sudo: false
 language: ruby
 rvm:
-  - 2.2.6
-  - 2.3.3
-  - 2.4.0
+  - 2.2.7
+  - 2.3.4
+  - 2.4.1
   - ruby-head
 gemfile:
   - gemfiles/rails_3_2.gemfile
@@ -13,6 +13,7 @@ gemfile:
   - gemfiles/rails_4_1.gemfile
   - gemfiles/rails_4_2.gemfile
   - gemfiles/rails_5_0.gemfile
+  - gemfiles/rails_5_1.gemfile
 script: "bundle exec rake"
 notifications:
   recipients:
