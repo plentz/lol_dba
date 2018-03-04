@@ -3,9 +3,10 @@
 sudo: false
 language: ruby
 rvm:
-  - 2.2.7
-  - 2.3.4
-  - 2.4.1
+  - 2.2.9
+  - 2.3.6
+  - 2.4.3
+  - 2.5.0
   - ruby-head
 gemfile:
   - gemfiles/rails_3_2.gemfile
@@ -21,5 +22,6 @@ notifications:
 matrix:
   fast_finish: true
   allow_failures:
+    - rvm: 2.2.9
+    - rvm: 2.3.6
     - rvm: ruby-head
-
