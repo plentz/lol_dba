@@ -80,8 +80,8 @@ EOM
     end
 
     model_classes = []
-    ObjectSpace.each_object(Module) do |obj|
-      if Class == obj.class && obj != ActiveRecord::Base && obj.ancestors.include?(ActiveRecord::Base) && (!defined?(ActiveRecord::SessionStore::Session) || obj != ActiveRecord::SessionStore::Session)
+    ActiveRecord::Base.descendants.each do |obj|
+      if Class == obj.class && (!defined?(ActiveRecord::SessionStore::Session) || obj != ActiveRecord::SessionStore::Session)
         model_classes << obj
       end
     end
