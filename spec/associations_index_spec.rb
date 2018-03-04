@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Collect indexes based on associations:" do
+RSpec.describe "Collect indexes based on associations:" do
 
   before :all do
     lol_dba = LolDba.check_for_indexes

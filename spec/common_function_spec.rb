@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Function form_migration_content:" do
+RSpec.describe "Function form_migration_content:" do
 
   before do
     @add = ["add_index :report, :_id_test_plan"]
@@ -17,7 +17,7 @@ describe "Function form_migration_content:" do
   end
 end
 
-describe "Function form_data_for_migration:" do
+RSpec.describe "Function form_data_for_migration:" do
 
   it "return data for migrations for non-indexed single key in table" do
     relationship_indexes = {:users => [:user_id]}
@@ -46,7 +46,7 @@ describe "Function form_data_for_migration:" do
 
 end
 
-describe "Function key_exists?:" do
+RSpec.describe "Function key_exists?:" do
 
   it "return true if key is already indexed" do
     expect(LolDba.key_exists?("companies", "country_id")).to be_truthy
@@ -66,7 +66,7 @@ describe "Function key_exists?:" do
 
 end
 
-describe "Function puts_migration_content:" do
+RSpec.describe "Function puts_migration_content:" do
 
   before do
     @relationship_indexes, warning_messages = LolDba.check_for_indexes
