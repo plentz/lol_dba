@@ -56,7 +56,11 @@ module LolDba
 
       def migrations(which)
         migrator = nil
-        if ::ActiveRecord::VERSION::MAJOR == 4
+        if Gem::Version.new(ActiveRecord::VERSION::STRING) >= Gem::Version.new('5.2.0.rc1')
+          migrator = ::ActiveRecord::Migrator.new(:up, ActiveRecord::MigrationContext.new(ActiveRecord::Migrator.migrations_paths).migrations)
+        elsif ::ActiveRecord::VERSION::MAJOR == 5
+          migrator = ActiveRecord::Migrator.new(:up, ActiveRecord::Migrator.migrations(ActiveRecord::Migrator.migrations_paths))
+        elsif ::ActiveRecord::VERSION::MAJOR == 4
           migrator = ActiveRecord::Migrator.new(:up, ActiveRecord::Migrator.migrations(ActiveRecord::Migrator.migrations_path))
         else
           migrator = ActiveRecord::Migrator.new(:up, ActiveRecord::Migrator.migrations_path)

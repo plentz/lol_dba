@@ -39,3 +39,10 @@ appraise "rails_5_1" do
   gem 'actionpack', version
   gem 'railties', version
 end
+
+appraise "rails_5_2" do
+  version = "~> 5.2.0.rc1"
+  gem 'activerecord', version
+  gem 'actionpack', version
+  gem 'railties', version
+end
