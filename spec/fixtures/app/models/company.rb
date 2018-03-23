@@ -8,4 +8,5 @@ class Company < ActiveRecord::Base
   has_many :users
 
   has_and_belongs_to_many :freelancers
+  has_and_belongs_to_many :worker_users, join_table: 'companies_users', association_foreign_key: 'user_id'
 end

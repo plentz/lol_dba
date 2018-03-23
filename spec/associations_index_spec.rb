@@ -5,7 +5,7 @@ RSpec.describe "Collect indexes based on associations:" do
   before :all do
     lol_dba = LolDba.check_for_indexes
     @relationship_indexes = lol_dba[0]
-    @warning_messages = lol_dba[1]
+    @warning_messages = lol_dba[1].split("\n")
   end
 
   it "find relationship indexes" do
@@ -62,9 +62,11 @@ RSpec.describe "Collect indexes based on associations:" do
   end
 
   it "have warnings(non-existent table) on test data" do
-    expect(@warning_messages).not_to be_empty
-    expect(@warning_messages).to match(/\'wrongs\'/)
-    expect(@warning_messages).to match(/\'addresses_wrongs\'/)
+    expected_warnings = [
+      "BUG: table 'wrongs' does not exist, please report this bug.",
+      "BUG: table 'addresses_wrongs' does not exist, please report this bug."
+    ]
+    expect(@warning_messages).to match_array(expected_warnings)
   end
 
   it "find indexes for STI" do
@@ -73,6 +75,12 @@ RSpec.describe "Collect indexes based on associations:" do
 
   it "find indexes for STI with custom inheritance column" do
     expect(@relationship_indexes["freelancers"]).to include(["id", "worker_type"])
+  end
+
+  it "finds the right join table for HABTM for an STI subclass" do
+    expect(@relationship_indexes).not_to have_key('companies_worker_users')
+    expect(@relationship_indexes).to have_key('companies_users')
+    expect(@relationship_indexes["companies_users"]).to include(["company_id", "user_id"])
   end
 
   it "find indexes, than use custom class name option in association" do

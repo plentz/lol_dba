@@ -48,7 +48,7 @@ EOM
           keys_to_add = foreign_keys.uniq - existing_indexes
           missing_indexes[table_name] = keys_to_add unless keys_to_add.empty?
         else
-          warning_messages << "BUG: table '#{table_name.to_s}' does not exist, please report this bug.\n    "
+          warning_messages << "BUG: table '#{table_name.to_s}' does not exist, please report this bug.\n"
         end
       rescue Exception => e
         puts "ERROR: #{e}"
@@ -112,8 +112,13 @@ EOM
               index_name = foreign_key.to_s
             end
           when :has_and_belongs_to_many
-            table_name = reflection_options.options[:join_table]
-            table_name ||= [class_name.table_name, reflection_name.to_s].sort.join('_')
+            # in older rails versions, join_table is not present
+            if reflection_options.respond_to?(:join_table)
+              table_name = reflection_options.join_table
+            else
+              table_name ||= reflection_options.options[:join_table]
+              table_name ||= [class_name.table_name, reflection_options.table_name].sort.join('_')
+            end
             association_foreign_key = reflection_options.options[:association_foreign_key] ||= "#{reflection_name.to_s.singularize}_id"
 
             foreign_key = get_through_foreign_key(class_name, reflection_options)
