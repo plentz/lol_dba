@@ -2,6 +2,9 @@
 # http://docs.travis-ci.com/user/workers/container-based-infrastructure/
 sudo: false
 language: ruby
+before_install:
+  - gem update --system
+  - gem install bundler
 rvm:
   - 2.2.10
   - 2.3.7
@@ -15,6 +18,7 @@ gemfile:
   - gemfiles/rails_4_2.gemfile
   - gemfiles/rails_5_0.gemfile
   - gemfiles/rails_5_1.gemfile
+  - gemfiles/rails_5_2.gemfile
 script: "bundle exec rake"
 notifications:
   recipients:
