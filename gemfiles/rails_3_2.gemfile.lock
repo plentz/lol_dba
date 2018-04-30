@@ -90,7 +90,7 @@ GEM
       power_assert
     thor (0.20.0)
     tilt (1.4.1)
-    tzinfo (0.3.53)
+    tzinfo (0.3.54)
 
 PLATFORMS
   ruby
