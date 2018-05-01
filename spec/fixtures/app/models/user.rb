@@ -1,5 +1,4 @@
 class User < ActiveRecord::Base
-
   has_one :company, foreign_key: :owner_id
   has_one :address, as: :addressable
 
@@ -10,5 +9,4 @@ class User < ActiveRecord::Base
   has_many :favourite_projects, through: :favourites, source: :favourable, source_type: 'Project'
 
   validates_uniqueness_of :name
-
 end
