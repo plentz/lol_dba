@@ -24,4 +24,5 @@ Gem::Specification.new do |s|
   s.add_dependency "railties", ">= 3.0"
 
   s.add_development_dependency "appraisal"
+  s.add_development_dependency "simplecov"
 end

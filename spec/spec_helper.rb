@@ -1,7 +1,10 @@
 require 'rails/all'
 require 'lol_dba'
+require 'simplecov'
 
 ENV["RAILS_ENV"] ||= 'test'
+
+SimpleCov.start
 
 ActiveRecord::Base.establish_connection(
   :adapter  => "sqlite3",
