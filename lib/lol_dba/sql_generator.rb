@@ -68,19 +68,27 @@ module LolDba
         if which == 'all'
           migrator.migrations.collect(&:filename)
         elsif which == 'pending'
-          pending = migrator.pending_migrations
-          if pending.empty?
-            puts 'No pending migrations.'
-            exit
-          end
-          migrator.pending_migrations.collect(&:filename)
+          pending_migrations
         else
-          if migration = migrator.migrations.find { |m| m.version == which.to_i }
-            [migration.filename]
-          else
-            puts "There are no migrations for version #{which}."
-            exit
-          end
+          specific_migration(which)
+        end
+      end
+
+      def pending_migrations
+        pending = migrator.pending_migrations
+        if pending.empty?
+          puts 'No pending migrations.'
+          exit
+        end
+        migrator.pending_migrations.collect(&:filename)
+      end
+
+      def specific_migration(which)
+        if migration = migrator.migrations.find { |m| m.version == which.to_i }
+          [migration.filename]
+        else
+          puts "There are no migrations for version #{which}."
+          exit
         end
       end
 
