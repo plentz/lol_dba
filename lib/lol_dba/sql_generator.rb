@@ -1,13 +1,12 @@
 module LolDba
   class SqlGenerator
     class << self
-
       def connection
         ActiveRecord::Base.connection
       end
 
       def methods_to_modify
-        [:execute, :do_execute, :rename_column, :change_column, :column_for, :tables, :indexes, :select_all] & connection.methods
+        %i[execute do_execute rename_column change_column column_for tables indexes select_all] & connection.methods
       end
 
       def redefine_execution_methods
@@ -17,23 +16,23 @@ module LolDba
         redefine_execute_methods(:do_execute)
 
         connection.class.send(:define_method, :column_for) { |*args| args.last }
-        connection.class.send(:define_method, :change_column) { |*args| [] }
-        connection.class.send(:define_method, :rename_column) { |*args| [] }
-        connection.class.send(:define_method, :tables) { |*args| [] }
-        connection.class.send(:define_method, :select_all) { |*args| [] }
-        connection.class.send(:define_method, :indexes) { |*args| [] }
-        #returns always the default(args[2])
+        connection.class.send(:define_method, :change_column) { |*_args| [] }
+        connection.class.send(:define_method, :rename_column) { |*_args| [] }
+        connection.class.send(:define_method, :tables) { |*_args| [] }
+        connection.class.send(:define_method, :select_all) { |*_args| [] }
+        connection.class.send(:define_method, :indexes) { |*_args| [] }
+        # returns always the default(args[2])
         connection.class.send(:define_method, :index_name_exists?) { |*args| args[2] }
       end
 
       def redefine_execute_methods(name)
-        connection.class.send(:define_method, name) { |*args|
+        connection.class.send(:define_method, name) do |*args|
           if args.first =~ /SELECT "schema_migrations"."version"/ || args.first =~ /^SHOW/
-            self.orig_execute(*args)
+            orig_execute(*args)
           else
             Writer.write(to_sql(args.first, args.last))
           end
-        }
+        end
       end
 
       def save_original_methods
@@ -44,11 +43,15 @@ module LolDba
 
       def reset_methods
         methods_to_modify.each do |method_name|
-          connection.class.send(:alias_method, method_name, "orig_#{method_name}".to_sym) rescue nil
+          begin
+            connection.class.send(:alias_method, method_name, "orig_#{method_name}".to_sym)
+          rescue StandardError
+            nil
+          end
         end
       end
 
-      def generate_instead_of_executing(&block)
+      def generate_instead_of_executing
         LolDba::Writer.reset
         redefine_execution_methods
         yield
@@ -62,17 +65,17 @@ module LolDba
         else
           migrator = ActiveRecord::Migrator.new(:up, ActiveRecord::Migrator.migrations_path)
         end
-        if which == "all"
-          migrator.migrations.collect { |m| m.filename }
-        elsif which == "pending"
+        if which == 'all'
+          migrator.migrations.collect(&:filename)
+        elsif which == 'pending'
           pending = migrator.pending_migrations
           if pending.empty?
-            puts "No pending migrations."
+            puts 'No pending migrations.'
             exit
           end
-          migrator.pending_migrations.collect { |m| m.filename }
+          migrator.pending_migrations.collect(&:filename)
         else
-          if migration = migrator.migrations.find {|m| m.version == which.to_i}
+          if migration = migrator.migrations.find { |m| m.version == which.to_i }
             [migration.filename]
           else
             puts "There are no migrations for version #{which}."
