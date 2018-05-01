@@ -40,20 +40,22 @@ EOM
     warning_messages = ''
     indexes_required.each do |table_name, foreign_keys|
       next if foreign_keys.blank?
-      begin
-        if tables.include?(table_name.to_s)
-          existing_indexes = ActiveRecord::Base.connection.indexes(table_name.to_sym).collect { |index| index.columns.size > 1 ? index.columns : index.columns.first }
-          existing_indexes += Array(ActiveRecord::Base.connection.primary_key(table_name.to_s))
-          keys_to_add = foreign_keys.uniq - existing_indexes
-          missing_indexes[table_name] = keys_to_add unless keys_to_add.empty?
-        else
-          warning_messages << "BUG: table '#{table_name}' does not exist, please report this bug.\n    "
-        end
-      rescue Exception => e
-        puts "ERROR: #{e}"
+      if tables.include?(table_name.to_s)
+        keys_to_add = foreign_keys.uniq - existing_indexes(table_name)
+        missing_indexes[table_name] = keys_to_add unless keys_to_add.empty?
+      else
+        warning_messages << "BUG: table '#{table_name}' does not exist, please report this bug.\n    "
       end
     end
     [missing_indexes, warning_messages]
+  end
+
+  def self.existing_indexes(table_name)
+    table_indexes = ActiveRecord::Base.connection.indexes(table_name.to_sym)
+    existing = table_indexes.collect do |index|
+      index.columns.size > 1 ? index.columns : index.columns.first
+    end
+    existing += Array(ActiveRecord::Base.connection.primary_key(table_name.to_s))
   end
 
   def self.form_data_for_migration(missing_indexes)
