@@ -1,7 +1,11 @@
 # Send builds to container-based infrastructure
 # http://docs.travis-ci.com/user/workers/container-based-infrastructure/
+env:
+  global:
+    - CC_TEST_REPORTER_ID=46e5fb2273e7c6fb1beaad7c0f14ad898f0eed65d98a20c80fe8eb4e216a7ff0
 sudo: false
 language: ruby
+cache: bundler
 before_install:
   - gem update --system
   - gem install bundler
@@ -19,7 +23,13 @@ gemfile:
   - gemfiles/rails_5_0.gemfile
   - gemfiles/rails_5_1.gemfile
   - gemfiles/rails_5_2.gemfile
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
 script: "bundle exec rake"
+after_script:
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
 notifications:
   recipients:
     - diego@plentz.org
