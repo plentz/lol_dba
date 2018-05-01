@@ -93,10 +93,10 @@ module LolDba
       end
 
       def migrator
-        @@migrator ||= ActiveRecord::Migrator.new(:up, migrations)
+        @@migrator ||= ActiveRecord::Migrator.new(:up, migrations_path)
       end
 
-      def migrations
+      def migrations_path
         if ::ActiveRecord::VERSION::MAJOR == 4
           ActiveRecord::Migrator.migrations(ActiveRecord::Migrator.migrations_path)
         else
