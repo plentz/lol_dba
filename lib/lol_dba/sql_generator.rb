@@ -1,6 +1,12 @@
 module LolDba
   class SqlGenerator
     class << self
+      def generate(which)
+        generate_instead_of_executing { migrations(which).each { |file| up_and_down(file) } }
+      end
+
+      private
+
       def connection
         ActiveRecord::Base.connection
       end
@@ -59,12 +65,6 @@ module LolDba
       end
 
       def migrations(which)
-        migrator = nil
-        if ::ActiveRecord::VERSION::MAJOR == 4
-          migrator = ActiveRecord::Migrator.new(:up, ActiveRecord::Migrator.migrations(ActiveRecord::Migrator.migrations_path))
-        else
-          migrator = ActiveRecord::Migrator.new(:up, ActiveRecord::Migrator.migrations_path)
-        end
         if which == 'all'
           migrator.migrations.collect(&:filename)
         elsif which == 'pending'
@@ -84,16 +84,20 @@ module LolDba
         end
       end
 
-      def generate(which)
-        generate_instead_of_executing { migrations(which).each { |file| up_and_down(file) } }
-      end
-
       def up_and_down(file)
         migration = LolDba::Migration.new(file)
         LolDba::Writer.file_name = "#{migration}.sql"
         migration.up
         # MigrationSqlGenerator::Writer.file_name = "#{migration}_down.sql"
         # migration.down
+      end
+
+      def migrator
+        @@migrator ||= if ::ActiveRecord::VERSION::MAJOR == 4
+                         ActiveRecord::Migrator.new(:up, ActiveRecord::Migrator.migrations(ActiveRecord::Migrator.migrations_path))
+                       else
+                         ActiveRecord::Migrator.new(:up, ActiveRecord::Migrator.migrations_path)
+        end
       end
     end
   end

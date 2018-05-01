@@ -35,8 +35,10 @@ module LolDba
         LolDba::SqlGenerator.generate(which)
       end
     rescue Exception => e
-      warn "Failed: #{e.class}: #{e.message}" if @options[:debug]
-      warn e.backtrace.map { |t| "    from #{t}" } if @options[:debug]
+      if @options[:debug]
+        warn "Failed: #{e.class}: #{e.message}"
+        warn e.backtrace.map { |t| "    from #{t}" }
+      end
     end
 
     protected
