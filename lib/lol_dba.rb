@@ -3,19 +3,6 @@ module LolDba
   require 'lol_dba/migration'
   require 'lol_dba/railtie.rb' if defined?(Rails)
 
-  def self.form_migration_content(migration_name, index_array)
-    migration = <<EOM
-* run `rails g migration #{migration_name}` and add the following content:
-
-
-    class #{migration_name} < ActiveRecord::Migration
-      def change
-        #{index_array.sort.uniq.join("\n        ")}
-      end
-    end
-EOM
-  end
-
   def self.get_through_foreign_key(target_class, reflection_options)
     # has_many :through
     reflection = target_class.reflections[reflection_options.options[:through].to_s]
@@ -60,33 +47,6 @@ EOM
       index.columns.size > 1 ? index.columns : index.columns.first
     end
     existing += Array(ActiveRecord::Base.connection.primary_key(table_name.to_s))
-  end
-
-  def self.key_exists?(table, key_columns)
-    result = (Array(key_columns) - ActiveRecord::Base.connection.indexes(table).map(&:columns).flatten)
-    # primary key are always indexed, but ActiveRecord::Base.connection.indexes does not show it
-    result -= Array(ActiveRecord::Base.connection.primary_key(table)) if result
-    result.empty?
-  end
-
-  def self.format_for_migration(missing_indexes)
-    add = []
-    missing_indexes.each do |table_name, keys_to_add|
-      keys_to_add.each do |key|
-        next if key.blank? || key_exists?(table_name, key)
-        add << format_index(table_name, key)
-      end
-    end
-    add
-  end
-
-  def self.format_index(table_name, key)
-    if key.is_a?(Array)
-      keys = key.collect { |k| ":#{k}" }
-      "add_index :#{table_name}, [#{keys.join(', ')}]"
-    else
-      "add_index :#{table_name}, :#{key}"
-    end
   end
 
   def self.model_classes
@@ -177,6 +137,12 @@ EOM
     validate_and_sort_indexes(@index_migrations)
   end
 
+  def self.simple_migration
+    missing_indexes, warning_messages = check_for_indexes
+
+    puts_migration_content('AddMissingIndexes', missing_indexes, warning_messages)
+  end
+
   def self.puts_migration_content(migration_name, indexes, warning_messages)
     puts warning_messages
     add = format_for_migration(indexes)
@@ -190,9 +156,43 @@ EOM
     end
   end
 
-  def self.simple_migration
-    missing_indexes, warning_messages = check_for_indexes
+  def self.format_for_migration(missing_indexes)
+    add = []
+    missing_indexes.each do |table_name, keys_to_add|
+      keys_to_add.each do |key|
+        next if key.blank? || key_exists?(table_name, key)
+        add << format_index(table_name, key)
+      end
+    end
+    add
+  end
 
-    puts_migration_content('AddMissingIndexes', missing_indexes, warning_messages)
+  def self.form_migration_content(migration_name, index_array)
+    migration = <<EOM
+* run `rails g migration #{migration_name}` and add the following content:
+
+
+    class #{migration_name} < ActiveRecord::Migration
+      def change
+        #{index_array.sort.uniq.join("\n        ")}
+      end
+    end
+EOM
+  end
+
+  def self.key_exists?(table, key_columns)
+    result = (Array(key_columns) - ActiveRecord::Base.connection.indexes(table).map(&:columns).flatten)
+    # primary key are always indexed, but ActiveRecord::Base.connection.indexes does not show it
+    result -= Array(ActiveRecord::Base.connection.primary_key(table)) if result
+    result.empty?
+  end
+
+  def self.format_index(table_name, key)
+    if key.is_a?(Array)
+      keys = key.collect { |k| ":#{k}" }
+      "add_index :#{table_name}, [#{keys.join(', ')}]"
+    else
+      "add_index :#{table_name}, :#{key}"
+    end
   end
 end
