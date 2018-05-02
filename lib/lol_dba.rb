@@ -32,7 +32,11 @@ EOM
   end
 
   def self.tables
-    ::ActiveRecord::VERSION::MAJOR >= 5 ? ActiveRecord::Base.connection.data_sources : ActiveRecord::Base.connection.tables
+    if ::ActiveRecord::VERSION::MAJOR >= 5
+      ActiveRecord::Base.connection.data_sources
+    else
+      ActiveRecord::Base.connection.tables
+    end
   end
 
   def self.validate_and_sort_indexes(indexes_required)
