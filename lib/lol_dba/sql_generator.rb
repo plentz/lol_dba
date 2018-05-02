@@ -1,38 +1,44 @@
 module LolDba
   class SqlGenerator
     class << self
+      def generate(which)
+        generate_instead_of_executing { migrations(which).each { |file| up_and_down(file) } }
+      end
+
+      private
 
       def connection
         ActiveRecord::Base.connection
       end
 
       def methods_to_modify
-        [:execute, :do_execute, :rename_column, :change_column, :column_for, :tables, :indexes, :select_all] & connection.methods
+        %i[execute do_execute rename_column change_column column_for tables indexes select_all] & connection.methods
       end
 
-      def redefine_execute_methods
+      def redefine_execution_methods
         save_original_methods
-        connection.class.send(:define_method, :execute) { |*args|
-          if args.first =~ /SELECT "schema_migrations"."version"/ || args.first =~ /^SHOW/
-            self.orig_execute(*args)
-          else
-            Writer.write(to_sql(args.first, args.last))
-          end
-        }
-        connection.class.send(:define_method, :do_execute) { |*args|
-          if args.first =~ /SELECT "schema_migrations"."version"/ || args.first =~ /^SHOW/
-             self.orig_do_execute(*args)
-          else
-            Writer.write(to_sql(args.first, args.last))
-          end
-        }
+        redefine_execute_methods(:execute)
+        # needed for activerecord-sqlserver-adapter
+        redefine_execute_methods(:do_execute)
+
         connection.class.send(:define_method, :column_for) { |*args| args.last }
-        connection.class.send(:define_method, :change_column) { |*args| [] }
-        connection.class.send(:define_method, :rename_column) { |*args| [] }
-        connection.class.send(:define_method, :tables) { |*args| [] }
-        connection.class.send(:define_method, :select_all) { |*args| [] }
-        connection.class.send(:define_method, :indexes) { |*args| [] }
-        connection.class.send(:define_method, :index_name_exists?) { |*args| args[2] } #returns always the default(args[2])
+        connection.class.send(:define_method, :change_column) { |*_args| [] }
+        connection.class.send(:define_method, :rename_column) { |*_args| [] }
+        connection.class.send(:define_method, :tables) { |*_args| [] }
+        connection.class.send(:define_method, :select_all) { |*_args| [] }
+        connection.class.send(:define_method, :indexes) { |*_args| [] }
+        # returns always the default(args[2])
+        connection.class.send(:define_method, :index_name_exists?) { |*args| args[2] }
+      end
+
+      def redefine_execute_methods(name)
+        connection.class.send(:define_method, name) do |*args|
+          if args.first =~ /SELECT "schema_migrations"."version"/ || args.first =~ /^SHOW/
+            orig_execute(*args)
+          else
+            Writer.write(to_sql(args.first, args.last))
+          end
+        end
       end
 
       def save_original_methods
@@ -43,53 +49,67 @@ module LolDba
 
       def reset_methods
         methods_to_modify.each do |method_name|
-          connection.class.send(:alias_method, method_name, "orig_#{method_name}".to_sym) rescue nil
+          begin
+            connection.class.send(:alias_method, method_name, "orig_#{method_name}".to_sym)
+          rescue StandardError
+            nil
+          end
         end
       end
 
-      def generate_instead_of_executing(&block)
+      def generate_instead_of_executing
         LolDba::Writer.reset
-        redefine_execute_methods
+        redefine_execution_methods
         yield
         reset_methods
       end
 
       def migrations(which)
-        migrator = nil
-        if ::ActiveRecord::VERSION::MAJOR == 4
-          migrator = ActiveRecord::Migrator.new(:up, ActiveRecord::Migrator.migrations(ActiveRecord::Migrator.migrations_path))
+        if which == 'all'
+          migrator.migrations.collect(&:filename)
+        elsif which == 'pending'
+          pending_migrations
         else
-          migrator = ActiveRecord::Migrator.new(:up, ActiveRecord::Migrator.migrations_path)
-        end
-        if which == "all"
-          migrator.migrations.collect { |m| m.filename }
-        elsif which == "pending"
-          pending = migrator.pending_migrations
-          if pending.empty?
-            puts "No pending migrations."
-            exit
-          end
-          migrator.pending_migrations.collect { |m| m.filename }
-        else
-          if migration = migrator.migrations.find {|m| m.version == which.to_i}
-            [migration.filename]
-          else
-            puts "There are no migrations for version #{which}."
-            exit
-          end
+          specific_migration(which)
         end
       end
 
-      def generate(which)
-        generate_instead_of_executing { migrations(which).each { |file| up_and_down(file) } }
+      def pending_migrations
+        pending = migrator.pending_migrations
+        if pending.empty?
+          puts 'No pending migrations.'
+          exit
+        end
+        migrator.pending_migrations.collect(&:filename)
+      end
+
+      def specific_migration(which)
+        if migration = migrator.migrations.find { |m| m.version == which.to_i }
+          [migration.filename]
+        else
+          puts "There are no migrations for version #{which}."
+          exit
+        end
       end
 
       def up_and_down(file)
         migration = LolDba::Migration.new(file)
         LolDba::Writer.file_name = "#{migration}.sql"
         migration.up
-        #MigrationSqlGenerator::Writer.file_name = "#{migration}_down.sql"
-        #migration.down
+        # MigrationSqlGenerator::Writer.file_name = "#{migration}_down.sql"
+        # migration.down
+      end
+
+      def migrator
+        ActiveRecord::Migrator.new(:up, migrations_path)
+      end
+
+      def migrations_path
+        if ::ActiveRecord::VERSION::MAJOR == 4
+          ActiveRecord::Migrator.migrations(ActiveRecord::Migrator.migrations_path)
+        else
+          ActiveRecord::Migrator.migrations_path
+        end
       end
     end
   end

@@ -1,3 +1,3 @@
 module LolDba
-  VERSION = "2.1.5" unless defined? LolDba::VERSION
+  VERSION = '2.1.5'.freeze unless defined? LolDba::VERSION
 end

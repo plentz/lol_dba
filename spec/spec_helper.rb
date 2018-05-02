@@ -1,16 +1,19 @@
 require 'rails/all'
 require 'lol_dba'
+require 'simplecov'
 
-ENV["RAILS_ENV"] ||= 'test'
+ENV['RAILS_ENV'] ||= 'test'
+
+SimpleCov.start
 
 ActiveRecord::Base.establish_connection(
-  :adapter  => "sqlite3",
-  :database => ":memory:"
+  adapter: 'sqlite3',
+  database: ':memory:'
 )
 
 module Rails
   def self.root
-    "spec/fixtures/"
+    'spec/fixtures/'
   end
 end
 Dir.glob("#{Rails.root}/app/models/*.rb").sort.each { |file| require_dependency file }
@@ -20,8 +23,8 @@ load 'fixtures/schema.rb'
 
 root_dir = File.dirname(__FILE__)
 
-#add current dir to the load path
-$:.unshift('.')
+# add current dir to the load path
+$LOAD_PATH.unshift('.')
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true

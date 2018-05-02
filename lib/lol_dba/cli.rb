@@ -4,13 +4,12 @@ require 'lol_dba/version'
 
 module LolDba
   class CLI
-
     class << self
       def start
         options = {}
         OptionParser.new do |opts|
           opts.on('-d', '--debug', 'Show stack traces when an error occurs.') { |v| options[:debug] = v }
-          opts.on_tail("-v", "--version", "Show version") do
+          opts.on_tail('-v', '--version', 'Show version') do
             puts LolDba::VERSION
             exit
           end
@@ -20,7 +19,8 @@ module LolDba
     end
 
     def initialize(path, options)
-      @path, @options = path, options
+      @path = path
+      @options = options
     end
 
     def start
@@ -29,14 +29,16 @@ module LolDba
       if arg =~ /db:find_indexes/
         LolDba.simple_migration
       elsif arg !~ /\[/
-        LolDba::SqlGenerator.generate("all")
+        LolDba::SqlGenerator.generate('all')
       else
         which = arg.match(/.*\[(.*)\].*/).captures[0]
         LolDba::SqlGenerator.generate(which)
       end
     rescue Exception => e
-      $stderr.puts "Failed: #{e.class}: #{e.message}" if @options[:debug]
-      $stderr.puts e.backtrace.map { |t| "    from #{t}" } if @options[:debug]
+      if @options[:debug]
+        warn "Failed: #{e.class}: #{e.message}"
+        warn e.backtrace.map { |t| "    from #{t}" }
+      end
     end
 
     protected
