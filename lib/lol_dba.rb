@@ -1,6 +1,7 @@
 module LolDba
   require 'lol_dba/writer'
   require 'lol_dba/migration'
+  require 'lol_dba/migration_formatter'
   require 'lol_dba/railtie.rb' if defined?(Rails)
 
   def self.get_through_foreign_key(target_class, reflection_options)
@@ -140,59 +141,6 @@ module LolDba
   def self.simple_migration
     missing_indexes, warning_messages = check_for_indexes
 
-    puts_migration_content('AddMissingIndexes', missing_indexes, warning_messages)
-  end
-
-  def self.puts_migration_content(migration_name, indexes, warning_messages)
-    puts warning_messages
-    add = format_for_migration(indexes)
-    if add.blank?
-      puts 'Yey, no missing indexes found!'
-    else
-      tip = "* TIP: if you have a problem with the index name('index name too long') you can solve with the :name option. "
-      tip += "Something like :name => 'my_index'."
-      puts tip
-      puts form_migration_content(migration_name, add)
-    end
-  end
-
-  def self.format_for_migration(missing_indexes)
-    add = []
-    missing_indexes.each do |table_name, keys_to_add|
-      keys_to_add.each do |key|
-        next if key.blank? || key_exists?(table_name, key)
-        add << format_index(table_name, key)
-      end
-    end
-    add
-  end
-
-  def self.form_migration_content(migration_name, index_array)
-    migration = <<EOM
-* run `rails g migration #{migration_name}` and add the following content:
-
-
-    class #{migration_name} < ActiveRecord::Migration
-      def change
-        #{index_array.sort.uniq.join("\n        ")}
-      end
-    end
-EOM
-  end
-
-  def self.key_exists?(table, key_columns)
-    result = (Array(key_columns) - ActiveRecord::Base.connection.indexes(table).map(&:columns).flatten)
-    # primary key are always indexed, but ActiveRecord::Base.connection.indexes does not show it
-    result -= Array(ActiveRecord::Base.connection.primary_key(table)) if result
-    result.empty?
-  end
-
-  def self.format_index(table_name, key)
-    if key.is_a?(Array)
-      keys = key.collect { |k| ":#{k}" }
-      "add_index :#{table_name}, [#{keys.join(', ')}]"
-    else
-      "add_index :#{table_name}, :#{key}"
-    end
+    MigrationFormatter.puts_migration_content('AddMissingIndexes', missing_indexes, warning_messages)
   end
 end
