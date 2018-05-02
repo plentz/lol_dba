@@ -76,11 +76,8 @@ EOM
   end
 
   def self.model_classes
-    model_classes = []
-    ActiveRecord::Base.descendants.each do |obj|
-      if Class == obj.class && session_store?(obj)
-        model_classes << obj
-      end
+    ActiveRecord::Base.descendants.select do |obj|
+      Class == obj.class && session_store?(obj)
     end
   end
 
