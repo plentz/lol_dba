@@ -75,15 +75,21 @@ EOM
     add
   end
 
-  def self.check_for_indexes(_migration_format = false)
-    Rails.application.eager_load! if defined?(Rails) && !Rails.env.test?
-
+  def self.model_classes
     model_classes = []
     ActiveRecord::Base.descendants.each do |obj|
-      if Class == obj.class && (!defined?(ActiveRecord::SessionStore::Session) || obj != ActiveRecord::SessionStore::Session)
+      if Class == obj.class && session_store?(obj)
         model_classes << obj
       end
     end
+  end
+
+  def self.session_store?(obj)
+    !defined?(ActiveRecord::SessionStore::Session) || obj != ActiveRecord::SessionStore::Session
+  end
+
+  def self.check_for_indexes
+    Rails.application.eager_load! if defined?(Rails) && !Rails.env.test?
 
     @index_migrations = Hash.new([])
 
@@ -180,7 +186,7 @@ EOM
   end
 
   def self.simple_migration
-    missing_indexes, warning_messages = check_for_indexes(true)
+    missing_indexes, warning_messages = check_for_indexes
 
     puts_migration_content('AddMissingIndexes', missing_indexes, warning_messages)
   end
