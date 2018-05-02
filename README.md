@@ -1,4 +1,4 @@
-# lol_dba [![travis](https://api.travis-ci.org/plentz/lol_dba.svg?branch=master)](https://travis-ci.org/plentz/lol_dba)
+# lol_dba [![travis](https://api.travis-ci.org/plentz/lol_dba.svg?branch=master)](https://travis-ci.org/plentz/lol_dba) [![Maintainability](https://api.codeclimate.com/v1/badges/a5cc1172ec1291536904/maintainability)](https://codeclimate.com/github/plentz/lol_dba/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/a5cc1172ec1291536904/test_coverage)](https://codeclimate.com/github/plentz/lol_dba/test_coverage)
 
 lol_dba is a small package of rake tasks that scan your application models and displays a list of columns that probably should be indexed. Also, it can generate .sql migration scripts. Most of the initial code came from [rails_indexes](https://github.com/warpc/rails_indexes) and [migration_sql_generator](https://github.com/muness/migration_sql_generator).
 

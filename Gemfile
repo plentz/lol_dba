@@ -1,10 +1,10 @@
-source "https://rubygems.org"
+source 'https://rubygems.org'
 
 gemspec
 
-gem "activerecord"
-gem "actionpack"
-gem "railties"
-gem "rspec-rails"
-gem "test-unit"
-gem "sqlite3"
+gem 'actionpack'
+gem 'activerecord'
+gem 'railties'
+gem 'rspec-rails'
+gem 'sqlite3'
+gem 'test-unit'

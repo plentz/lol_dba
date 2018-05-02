@@ -5,5 +5,4 @@ class ComplexBillableWeek < ActiveRecord::Base
 
   belongs_to :slave, class_name: 'Freelancer'
   belongs_to :complex_timesheet, foreign_key: :id_complex_timesheet
-
 end

@@ -3,7 +3,7 @@ module LolDba
     attr_accessor :full_name
 
     def initialize(migration_file)
-      self.full_name = File.basename(migration_file, ".rb")
+      self.full_name = File.basename(migration_file, '.rb')
       require Rails.root.join(migration_file)
     end
 
@@ -20,7 +20,7 @@ module LolDba
     end
 
     def migration_class
-      name.camelize.split(".")[0].constantize
+      name.camelize.split('.')[0].constantize
     end
 
     def up

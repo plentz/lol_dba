@@ -1,16 +1,16 @@
 require 'rubygems'
 require 'rspec/core/rake_task'
 require 'rdoc/task'
-require "appraisal"
+require 'appraisal'
 
-if !ENV["APPRAISAL_INITIALIZED"] && !ENV["TRAVIS"]
+if !ENV['APPRAISAL_INITIALIZED'] && !ENV['TRAVIS']
   desc 'Default: run unit tests with appraisal.'
   task :default do
-    sh "appraisal install && rake appraisal spec"
+    sh 'appraisal install && rake appraisal spec'
   end
 else
   desc 'Default: run unit tests.'
-  task :default => :spec
+  task default: :spec
 end
 
 desc 'Testing the rails indexes plugin.'

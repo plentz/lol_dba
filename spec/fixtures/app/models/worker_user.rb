@@ -1,4 +1,3 @@
-#Test STI
+# Test STI
 class WorkerUser < User
-
 end
