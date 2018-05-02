@@ -16,12 +16,12 @@ RSpec.describe 'Function form_migration_content:' do
   end
 end
 
-RSpec.describe 'Function form_data_for_migration:' do
+RSpec.describe 'Function format_for_migration:' do
   it 'return data for migrations for non-indexed single key in table' do
     relationship_indexes = { users: [:user_id] }
     allow(LolDba).to receive(:key_exists?).with(:users, :user_id).and_return(false)
 
-    add_indexes = LolDba.form_data_for_migration(relationship_indexes)
+    add_indexes = LolDba.format_for_migration(relationship_indexes)
 
     expect(add_indexes.first).to eq('add_index :users, :user_id')
   end
@@ -30,14 +30,14 @@ RSpec.describe 'Function form_data_for_migration:' do
     relationship_indexes = { friends: [%i[user_id friend_id]] }
     allow(LolDba).to receive(:key_exists?).with(:friends, %i[user_id friend_id]).and_return(false)
 
-    add_indexes = LolDba.form_data_for_migration(relationship_indexes)
+    add_indexes = LolDba.format_for_migration(relationship_indexes)
 
     expect(add_indexes.first).to eq('add_index :friends, [:user_id, :friend_id]')
   end
 
   it 'ignore empty or nil keys for table' do
     relationship_indexes = { table: [''], table2: [nil] }
-    add_indexes = LolDba.form_data_for_migration(relationship_indexes)
+    add_indexes = LolDba.format_for_migration(relationship_indexes)
 
     expect(add_indexes).to be_empty
   end

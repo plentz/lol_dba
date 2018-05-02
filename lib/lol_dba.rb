@@ -62,21 +62,31 @@ EOM
     existing += Array(ActiveRecord::Base.connection.primary_key(table_name.to_s))
   end
 
-  def self.form_data_for_migration(missing_indexes)
+  def self.key_exists?(table, key_columns)
+    result = (Array(key_columns) - ActiveRecord::Base.connection.indexes(table).map(&:columns).flatten)
+    # FIXME: Primary key always indexes, but ActiveRecord::Base.connection.indexes not show it!
+    result -= Array(ActiveRecord::Base.connection.primary_key(table)) if result
+    result.empty?
+  end
+
+  def self.format_for_migration(missing_indexes)
     add = []
     missing_indexes.each do |table_name, keys_to_add|
       keys_to_add.each do |key|
-        next if key.blank?
-        next if key_exists?(table_name, key)
-        if key.is_a?(Array)
-          keys = key.collect { |k| ":#{k}" }
-          add << "add_index :#{table_name}, [#{keys.join(', ')}]"
-        else
-          add << "add_index :#{table_name}, :#{key}"
-        end
+        next if key.blank? || key_exists?(table_name, key)
+        add << format_index(table_name, key)
       end
     end
     add
+  end
+
+  def self.format_index(table_name, key)
+    if key.is_a?(Array)
+      keys = key.collect { |k| ":#{k}" }
+      add << "add_index :#{table_name}, [#{keys.join(', ')}]"
+    else
+      add << "add_index :#{table_name}, :#{key}"
+    end
   end
 
   def self.model_classes
@@ -163,19 +173,13 @@ EOM
         end
       end # case end
     end # each_pair end
-    missing_indexes, warning_messages = validate_and_sort_indexes(@index_migrations)
-  end
 
-  def self.key_exists?(table, key_columns)
-    result = (Array(key_columns) - ActiveRecord::Base.connection.indexes(table).map(&:columns).flatten)
-    # FIXME: Primary key always indexes, but ActiveRecord::Base.connection.indexes not show it!
-    result -= Array(ActiveRecord::Base.connection.primary_key(table)) if result
-    result.empty?
+    validate_and_sort_indexes(@index_migrations)
   end
 
   def self.puts_migration_content(migration_name, indexes, warning_messages)
     puts warning_messages
-    add = form_data_for_migration(indexes)
+    add = format_for_migration(indexes)
     if add.blank?
       puts 'Yey, no missing indexes found!'
     else
