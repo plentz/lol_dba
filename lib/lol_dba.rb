@@ -83,9 +83,9 @@ EOM
   def self.format_index(table_name, key)
     if key.is_a?(Array)
       keys = key.collect { |k| ":#{k}" }
-      add << "add_index :#{table_name}, [#{keys.join(', ')}]"
+      "add_index :#{table_name}, [#{keys.join(', ')}]"
     else
-      add << "add_index :#{table_name}, :#{key}"
+      "add_index :#{table_name}, :#{key}"
     end
   end
 
