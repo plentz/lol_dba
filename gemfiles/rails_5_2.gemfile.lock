@@ -105,11 +105,11 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  actionpack (~> 5.2.0.rc1)
-  activerecord (~> 5.2.0.rc1)
+  actionpack (~> 5.2.0)
+  activerecord (~> 5.2.0)
   appraisal
   lol_dba!
-  railties (~> 5.2.0.rc1)
+  railties (~> 5.2.0)
   rspec-rails
   simplecov
   sqlite3
