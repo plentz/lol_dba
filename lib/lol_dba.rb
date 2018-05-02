@@ -64,7 +64,7 @@ EOM
 
   def self.key_exists?(table, key_columns)
     result = (Array(key_columns) - ActiveRecord::Base.connection.indexes(table).map(&:columns).flatten)
-    # FIXME: Primary key always indexes, but ActiveRecord::Base.connection.indexes not show it!
+    # primary key are always indexed, but ActiveRecord::Base.connection.indexes does not show it
     result -= Array(ActiveRecord::Base.connection.primary_key(table)) if result
     result.empty?
   end
