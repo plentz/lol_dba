@@ -101,7 +101,7 @@ module LolDba
       end
 
       def migrator
-        @@migrator ||= ActiveRecord::Migrator.new(:up, migrations_path)
+        ActiveRecord::Migrator.new(:up, migrations_path)
       end
 
       def migrations_path
