@@ -115,7 +115,7 @@ module LolDba
             end
 
             # FIXME: currently we don't support :through => :another_regular_has_many_and_non_through_relation
-            next if association_foreign_key.nil?
+            next unless association_foreign_key.present?
             index_name = [association_foreign_key, foreign_key].map(&:to_s).sort
           end
 
