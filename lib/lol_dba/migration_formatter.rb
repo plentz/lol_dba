@@ -26,7 +26,7 @@ module LolDba
 
     def self.format_index(table_name, key)
       if key.is_a?(Array)
-        keys = key.collect { |k| ":#{k}" }
+        keys = key.collect { |col| ":#{col}" }
         "add_index :#{table_name}, [#{keys.join(', ')}]"
       else
         "add_index :#{table_name}, :#{key}"
@@ -34,7 +34,7 @@ module LolDba
     end
 
     def self.form_migration_content(migration_name, index_array)
-      migration = <<EOM
+      <<-EOM
 * run `rails g migration #{migration_name}` and add the following content:
 
 

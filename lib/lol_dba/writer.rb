@@ -18,7 +18,7 @@ module LolDba
 
       def write(string)
         return unless file_name.present?
-        File.open(path, 'a') { |file| file << string; file << ";\n" }
+        File.open(path, 'a') { |file| file << string << ";\n" }
       end
     end
   end
