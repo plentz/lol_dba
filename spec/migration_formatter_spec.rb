@@ -52,7 +52,7 @@ RSpec.describe LolDba::MigrationFormatter do
       expect($stdout).to receive(:puts).with('')
       expect($stdout).to receive(:puts).with(/AddMissingIndexes/i)
       LolDba::MigrationFormatter.new(@relationship_indexes, '')
-      .puts_migration_content
+                                .puts_migration_content
     end
 
     it 'print warning messages if they exist' do
