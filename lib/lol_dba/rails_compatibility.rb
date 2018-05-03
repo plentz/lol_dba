@@ -29,15 +29,18 @@ module LolDba
       end
 
       def ar_5_2_0_migrations_path
-        ActiveRecord::MigrationContext.new(ActiveRecord::Migrator.migrations_paths).migrations
+        paths = ActiveRecord::Migrator.migrations_paths
+        ActiveRecord::MigrationContext.new(paths).migrations
       end
 
       def ar_5_0_0_migrations_path
-        ActiveRecord::Migrator.migrations(ActiveRecord::Migrator.migrations_paths)
+        paths = ActiveRecord::Migrator.migrations_paths
+        ActiveRecord::Migrator.migrations(paths)
       end
 
       def ar_4_0_0_migrations_path
-        ActiveRecord::Migrator.migrations(ActiveRecord::Migrator.migrations_path)
+        path = ActiveRecord::Migrator.migrations_path
+        ActiveRecord::Migrator.migrations(path)
       end
     end
   end
