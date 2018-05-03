@@ -1,17 +1,17 @@
 require 'spec_helper'
 
 RSpec.describe LolDba::MigrationFormatter do
-  describe '#form_migration_content' do
+  describe '#migration_instructions' do
     subject(:formatter) { LolDba::MigrationFormatter.new('', '') }
-    let(:add) { ['add_index :report, :_id_test_plan'] }
+    let(:index_to_add) { ['add_index :report, :_id_test_plan'] }
 
     it 'print migration skeleton with set name' do
-      migration = formatter.form_migration_content(add)
+      migration = formatter.migration_instructions(index_to_add)
       expect(migration).to match(/class AddMissingIndexes/i)
     end
 
     it 'print migration with add_keys params' do
-      migration = formatter.form_migration_content(add)
+      migration = formatter.migration_instructions(index_to_add)
       expect(migration).to match(/add_index :report, :_id_test_plan/i)
     end
   end

@@ -11,7 +11,7 @@ module LolDba
       if formated_indexes.blank?
         puts 'Yey, no missing indexes found!'
       else
-        puts form_migration_content(formated_indexes)
+        puts migration_instructions(formated_indexes)
       end
     end
 
@@ -35,8 +35,8 @@ module LolDba
       end
     end
 
-    def form_migration_content(formated_indexes)
-      <<-EOM
+    def migration_instructions(formated_indexes)
+      <<-MIGRATION
 * TIP: if you have a problem with the index name('index name too long'), you can
 solve with the :name option. Something like :name => 'my_index'.
 * run `rails g migration AddMissingIndexes` and add the following content:
@@ -46,7 +46,7 @@ solve with the :name option. Something like :name => 'my_index'.
         #{formated_indexes.sort.uniq.join("\n        ")}
       end
     end
-EOM
+MIGRATION
     end
   end
 end
