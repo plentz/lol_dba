@@ -2,14 +2,11 @@ module LolDba
   class MigrationFormatter
     def self.puts_migration_content(migration_name, indexes, warning_messages)
       puts warning_messages
-      add = format_for_migration(indexes)
-      if add.blank?
+      formated_indexes = format_for_migration(indexes)
+      if formated_indexes.blank?
         puts 'Yey, no missing indexes found!'
       else
-        tip = "* TIP: if you have a problem with the index name('index name too long') you can solve with the :name option. "
-        tip += "Something like :name => 'my_index'."
-        puts tip
-        puts form_migration_content(migration_name, add)
+        puts form_migration_content(migration_name, formated_indexes)
       end
     end
 
@@ -33,14 +30,15 @@ module LolDba
       end
     end
 
-    def self.form_migration_content(migration_name, index_array)
+    def self.form_migration_content(migration_name, formated_indexes)
       <<-EOM
+* TIP: if you have a problem with the index name('index name too long'), you can
+solve with the :name option. Something like :name => 'my_index'.
 * run `rails g migration #{migration_name}` and add the following content:
-
 
     class #{migration_name} < ActiveRecord::Migration
       def change
-        #{index_array.sort.uniq.join("\n        ")}
+        #{formated_indexes.sort.uniq.join("\n        ")}
       end
     end
 EOM

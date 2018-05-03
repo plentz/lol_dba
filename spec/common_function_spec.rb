@@ -48,7 +48,6 @@ RSpec.describe 'Function puts_migration_content:' do
 
   it 'print migration code' do
     expect($stdout).to receive(:puts).with('')
-    expect($stdout).to receive(:puts).with(/TIP/)
     expect($stdout).to receive(:puts).with(/TestMigration/i)
     LolDba::MigrationFormatter.puts_migration_content('TestMigration', @relationship_indexes, '')
   end
