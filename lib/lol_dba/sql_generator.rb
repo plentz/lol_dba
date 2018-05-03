@@ -2,7 +2,9 @@ module LolDba
   class SqlGenerator
     class << self
       def generate(which)
-        generate_instead_of_executing { migrations(which).each { |file| up_and_down(file) } }
+        generate_instead_of_executing do
+          migrations(which).each { |file| up_and_down(file) }
+        end
       end
 
       private
@@ -80,11 +82,12 @@ module LolDba
           puts 'No pending migrations.'
           exit
         end
-        migrator.pending_migrations.collect(&:filename)
+        pending.collect(&:filename)
       end
 
       def specific_migration(which)
-        if migration = migrator.migrations.find { |m| m.version == which.to_i }
+        migration = migrator.migrations.find { |m| m.version == which.to_i }
+        if migration.present?
           [migration.filename]
         else
           puts "There are no migrations for version #{which}."
