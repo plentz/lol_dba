@@ -139,8 +139,6 @@ module LolDba
   end
 
   def self.simple_migration
-    missing_indexes, warning_messages = check_for_indexes
-
-    MigrationFormatter.puts_migration_content('AddMissingIndexes', missing_indexes, warning_messages)
+    MigrationFormatter.new(check_for_indexes).puts_migration_content
   end
 end

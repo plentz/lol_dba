@@ -1,16 +1,21 @@
 module LolDba
   class MigrationFormatter
-    def self.puts_migration_content(migration_name, indexes, warning_messages)
-      puts warning_messages
-      formated_indexes = format_for_migration(indexes)
+    def initialize(indexes, warning_messages)
+      @indexes = indexes
+      @warning_messages = warning_messages
+    end
+
+    def puts_migration_content
+      puts @warning_messages
+      formated_indexes = format_for_migration(@indexes)
       if formated_indexes.blank?
         puts 'Yey, no missing indexes found!'
       else
-        puts form_migration_content(migration_name, formated_indexes)
+        puts form_migration_content(formated_indexes)
       end
     end
 
-    def self.format_for_migration(missing_indexes)
+    def format_for_migration(missing_indexes)
       add = []
       missing_indexes.each do |table_name, keys_to_add|
         keys_to_add.each do |key|
@@ -21,7 +26,7 @@ module LolDba
       add
     end
 
-    def self.format_index(table_name, key)
+    def format_index(table_name, key)
       if key.is_a?(Array)
         keys = key.collect { |col| ":#{col}" }
         "add_index :#{table_name}, [#{keys.join(', ')}]"
@@ -30,13 +35,13 @@ module LolDba
       end
     end
 
-    def self.form_migration_content(migration_name, formated_indexes)
+    def form_migration_content(formated_indexes)
       <<-EOM
 * TIP: if you have a problem with the index name('index name too long'), you can
 solve with the :name option. Something like :name => 'my_index'.
-* run `rails g migration #{migration_name}` and add the following content:
+* run `rails g migration AddMissingIndexes` and add the following content:
 
-    class #{migration_name} < ActiveRecord::Migration
+    class AddMissingIndexes < ActiveRecord::Migration
       def change
         #{formated_indexes.sort.uniq.join("\n        ")}
       end
