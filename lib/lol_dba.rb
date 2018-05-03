@@ -2,6 +2,7 @@ module LolDba
   require 'lol_dba/writer'
   require 'lol_dba/migration'
   require 'lol_dba/migration_formatter'
+  require 'lol_dba/rails_compatibility'
   require 'lol_dba/railtie.rb' if defined?(Rails)
 
   def self.get_through_foreign_key(target_class, reflection_options)
@@ -20,11 +21,7 @@ module LolDba
   end
 
   def self.tables
-    if ::ActiveRecord::VERSION::MAJOR >= 5
-      ActiveRecord::Base.connection.data_sources
-    else
-      ActiveRecord::Base.connection.tables
-    end
+    LolDba::RailsCompatibility.tables
   end
 
   def self.validate_and_sort_indexes(indexes_required)
