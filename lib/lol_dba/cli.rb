@@ -32,10 +32,10 @@ module LolDba
     def start(arg)
       load_application
       select_action(arg)
-    rescue Exception => e
+    rescue Exception => exception
       if @options[:debug]
-        warn "Failed: #{e.class}: #{e.message}"
-        warn e.backtrace.map { |t| "    from #{t}" }
+        warn "Failed: #{exception.class}: #{exception.message}"
+        warn exception.backtrace.map { |trace| "    from #{trace}" }
       end
     end
 
