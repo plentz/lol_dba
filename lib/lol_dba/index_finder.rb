@@ -121,15 +121,15 @@ module LolDba
             unless index_name == '' || reflection_options.options.include?(:class)
               @index_migrations[table_name.to_s] += [index_name]
             end
-          rescue StandardError => e
+          rescue StandardError => exception
             puts 'Some errors here:'
             puts 'Please, create an issue with the following information here https://github.com/plentz/lol_dba/issues:'
             puts '***************************'
             puts "Class: #{class_name}"
             puts "Association type: #{reflection_options.macro}"
             puts "Association options: #{reflection_options.options}"
-            puts "Exception: #{e.message}"
-            e.backtrace.each { |trace| puts trace }
+            puts "Exception: #{exception.message}"
+            exception.backtrace.each { |trace| puts trace }
           end
         end # case end
       end # each_pair end
