@@ -121,7 +121,7 @@ module LolDba
             unless index_name == '' || reflection_options.options.include?(:class)
               @index_migrations[table_name.to_s] += [index_name]
             end
-          rescue Exception => e
+          rescue StandardError => e
             puts 'Some errors here:'
             puts 'Please, create an issue with the following information here https://github.com/plentz/lol_dba/issues:'
             puts '***************************'
