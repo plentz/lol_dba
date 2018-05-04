@@ -12,7 +12,10 @@ module LolDba
       def parse_options
         options = {}
         OptionParser.new do |opts|
-          opts.on('-d', '--debug', 'Show stack traces when an error occurs.') { |v| options[:debug] = v }
+          opts.on('-d', '--debug',
+                  'Show stack traces when an error occurs.') do |opt|
+            options[:debug] = opt
+          end
           opts.on_tail('-v', '--version', 'Show version') do
             puts LolDba::VERSION
             exit
