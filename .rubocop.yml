@@ -1,3 +1,5 @@
 AllCops:
   Exclude:
     - 'gemfiles/*'
+Metrics/LineLength:
+  Max: 100
