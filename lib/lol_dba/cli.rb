@@ -6,6 +6,10 @@ module LolDba
   class CLI
     class << self
       def start
+        new(Dir.pwd, parse_options).start(ARGV.first)
+      end
+
+      def parse_options
         options = {}
         OptionParser.new do |opts|
           opts.on('-d', '--debug', 'Show stack traces when an error occurs.') { |v| options[:debug] = v }
@@ -14,7 +18,6 @@ module LolDba
             exit
           end
         end.parse!
-        new(Dir.pwd, options).start(ARGV.first)
       end
     end
 

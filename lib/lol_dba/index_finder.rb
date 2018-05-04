@@ -53,7 +53,7 @@ module LolDba
     end
 
     def self.check_for_indexes
-      Rails.application.eager_load! if defined?(Rails) && !Rails.env.test?
+      eager_load_if_needed
 
       @index_migrations = Hash.new([])
 
@@ -128,6 +128,10 @@ module LolDba
       end # each_pair end
 
       validate_and_sort_indexes(@index_migrations)
+    end
+
+    def self.eager_load_if_needed
+      Rails.application.eager_load! if defined?(Rails) && !Rails.env.test?
     end
 
     def self.run
