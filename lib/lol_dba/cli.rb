@@ -14,7 +14,7 @@ module LolDba
             exit
           end
         end.parse!
-        new(Dir.pwd, options).start
+        new(Dir.pwd, options).start(ARGV.first)
       end
     end
 
@@ -23,17 +23,9 @@ module LolDba
       @options = options
     end
 
-    def start
+    def start(arg)
       load_application
-      arg = ARGV.first
-      if arg =~ /db:find_indexes/
-        LolDba.simple_migration
-      elsif arg !~ /\[/
-        LolDba::SqlGenerator.generate('all')
-      else
-        which = arg.match(/.*\[(.*)\].*/).captures[0]
-        LolDba::SqlGenerator.generate(which)
-      end
+      select_action(arg)
     rescue Exception => e
       if @options[:debug]
         warn "Failed: #{e.class}: #{e.message}"
@@ -42,6 +34,17 @@ module LolDba
     end
 
     protected
+
+    def select_action(arg)
+      if arg =~ /db:find_indexes/
+        LolDba::IndexFinder.run
+      elsif arg !~ /\[/
+        LolDba::SqlGenerator.run('all')
+      else
+        which = arg.match(/.*\[(.*)\].*/).captures[0]
+        LolDba::SqlGenerator.run(which)
+      end
+    end
 
     # Tks to https://github.com/voormedia/rails-erd/blob/master/lib/rails_erd/cli.rb
     def load_application

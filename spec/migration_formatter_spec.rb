@@ -45,7 +45,7 @@ RSpec.describe LolDba::MigrationFormatter do
 
   describe '#puts_migration_content' do
     before do
-      @relationship_indexes, warning_messages = LolDba.check_for_indexes
+      @relationship_indexes, warning_messages = LolDba::IndexFinder.check_for_indexes
     end
 
     it 'print migration code' do

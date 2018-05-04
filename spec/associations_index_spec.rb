@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe 'Collect indexes based on associations:' do
   before :all do
-    lol_dba = LolDba.check_for_indexes
+    lol_dba = LolDba::IndexFinder.check_for_indexes
     @relationship_indexes = lol_dba[0]
     @warning_messages = lol_dba[1]
   end
