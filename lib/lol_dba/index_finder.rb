@@ -35,11 +35,18 @@ module LolDba
     end
 
     def self.existing_indexes(table_name)
-      table_indexes = ActiveRecord::Base.connection.indexes(table_name.to_sym)
-      existing = table_indexes.collect do |index|
+      table_indexes(table_name) + primary_key(table_name)
+    end
+
+    def self.table_indexes(table_name)
+      indexes = ActiveRecord::Base.connection.indexes(table_name.to_sym)
+      indexes.collect do |index|
         index.columns.size > 1 ? index.columns : index.columns.first
       end
-      existing += Array(ActiveRecord::Base.connection.primary_key(table_name.to_s))
+    end
+
+    def self.primary_key(table_name)
+      Array(ActiveRecord::Base.connection.primary_key(table_name.to_s))
     end
 
     def self.model_classes
