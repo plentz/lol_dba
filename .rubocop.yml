@@ -1,5 +1,4 @@
 AllCops:
-  TargetRubyVersion: 2.0
   Exclude:
     - 'gemfiles/*'
 Metrics/LineLength:
