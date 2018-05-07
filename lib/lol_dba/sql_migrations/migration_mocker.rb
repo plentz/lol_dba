@@ -31,7 +31,7 @@ module LolDba
       end
     end
 
-    private
+    private_class_method
 
     def self.connection
       ActiveRecord::Base.connection
@@ -40,6 +40,8 @@ module LolDba
     def self.methods_to_modify
       %i[execute do_execute rename_column change_column column_for tables indexes select_all] & connection.methods
     end
+
+    private
 
     def redefine_execute_methods(name)
       connection.class.send(:define_method, name) do |*args|

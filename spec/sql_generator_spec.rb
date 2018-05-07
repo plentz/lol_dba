@@ -7,6 +7,6 @@ RSpec.describe LolDba::SqlGenerator do
   end
 
   it 'generates migrations without error' do
-    expect { LolDba::SqlGenerator.generate('all') }.not_to raise_error
+    expect { LolDba::SqlGenerator.new('all').run }.not_to raise_error
   end
 end

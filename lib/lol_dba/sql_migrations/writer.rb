@@ -14,14 +14,17 @@ module LolDba
       File.open(path, 'a') { |file| file << string << ";\n" }
     end
 
-    private
+    private_class_method
 
     def self.output_dir
       File.join(Rails.root, 'db', 'migrate_sql')
     end
 
+    private
+
     def path
       File.join(output_dir, @file_name)
     end
+
   end
 end
