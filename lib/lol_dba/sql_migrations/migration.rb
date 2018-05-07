@@ -43,7 +43,7 @@ module LolDba
     end
 
     def generate_instead_of_executing
-      LolDba::MigrationMocker.redefine_execution_methods(writer)
+      LolDba::MigrationMocker.redefine_migration_methods(writer)
       yield
       LolDba::MigrationMocker.reset_methods
     end
