@@ -1,12 +1,10 @@
 module LolDba
   class MigrationFormatter
-    def initialize(indexes, warning_messages)
+    def initialize(indexes)
       @indexes = indexes
-      @warning_messages = warning_messages
     end
 
     def puts_migration_content
-      puts @warning_messages
       formated_indexes = format_for_migration(@indexes)
       if formated_indexes.blank?
         puts 'Yey, no missing indexes found!'

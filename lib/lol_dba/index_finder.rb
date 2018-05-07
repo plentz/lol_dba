@@ -19,19 +19,14 @@ module LolDba
       LolDba::RailsCompatibility.tables
     end
 
-    def self.validate_and_sort_indexes(indexes_required)
+    def self.validate_indexes(indexes_required)
       missing_indexes = {}
-      warning_messages = ''
       indexes_required.each do |table_name, foreign_keys|
-        next if foreign_keys.blank?
-        if tables.include?(table_name.to_s)
-          keys_to_add = foreign_keys.uniq - existing_indexes(table_name)
-          missing_indexes[table_name] = keys_to_add unless keys_to_add.empty?
-        else
-          warning_messages << "BUG: table '#{table_name}' does not exist, please report this bug.\n    "
-        end
+        next if foreign_keys.blank? || !tables.include?(table_name.to_s)
+        keys_to_add = foreign_keys.uniq - existing_indexes(table_name)
+        missing_indexes[table_name] = keys_to_add unless keys_to_add.empty?
       end
-      [missing_indexes, warning_messages]
+      missing_indexes
     end
 
     def self.existing_indexes(table_name)
@@ -62,12 +57,12 @@ module LolDba
     def self.check_for_indexes
       eager_load_if_needed
 
-      @index_migrations = Hash.new([])
+      index_migrations = Hash.new([])
 
       model_classes.each do |class_name|
         unless class_name.descends_from_active_record?
           index_name = [class_name.inheritance_column, class_name.base_class.primary_key].sort
-          @index_migrations[class_name.base_class.table_name] += [index_name]
+          index_migrations[class_name.base_class.table_name] += [index_name]
         end
         reflections = class_name.reflections.stringify_keys
         reflections.each_pair do |reflection_name, reflection_options|
@@ -119,7 +114,7 @@ module LolDba
             end
 
             unless index_name == '' || reflection_options.options.include?(:class)
-              @index_migrations[table_name.to_s] += [index_name]
+              index_migrations[table_name.to_s] += [index_name]
             end
           rescue StandardError => exception
             puts 'Some errors here:'
@@ -134,7 +129,7 @@ module LolDba
         end # case end
       end # each_pair end
 
-      validate_and_sort_indexes(@index_migrations)
+      validate_indexes(index_migrations)
     end
 
     def self.eager_load_if_needed

@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe LolDba::MigrationFormatter do
   describe '#migration_instructions' do
-    subject(:formatter) { LolDba::MigrationFormatter.new('', '') }
+    subject(:formatter) { LolDba::MigrationFormatter.new('') }
     let(:index_to_add) { ['add_index :report, :_id_test_plan'] }
 
     it 'print migration skeleton with set name' do
@@ -17,7 +17,7 @@ RSpec.describe LolDba::MigrationFormatter do
   end
 
   describe '#format_for_migration' do
-    subject(:formatter) { LolDba::MigrationFormatter.new('', '') }
+    subject(:formatter) { LolDba::MigrationFormatter.new('') }
 
     it 'return data for migrations for non-indexed single key in table' do
       relationship_indexes = { users: [:user_id] }
@@ -45,28 +45,24 @@ RSpec.describe LolDba::MigrationFormatter do
 
   describe '#puts_migration_content' do
     before do
-      @relationship_indexes, warning_messages = LolDba::IndexFinder.check_for_indexes
+      @indexes = LolDba::IndexFinder.check_for_indexes
     end
 
     it 'print migration code' do
-      expect($stdout).to receive(:puts).with('')
       expect($stdout).to receive(:puts).with(/AddMissingIndexes/i)
-      LolDba::MigrationFormatter.new(@relationship_indexes, '')
-                                .puts_migration_content
+      LolDba::MigrationFormatter.new(@indexes).puts_migration_content
     end
 
     it 'print warning messages if they exist' do
       warning = 'warning text here'
-      expect($stdout).to receive(:puts).at_least(:once).with(warning)
       expect($stdout).to receive(:puts)
 
-      LolDba::MigrationFormatter.new({}, warning).puts_migration_content
+      LolDba::MigrationFormatter.new({}).puts_migration_content
     end
 
     it 'print nothing if no indexes and warning messages exist' do
-      expect($stdout).to receive(:puts).with('')
       expect($stdout).to receive(:puts).with('Yey, no missing indexes found!')
-      LolDba::MigrationFormatter.new({}, '').puts_migration_content
+      LolDba::MigrationFormatter.new({}).puts_migration_content
     end
   end
 end
