@@ -1,25 +1,27 @@
 module LolDba
   class Writer
-    class << self
-      attr_accessor :file_name
+    def initialize(file_name)
+      @file_name = file_name
+    end
 
-      def reset
-        FileUtils.rm_rf output_dir
-        Dir.mkdir output_dir
-      end
+    def self.reset_output_dir
+      FileUtils.rm_rf output_dir
+      Dir.mkdir output_dir
+    end
 
-      def output_dir
-        File.join(Rails.root, 'db', 'migrate_sql')
-      end
+    def write(string)
+      return unless @file_name.present?
+      File.open(path, 'a') { |file| file << string << ";\n" }
+    end
 
-      def path
-        File.join(output_dir, file_name)
-      end
+    private
 
-      def write(string)
-        return unless file_name.present?
-        File.open(path, 'a') { |file| file << string << ";\n" }
-      end
+    def self.output_dir
+      File.join(Rails.root, 'db', 'migrate_sql')
+    end
+
+    def path
+      File.join(output_dir, @file_name)
     end
   end
 end

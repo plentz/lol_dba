@@ -2,19 +2,13 @@ module LolDba
   class SqlGenerator
     class << self
       def generate(which)
-        generate_instead_of_executing do
-          migrations(which).each { |file| up_and_down(file) }
+        LolDba::Writer.reset_output_dir
+        migrations(which).each do |file|
+          LolDba::Migration.new(file).up
         end
       end
 
       private
-
-      def generate_instead_of_executing
-        LolDba::Writer.reset
-        LolDba::MigrationMocker.redefine_execution_methods
-        yield
-        LolDba::MigrationMocker.reset_methods
-      end
 
       def migrations(which)
         if which == 'all'
@@ -43,14 +37,6 @@ module LolDba
           puts "There are no migrations for version #{which}."
           exit
         end
-      end
-
-      def up_and_down(file)
-        migration = LolDba::Migration.new(file)
-        LolDba::Writer.file_name = "#{migration}.sql"
-        migration.up
-        # MigrationSqlGenerator::Writer.file_name = "#{migration}_down.sql"
-        # migration.down
       end
 
       def migrator

@@ -4,6 +4,7 @@ module LolDba
 
     def initialize(migration_file)
       self.full_name = File.basename(migration_file, '.rb')
+      self.writer = LolDba::Writer.new("#{migration}.sql")
       require Rails.root.join(migration_file)
     end
 
@@ -24,17 +25,27 @@ module LolDba
     end
 
     def up
-      migration_class.migrate(:up)
-      connection.execute("INSERT INTO schema_migrations (version) VALUES (#{number})")
+      generate_instead_of_executing do
+        migration_class.migrate(:up)
+        connection.execute("INSERT INTO schema_migrations (version) VALUES (#{number})")
+      end
     end
 
     def down
-      migration_class.migrate(:down)
-      connection.execute("DELETE FROM schema_migrations WHERE version = #{number}")
+      generate_instead_of_executing do
+        migration_class.migrate(:down)
+        connection.execute("DELETE FROM schema_migrations WHERE version = #{number}")
+      end
     end
 
     def connection
       ActiveRecord::Base.connection
+    end
+
+    def generate_instead_of_executing
+      LolDba::MigrationMocker.redefine_execution_methods(writer)
+      yield
+      LolDba::MigrationMocker.reset_methods
     end
   end
 end
