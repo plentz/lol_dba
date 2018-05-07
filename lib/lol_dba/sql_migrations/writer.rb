@@ -25,6 +25,5 @@ module LolDba
     def path
       File.join(output_dir, @file_name)
     end
-
   end
 end
