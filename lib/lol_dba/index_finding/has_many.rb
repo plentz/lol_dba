@@ -7,7 +7,7 @@ module LolDba
       foreign_key = get_through_foreign_key(class_name, reflection_options)
 
       through_reflections = through_class.reflections.stringify_keys
-      if source = reflection_options.options[:source]
+      if (source = reflection_options.options[:source])
         association_reflection = through_reflections[source.to_s]
         return nil if association_reflection.options[:polymorphic]
         association_foreign_key = get_through_foreign_key(association_reflection.klass, reflection_options)
@@ -18,7 +18,7 @@ module LolDba
 
       # FIXME: currently we don't support :through => :another_regular_has_many_and_non_through_relation
       return nil unless association_foreign_key.present?
-      index_name = [association_foreign_key, foreign_key].map(&:to_s).sort
+      [association_foreign_key, foreign_key].map(&:to_s).sort
     end
 
     def table_name
