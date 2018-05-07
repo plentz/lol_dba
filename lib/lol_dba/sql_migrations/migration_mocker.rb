@@ -28,8 +28,8 @@ module LolDba
       ActiveRecord::Base.connection
     end
 
-    def self.connection_class
-      redefine_migration_methods
+    def self.redefine_connection_method(method, &block)
+      connection.class.send(:define_method, method, block)
     end
 
     def self.methods_to_modify
@@ -40,23 +40,23 @@ module LolDba
 
     def save_original_methods
       methods_to_modify.each do |method_name|
-        connection_class.send(:alias_method, "orig_#{method_name}".to_sym, method_name)
+        connection.class.send(:alias_method, "orig_#{method_name}".to_sym, method_name)
       end
     end
 
     def redefine_metadata_methods
-      connection_class.send(:define_method, :column_for) { |*args| args.last }
-      connection_class.send(:define_method, :change_column) { |*_args| [] }
-      connection_class.send(:define_method, :rename_column) { |*_args| [] }
-      connection_class.send(:define_method, :tables) { |*_args| [] }
-      connection_class.send(:define_method, :select_all) { |*_args| [] }
-      connection_class.send(:define_method, :indexes) { |*_args| [] }
+      redefine_connection_method(:column_for) { |*args| args.last }
+      redefine_connection_method(:change_column) { |*_args| [] }
+      redefine_connection_method(:rename_column) { |*_args| [] }
+      redefine_connection_method(:tables) { |*_args| [] }
+      redefine_connection_method(:select_all) { |*_args| [] }
+      redefine_connection_method(:indexes) { |*_args| [] }
       # returns always the default(args[2])
-      connection_class.send(:define_method, :index_name_exists?) { |*args| args[2] }
+      redefine_connection_method(:index_name_exists?) { |*args| args[2] }
     end
 
     def redefine_execute_methods(name)
-      connection_class.send(:define_method, name) do |*args|
+      redefine_connection_method(name) do |*args|
         if args.first =~ /SELECT "schema_migrations"."version"/ || args.first =~ /^SHOW/
           orig_execute(*args)
         else
