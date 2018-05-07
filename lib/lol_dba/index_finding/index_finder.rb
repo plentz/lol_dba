@@ -1,22 +1,38 @@
 module LolDba
   class IndexFinder
-    def self.get_through_foreign_key(target_class, reflection_options)
-      # has_many :through
-      reflection = target_class.reflections[reflection_options.options[:through].to_s]
-
-      # has_and_belongs_to_many
-      reflection ||= reflection_options
-
-      # Guess foreign key?
-      if reflection.options[:foreign_key]
-        reflection.options[:foreign_key]
-      else
-        "#{target_class.name.tableize.singularize}_id"
-      end
+    def self.run
+      MigrationFormatter.new(check_for_indexes).puts_migration_content
     end
 
-    def self.tables
-      LolDba::RailsCompatibility.tables
+    def self.check_for_indexes
+      eager_load_if_needed
+
+      required_indexes = Hash.new([])
+
+      model_classes.each do |class_name|
+        unless class_name.descends_from_active_record?
+          index_name = [class_name.inheritance_column, class_name.base_class.primary_key].sort
+          required_indexes[class_name.base_class.table_name] += [index_name]
+        end
+        reflections = class_name.reflections.stringify_keys
+        reflections.each_pair do |reflection_name, reflection_options|
+          begin
+            clazz = RelationInspectorFactory.for(reflection_options.macro)
+            next unless clazz.present?
+            inspector = clazz.new(class_name, reflections,
+                                  reflection_options, reflection_name)
+            columns = inspector.relation_columns
+
+            unless columns.nil? || reflection_options.options.include?(:class)
+              required_indexes[inspector.table_name.to_s] += [columns]
+            end
+          rescue StandardError => exception
+            LolDba::ErrorLogging.log(class_name, reflection_options, exception)
+          end
+        end
+      end
+
+      missing_indexes(required_indexes)
     end
 
     def self.missing_indexes(indexes_required)
@@ -27,6 +43,10 @@ module LolDba
         missing_indexes[table_name] = keys_to_add unless keys_to_add.empty?
       end
       missing_indexes
+    end
+
+    def self.tables
+      LolDba::RailsCompatibility.tables
     end
 
     def self.existing_indexes(table_name)
@@ -54,83 +74,8 @@ module LolDba
       !defined?(ActiveRecord::SessionStore::Session) || obj != ActiveRecord::SessionStore::Session
     end
 
-    def self.check_for_indexes
-      eager_load_if_needed
-
-      required_indexes = Hash.new([])
-
-      model_classes.each do |class_name|
-        unless class_name.descends_from_active_record?
-          index_name = [class_name.inheritance_column, class_name.base_class.primary_key].sort
-          required_indexes[class_name.base_class.table_name] += [index_name]
-        end
-        reflections = class_name.reflections.stringify_keys
-        reflections.each_pair do |reflection_name, reflection_options|
-          begin
-            index_name = ''
-            case reflection_options.macro
-            when :belongs_to
-              # polymorphic?
-              table_name = class_name.table_name
-              if reflection_options.options[:polymorphic]
-                poly_type = "#{reflection_options.name}_type"
-                poly_id = "#{reflection_options.name}_id"
-                index_name = [poly_type, poly_id].sort
-              else
-                foreign_key = reflection_options.options[:foreign_key]
-                foreign_key ||= reflection_options.respond_to?(:primary_key_name) ? reflection_options.primary_key_name : reflection_options.foreign_key
-                next if foreign_key == 'left_side_id' # not a clue why rails 4.1+ creates this left_side_id thing
-                index_name = foreign_key.to_s
-              end
-            when :has_and_belongs_to_many
-              table_name = reflection_options.options[:join_table]
-              table_name ||= [class_name.table_name, reflection_name.to_s].sort.join('_')
-              association_foreign_key = reflection_options.options[:association_foreign_key] ||= "#{reflection_name.to_s.singularize}_id"
-
-              foreign_key = get_through_foreign_key(class_name, reflection_options)
-              index_name = [association_foreign_key, foreign_key].map(&:to_s).sort
-            when :has_many
-              through = reflection_options.options[:through]
-              next unless through && reflections[through.to_s] # has_many tables are threaten by the other side of the relation
-
-              through_class = reflections[through.to_s].klass
-              table_name = through_class.table_name
-
-              foreign_key = get_through_foreign_key(class_name, reflection_options)
-
-              through_reflections = through_class.reflections.stringify_keys
-              if source = reflection_options.options[:source]
-                association_reflection = through_reflections[source.to_s]
-                next if association_reflection.options[:polymorphic]
-                association_foreign_key = get_through_foreign_key(association_reflection.klass, reflection_options)
-              elsif belongs_to_reflections = through_reflections[reflection_name.singularize]
-                # go to joining model through has_many and find belongs_to
-                association_foreign_key = belongs_to_reflections.options[:foreign_key]
-              end
-
-              # FIXME: currently we don't support :through => :another_regular_has_many_and_non_through_relation
-              next unless association_foreign_key.present?
-              index_name = [association_foreign_key, foreign_key].map(&:to_s).sort
-            end
-
-            unless index_name == '' || reflection_options.options.include?(:class)
-              required_indexes[table_name.to_s] += [index_name]
-            end
-          rescue StandardError => exception
-            ErrorLogging.log(class_name, reflection_options, exception)
-          end
-        end # case end
-      end # each_pair end
-
-      missing_indexes(required_indexes)
-    end
-
     def self.eager_load_if_needed
       Rails.application.eager_load! if defined?(Rails) && !Rails.env.test?
-    end
-
-    def self.run
-      MigrationFormatter.new(check_for_indexes).puts_migration_content
     end
   end
 end
