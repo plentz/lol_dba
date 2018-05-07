@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'lol_dba/sql_generator'
+require 'lol_dba/sql_migrations/sql_generator'
 
 RSpec.describe LolDba::SqlGenerator do
   before do
