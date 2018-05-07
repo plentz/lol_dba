@@ -40,7 +40,8 @@ module LolDba
 
     def save_original_methods
       methods_to_modify.each do |method_name|
-        connection.class.send(:alias_method, "orig_#{method_name}".to_sym, method_name)
+        orig_name = "orig_#{method_name}".to_sym
+        connection.class.send(:alias_method, orig_name, method_name)
       end
     end
 
