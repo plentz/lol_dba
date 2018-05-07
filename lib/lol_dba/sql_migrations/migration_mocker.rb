@@ -58,10 +58,11 @@ module LolDba
 
     def redefine_execute_methods(name)
       redefine_connection_method(name) do |*args|
-        if args.first =~ /SELECT "schema_migrations"."version"/ || args.first =~ /^SHOW/
+        query = args.first
+        if query =~ /SELECT "schema_migrations"."version"/ || query =~ /^SHOW/
           orig_execute(*args)
         else
-          @writer.write(to_sql(args.first, args.last))
+          @writer.write(to_sql(query, args.last))
         end
       end
     end
