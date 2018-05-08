@@ -2,8 +2,9 @@ module LolDba
   class BelongsTo < RelationInspector
     def relation_columns
       if reflection_options.options[:polymorphic]
-        poly_type = "#{reflection_options.name}_type"
-        poly_id = "#{reflection_options.name}_id"
+        name = reflection_options.name
+        poly_type = "#{name}_type"
+        poly_id = "#{name}_id"
         [poly_type, poly_id].sort
       else
         foreign_key = non_polymorphic_fk
