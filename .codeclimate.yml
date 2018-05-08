@@ -1,0 +1,179 @@
+
+{
+  "checks": {
+    "argument-count": {
+      "enabled": true
+    },
+    "complex-logic": {
+      "enabled": true
+    },
+    "file-lines": {
+      "enabled": true
+    },
+    "identical-code": {
+      "enabled": true
+    },
+    "method-complexity": {
+      "enabled": true
+    },
+    "method-count": {
+      "enabled": true
+    },
+    "method-lines": {
+      "enabled": true
+    },
+    "nested-control-flow": {
+      "enabled": true
+    },
+    "return-statements": {
+      "enabled": true
+    },
+    "similar-code": {
+      "enabled": true
+    }
+  },
+  "exclude_patterns": [
+    "config/",
+    "db/",
+    "dist/",
+    "features/",
+    "**/node_modules/",
+    "script/",
+    "**/spec/",
+    "**/test/",
+    "**/tests/",
+    "Tests/",
+    "**/vendor/",
+    "**/*_test.go",
+    "**/*.d.ts"
+  ],
+  "plugins": {
+    "apexmetrics": {
+      "enabled": true
+    },
+    "brakeman": {
+      "enabled": false
+    },
+    "brakeman-pro": {
+      "enabled": false
+    },
+    "bundler-audit": {
+      "enabled": true
+    },
+    "checkstyle": {
+      "enabled": false
+    },
+    "coffeelint": {
+      "enabled": false
+    },
+    "csslint": {
+      "enabled": false
+    },
+    "eslint": {
+      "enabled": false
+    },
+    "fixme": {
+      "enabled": true
+    },
+    "flog": {
+      "enabled": true
+    },
+    "foodcritic": {
+      "enabled": false
+    },
+    "git-legal": {
+      "enabled": true
+    },
+    "gnu-complexity": {
+      "enabled": false
+    },
+    "gofmt": {
+      "enabled": false
+    },
+    "golint": {
+      "enabled": false
+    },
+    "govet": {
+      "enabled": false
+    },
+    "grep": {
+      "enabled": false
+    },
+    "haxe-checkstyle": {
+      "enabled": false
+    },
+    "hlint": {
+      "enabled": false
+    },
+    "kibit": {
+      "enabled": false
+    },
+    "markdownlint": {
+      "enabled": false
+    },
+    "nodesecurity": {
+      "enabled": false
+    },
+    "pep8": {
+      "enabled": false
+    },
+    "phan": {
+      "enabled": false
+    },
+    "phpcodesniffer": {
+      "enabled": false
+    },
+    "phpmd": {
+      "enabled": false
+    },
+    "pmd": {
+      "enabled": false
+    },
+    "radon": {
+      "enabled": false
+    },
+    "reek": {
+      "enabled": true
+    },
+    "rubocop": {
+      "enabled": true
+    },
+    "rubymotion": {
+      "enabled": false
+    },
+    "shellcheck": {
+      "enabled": false
+    },
+    "scss-lint": {
+      "enabled": false
+    },
+    "sonar-java": {
+      "enabled": false
+    },
+    "sonar-php": {
+      "enabled": false
+    },
+    "sonar-python": {
+      "enabled": false
+    },
+    "stylelint": {
+      "enabled": false
+    },
+    "swiftlint": {
+      "enabled": false
+    },
+    "tailor": {
+      "enabled": false
+    },
+    "tslint": {
+      "enabled": false
+    },
+    "vint": {
+      "enabled": false
+    },
+    "watson": {
+      "enabled": false
+    }
+  },
+  "version": "2"
+}
