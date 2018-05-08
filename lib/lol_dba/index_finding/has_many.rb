@@ -4,8 +4,6 @@ module LolDba
       # has_many tables are threaten by the other side of the relation
       return nil unless through && reflections[through.to_s]
 
-      foreign_key = get_through_foreign_key(class_name, reflection_options)
-
       through_reflections = through_class.reflections.stringify_keys
       if (source = reflection_options.options[:source])
         association_reflection = through_reflections[source.to_s]
@@ -33,6 +31,10 @@ module LolDba
 
     def through
       reflection_options.options[:through]
+    end
+
+    def foreign_key
+      get_through_foreign_key(class_name, reflection_options)
     end
   end
 end
