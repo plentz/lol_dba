@@ -9,25 +9,25 @@ module LolDba
 
       required_indexes = Hash.new([])
 
-      model_classes.each do |class_name|
-        unless class_name.descends_from_active_record?
-          index_name = [class_name.inheritance_column, class_name.base_class.primary_key].sort
-          required_indexes[class_name.base_class.table_name] += [index_name]
+      model_classes.each do |model_class|
+        unless model_class.descends_from_active_record?
+          index_name = [model_class.inheritance_column, model_class.base_class.primary_key].sort
+          required_indexes[model_class.base_class.table_name] += [index_name]
         end
-        reflections = class_name.reflections.stringify_keys
+        reflections = model_class.reflections.stringify_keys
         reflections.each_pair do |reflection_name, reflection_options|
           begin
             clazz = RelationInspectorFactory.for(reflection_options.macro)
             next unless clazz.present?
-            inspector = clazz.new(class_name, reflections,
-                                  reflection_options, reflection_name)
+            inspector = clazz.new(model_class, reflection_options,
+                          reflection_name)
             columns = inspector.relation_columns
 
             unless columns.nil? || reflection_options.options.include?(:class)
               required_indexes[inspector.table_name.to_s] += [columns]
             end
           rescue StandardError => exception
-            LolDba::ErrorLogging.log(class_name, reflection_options, exception)
+            LolDba::ErrorLogging.log(model_class, reflection_options, exception)
           end
         end
       end

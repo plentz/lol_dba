@@ -15,7 +15,7 @@ module LolDba
     end
 
     def table_name
-      class_name.table_name
+      model_class.table_name
     end
 
     private

@@ -1,13 +1,13 @@
 module LolDba
   class HasAndBelongsToMany < RelationInspector
     def relation_columns
-      foreign_key = get_through_foreign_key(class_name, reflection_options)
+      foreign_key = get_through_foreign_key(model_class, reflection_options)
       index_name = [association_fk, foreign_key].map(&:to_s).sort
     end
 
     def table_name
       table_name = reflection_options.options[:join_table]
-      table_name || [class_name.table_name, reflection_name.to_s].sort.join('_')
+      table_name || [model_class.table_name, reflection_name.to_s].sort.join('_')
     end
 
     private

@@ -37,7 +37,7 @@ module LolDba
     end
 
     def foreign_key
-      get_through_foreign_key(class_name, reflection_options)
+      get_through_foreign_key(model_class, reflection_options)
     end
 
     def through_reflections

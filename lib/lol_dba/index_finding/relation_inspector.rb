@@ -1,11 +1,9 @@
 module LolDba
   class RelationInspector
-    attr_accessor :class_name, :reflections,
-                  :reflection_options, :reflection_name
+    attr_accessor :model_class, :reflection_options, :reflection_name
 
-    def initialize(class_name, reflections, reflection_options, reflection_name)
-      self.class_name = class_name
-      self.reflections = reflections
+    def initialize(model_class, reflection_options, reflection_name)
+      self.model_class = model_class
       self.reflection_options = reflection_options
       self.reflection_name = reflection_name
     end
@@ -23,6 +21,10 @@ module LolDba
       else
         "#{target_class.name.tableize.singularize}_id"
       end
+    end
+
+    def reflections
+      model_class.reflections.stringify_keys
     end
   end
 end
