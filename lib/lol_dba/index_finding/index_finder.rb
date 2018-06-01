@@ -20,7 +20,7 @@ module LolDba
             clazz = RelationInspectorFactory.for(reflection_options.macro)
             next unless clazz.present?
             inspector = clazz.new(model_class, reflection_options,
-                          reflection_name)
+                                  reflection_name)
             columns = inspector.relation_columns
 
             unless columns.nil? || reflection_options.options.include?(:class)
