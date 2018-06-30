@@ -107,7 +107,7 @@ PLATFORMS
 DEPENDENCIES
   actionpack
   activerecord
-  appraisal (~> 2.2.0)
+  appraisal (~> 2.2)
   lol_dba!
   railties
   rspec-rails
