@@ -19,10 +19,10 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib', 'lib/lol_dba']
 
   s.required_ruby_version = '>= 2.0.0'
-  s.add_dependency 'actionpack', '>= 3.0'
-  s.add_dependency 'activerecord', '>= 3.0'
-  s.add_dependency 'railties', '>= 3.0'
+  s.add_dependency 'actionpack', '>= 3.0', '< 6.0'
+  s.add_dependency 'activerecord', '>= 3.0', '< 6.0'
+  s.add_dependency 'railties', '>= 3.0', '< 6.0'
 
-  s.add_development_dependency 'appraisal'
-  s.add_development_dependency 'simplecov'
+  s.add_development_dependency 'appraisal', '~> 2.2'
+  s.add_development_dependency 'simplecov', '~> 0.1'
 end
