@@ -1,6 +1,6 @@
 module LolDba
   class RelationInspector
-    attr_accessor :model_class, :reflection_options, :reflection_name
+    attr_reader :model_class, :reflection_options, :reflection_name
 
     def initialize(model_class, reflection_options, reflection_name)
       @model_class = model_class

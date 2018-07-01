@@ -1,6 +1,6 @@
 module LolDba
   class Migration
-    attr_accessor :full_name, :writer
+    attr_reader :full_name, :writer
 
     def initialize(migration_file)
       @full_name = File.basename(migration_file, '.rb')
