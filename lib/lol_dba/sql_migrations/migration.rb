@@ -1,10 +1,10 @@
 module LolDba
   class Migration
-    attr_accessor :full_name
+    attr_accessor :full_name, :writer
 
     def initialize(migration_file)
-      self.full_name = File.basename(migration_file, '.rb')
-      self.writer = LolDba::Writer.new("#{migration}.sql")
+      @full_name = File.basename(migration_file, '.rb')
+      @writer = LolDba::Writer.new("#{migration}.sql")
       require Rails.root.join(migration_file)
     end
 
