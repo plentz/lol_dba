@@ -3,9 +3,9 @@ module LolDba
     attr_accessor :model_class, :reflection_options, :reflection_name
 
     def initialize(model_class, reflection_options, reflection_name)
-      self.model_class = model_class
-      self.reflection_options = reflection_options
-      self.reflection_name = reflection_name
+      @model_class = model_class
+      @reflection_options = reflection_options
+      @reflection_name = reflection_name
     end
 
     def get_through_foreign_key(target_class, reflection_options)
