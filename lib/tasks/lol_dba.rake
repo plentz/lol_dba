@@ -1,5 +1,4 @@
 require 'lol_dba'
-require 'lol_dba/sql_generator'
 
 namespace :db do
   desc 'Display a migration for adding/removing all necessary indexes based on associations'
