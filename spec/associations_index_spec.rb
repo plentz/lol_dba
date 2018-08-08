@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe 'Collect indexes based on associations:' do
   let (:indexes) { LolDba::IndexFinder.check_for_indexes }
 

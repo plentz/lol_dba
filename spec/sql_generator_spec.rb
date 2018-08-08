@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe LolDba::SqlGenerator do
   before do
     FileUtils.mkdir_p(Pathname.new(Rails.root).join('db', 'migrate_sql'))

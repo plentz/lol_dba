@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe LolDba::MigrationFormatter do
   describe '#migration_instructions' do
     subject(:formatter) { LolDba::MigrationFormatter.new('') }
