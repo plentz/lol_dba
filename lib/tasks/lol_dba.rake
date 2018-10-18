@@ -8,7 +8,6 @@ namespace :db do
   desc 'Generate .sql files for your migrations inside db/migrate_sql folder'
   task :migrate_sql, [:which] => :environment do |_t, args|
     args.with_defaults(which: 'all')
-
     LolDba::SqlGenerator.new(args[:which]).run
   end
 end

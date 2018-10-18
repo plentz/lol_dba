@@ -1,7 +1,6 @@
 module LolDba
   class Writer
     def initialize(file_name)
-
       @file_name = file_name
     end
 
@@ -12,9 +11,10 @@ module LolDba
 
     def write(string)
       return unless @file_name.present?
-
-      File.open(path, 'a') { |file| file << string << ";\n" }
-      puts "after #{ string}"
+      File.open(path, 'a+') do  |file|
+        file << string << ";\n"
+        file.close
+      end
     end
 
     private_class_method
