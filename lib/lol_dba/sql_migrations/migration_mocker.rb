@@ -58,7 +58,6 @@ module LolDba
     end
 
     def redefine_execute_methods(name)
-
       writer = @writer
 
       redefine_connection_method(name) do |*args|
