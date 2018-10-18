@@ -4,7 +4,7 @@ module LolDba
 
     def initialize(migration_file)
       @full_name = File.basename(migration_file, '.rb')
-      @writer = LolDba::Writer.new("#{migration}.sql")
+      @writer = LolDba::Writer.new("#{@full_name}.sql")
       require Rails.root.join(migration_file)
     end
 
@@ -43,9 +43,11 @@ module LolDba
     end
 
     def generate_instead_of_executing
-      LolDba::MigrationMocker.redefine_migration_methods(writer)
+      migration_mocker = LolDba::MigrationMocker.new(writer)
+
+      migration_mocker.redefine_migration_methods
       yield
-      LolDba::MigrationMocker.reset_methods
+      migration_mocker.reset_methods
     end
   end
 end
