@@ -1,7 +1,6 @@
 module LolDba
   class MigrationMocker
     def initialize(writer)
-      puts writer.class
       @writer = writer
     end
 
