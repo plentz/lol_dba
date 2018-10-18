@@ -66,8 +66,6 @@ module LolDba
         if query =~ /SELECT "schema_migrations"."version"/ || query =~ /^SHOW/
           orig_execute(*args)
         else
-          # debugger if @writer.nil?
-
           writer.write(to_sql(query, args.last))
         end
       end
