@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.platform = Gem::Platform::RUBY
 
   s.authors =  ['Diego Plentz']
-  s.email =  ['diego@plentz.org']
+  s.email =  ['diego@plentz.io']
   s.homepage = 'https://github.com/plentz/lol_dba'
   s.summary = 'A small package of rake tasks to track down missing database indexes and generate sql migration scripts'
   s.description = 'lol_dba is a small package of rake tasks that scan your application models and displays a list of columns that probably should be indexed. Also, it can generate .sql migration scripts.'
