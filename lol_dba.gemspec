@@ -25,4 +25,6 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency 'appraisal', '~> 2.2'
   s.add_development_dependency 'simplecov', '~> 0.1'
+  s.add_development_dependency 'sqlite3', '~> 1.3.5'
+  s.add_development_dependency 'rspec-rails'
 end
