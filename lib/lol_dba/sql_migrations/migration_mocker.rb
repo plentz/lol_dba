@@ -12,7 +12,7 @@ module LolDba
       redefine_execute_methods(:do_execute)
     end
 
-    def self.reset_methods
+    def reset_methods
       methods_to_modify.each do |method_name|
         begin
           connection_class.send(:alias_method, method_name, "orig_#{method_name}".to_sym)
@@ -28,12 +28,12 @@ module LolDba
       ActiveRecord::Base.connection
     end
 
-    def self.redefine_connection_method(method, &block)
-      connection.class.send(:define_method, method, block)
+    def redefine_connection_method(method, &block)
+      self.class.connection.class.send(:define_method, method, block)
     end
 
-    def self.methods_to_modify
-      %i[execute do_execute rename_column change_column column_for tables indexes select_all] & connection.methods
+    def methods_to_modify
+      %i[execute do_execute rename_column change_column column_for tables indexes select_all] & self.class.connection.methods
     end
 
     private
@@ -41,7 +41,7 @@ module LolDba
     def save_original_methods
       methods_to_modify.each do |method_name|
         orig_name = "orig_#{method_name}".to_sym
-        connection.class.send(:alias_method, orig_name, method_name)
+        self.class.connection.class.send(:alias_method, orig_name, method_name)
       end
     end
 
@@ -57,12 +57,14 @@ module LolDba
     end
 
     def redefine_execute_methods(name)
+      writer = @writer
+
       redefine_connection_method(name) do |*args|
         query = args.first
         if query =~ /SELECT "schema_migrations"."version"/ || query =~ /^SHOW/
           orig_execute(*args)
         else
-          @writer.write(to_sql(query, args.last))
+          writer.write(to_sql(query, args.last))
         end
       end
     end
