@@ -2,11 +2,8 @@
 
 source "https://rubygems.org"
 
-gem "actionpack", "~> 4.1.9"
 gem "activerecord", "~> 4.1.9"
+gem "actionpack", "~> 4.1.9"
 gem "railties", "~> 4.1.9"
-gem "rspec-rails"
-gem "sqlite3"
-gem "test-unit"
 
 gemspec path: "../"

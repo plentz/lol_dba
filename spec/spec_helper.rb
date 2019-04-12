@@ -1,3 +1,4 @@
+require 'bundler/setup'
 require 'rails/all'
 require 'lol_dba'
 require 'simplecov'
@@ -25,13 +26,17 @@ root_dir = File.dirname(__FILE__)
 
 # add current dir to the load path
 $LOAD_PATH.unshift('.')
+
 RSpec.configure do |config|
-  config.expect_with :rspec do |expectations|
-    expectations.include_chain_clauses_in_custom_matcher_descriptions = true
+  config.disable_monkey_patching!
+
+  config.expect_with :rspec do |c|
+    c.syntax = :expect
+    c.include_chain_clauses_in_custom_matcher_descriptions = true
   end
+
   config.mock_with :rspec do |mocks|
     mocks.allow_message_expectations_on_nil = true
     mocks.verify_partial_doubles = true
   end
-  config.disable_monkey_patching!
 end
