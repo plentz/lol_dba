@@ -7,7 +7,7 @@ before_install:
   - gem update --system
   - gem install bundler
 rvm:
-  - 2.6.1
+  - 2.6.3
   - ruby-head
 gemfile:
   - gemfiles/rails_3_2.gemfile
@@ -25,8 +25,9 @@ script: "bundle exec rake"
 after_script:
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
 notifications:
-  recipients:
-    - diego@plentz.io
+  email:
+    recipients:
+      - diego@plentz.io
 matrix:
   fast_finish: true
   allow_failures:
