@@ -56,7 +56,7 @@ module LolDba
     def self.table_indexes(table_name)
       indexes = ActiveRecord::Base.connection.indexes(table_name.to_sym)
       indexes.collect do |index|
-        index.columns.size > 1 ? index.columns : index.columns.first
+        index.columns.size > 1 ? index.columns.sort : index.columns.first
       end
     end
 

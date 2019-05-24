@@ -40,6 +40,15 @@ RSpec.describe 'Collect indexes based on associations:' do
     expect(indexes['companies']).not_to include('country_id')
   end
 
+  it 'do not add an already existing index for polymorphic belongs_to with inverse order' do
+    expect {
+      ActiveRecord::Base.connection.add_index :addresses, %w[addressable_type addressable_id]
+    }.to change {
+      # Do not use `indexes` since it is memoized.
+      LolDba::IndexFinder.check_for_indexes['addresses'].include?(%w[addressable_id addressable_type])
+    }
+  end
+
   it 'find indexes for has_many :through' do
     expect(indexes['billable_weeks']).to include('remote_worker_id', 'timesheet_id')
     expect(indexes['billable_weeks']).not_to include(%w[billable_week_id remote_worker_id])
