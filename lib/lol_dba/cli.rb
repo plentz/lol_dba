@@ -20,6 +20,7 @@ module LolDba
             exit
           end
         end.parse!
+        options
       end
     end
 
