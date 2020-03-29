@@ -2,9 +2,9 @@ PATH
   remote: ..
   specs:
     lol_dba (2.1.9)
-      actionpack (>= 3.0, < 6.0)
-      activerecord (>= 3.0, < 6.0)
-      railties (>= 3.0, < 6.0)
+      actionpack (>= 3.0, < 7.0)
+      activerecord (>= 3.0, < 7.0)
+      railties (>= 3.0, < 7.0)
 
 GEM
   remote: https://rubygems.org/
@@ -87,12 +87,12 @@ PLATFORMS
 DEPENDENCIES
   actionpack (~> 4.1.9)
   activerecord (~> 4.1.9)
-  appraisal (~> 2.2)
+  appraisal
   lol_dba!
   railties (~> 4.1.9)
   rspec-rails
-  simplecov (~> 0.1)
-  sqlite3 (~> 1.3.5)
+  simplecov
+  sqlite3 (< 1.4)
 
 BUNDLED WITH
    2.1.4

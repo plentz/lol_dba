@@ -7,7 +7,7 @@ before_install:
   - gem update --system
   - gem install bundler
 rvm:
-  - 2.6.3
+  - 2.6.5
   - ruby-head
 gemfile:
   - gemfiles/rails_3_2.gemfile
@@ -17,6 +17,7 @@ gemfile:
   - gemfiles/rails_5_0.gemfile
   - gemfiles/rails_5_1.gemfile
   - gemfiles/rails_5_2.gemfile
+  - gemfiles/rails_6.gemfile
 before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter

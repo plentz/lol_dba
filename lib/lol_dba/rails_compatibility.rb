@@ -2,7 +2,11 @@ module LolDba
   class RailsCompatibility
     class << self
       def migrator
-        ActiveRecord::Migrator.new(:up, migrations_path)
+        if ::ActiveRecord::VERSION::MAJOR >= 6
+          ActiveRecord::Migrator.new(:up, migrations_path, ActiveRecord::SchemaMigration)
+        else
+          ActiveRecord::Migrator.new(:up, migrations_path)
+        end
       end
 
       def tables
@@ -17,30 +21,35 @@ module LolDba
 
       def migrations_path
         ar_version = Gem::Version.new(ActiveRecord::VERSION::STRING)
-        if ar_version >= Gem::Version.new('5.2.0')
-          ar_5_2_0_migrations_path
-        elsif ar_version >= Gem::Version.new('5.0.0')
-          ar_5_0_0_migrations_path
-        elsif ar_version >= Gem::Version.new('4.0.0')
-          ar_4_0_0_migrations_path
+        if ar_version >= Gem::Version.new('6')
+          ar_6_migrations_path
+        elsif ar_version >= Gem::Version.new('5.2')
+          ar_5_2_migrations_path
+        elsif ar_version >= Gem::Version.new('4')
+          ar_4_migrations_path
         else
-          ActiveRecord::Migrator.migrations_path
+          path
         end
       end
 
-      def ar_5_2_0_migrations_path
-        paths = ActiveRecord::Migrator.migrations_paths
-        ActiveRecord::MigrationContext.new(paths).migrations
+      def ar_6_migrations_path
+        ActiveRecord::MigrationContext.new(path, 6).migrations
       end
 
-      def ar_5_0_0_migrations_path
-        paths = ActiveRecord::Migrator.migrations_paths
-        ActiveRecord::Migrator.migrations(paths)
+      def ar_5_2_migrations_path
+        ActiveRecord::MigrationContext.new(path).migrations
       end
 
-      def ar_4_0_0_migrations_path
-        path = ActiveRecord::Migrator.migrations_path
+      def ar_4_migrations_path
         ActiveRecord::Migrator.migrations(path)
+      end
+
+      def path
+        if ::ActiveRecord::VERSION::MAJOR >= 4
+          ActiveRecord::Migrator.migrations_paths
+        else
+          ActiveRecord::Migrator.migrations_path
+        end
       end
     end
   end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 $LOAD_PATH << File.join(File.dirname(__FILE__), 'lib')
 require 'lol_dba/version.rb'
 
@@ -19,12 +21,11 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib', 'lib/lol_dba']
 
   s.required_ruby_version = '>= 2.0.0'
-  s.add_dependency 'actionpack', '>= 3.0', '< 6.0'
-  s.add_dependency 'activerecord', '>= 3.0', '< 6.0'
-  s.add_dependency 'railties', '>= 3.0', '< 6.0'
+  s.add_dependency 'actionpack', '>= 3.0', '< 7.0'
+  s.add_dependency 'activerecord', '>= 3.0', '< 7.0'
+  s.add_dependency 'railties', '>= 3.0', '< 7.0'
 
-  s.add_development_dependency 'appraisal', '~> 2.2'
-  s.add_development_dependency 'simplecov', '~> 0.1'
-  s.add_development_dependency 'sqlite3', '~> 1.3.5'
+  s.add_development_dependency 'appraisal'
   s.add_development_dependency 'rspec-rails'
+  s.add_development_dependency 'simplecov'
 end
