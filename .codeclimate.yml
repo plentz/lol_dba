@@ -81,9 +81,6 @@
     "foodcritic": {
       "enabled": false
     },
-    "git-legal": {
-      "enabled": true
-    },
     "gnu-complexity": {
       "enabled": false
     },
