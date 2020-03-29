@@ -1,7 +1,7 @@
 PATH
   remote: ..
   specs:
-    lol_dba (2.1.9)
+    lol_dba (2.2.0)
       actionpack (>= 3.0, < 7.0)
       activerecord (>= 3.0, < 7.0)
       railties (>= 3.0, < 7.0)
