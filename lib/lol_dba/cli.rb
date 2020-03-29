@@ -32,6 +32,8 @@ module LolDba
     def start(arg)
       load_application
       select_action(arg)
+    rescue SystemExit
+      raise $!
     rescue Exception => exception
       if @options[:debug]
         warn "Failed: #{exception.class}: #{exception.message}"
@@ -43,7 +45,8 @@ module LolDba
 
     def select_action(arg)
       if arg =~ /db:find_indexes/
-        LolDba::IndexFinder.run
+        success = LolDba::IndexFinder.run
+        exit(1) if success
       elsif arg !~ /\[/
         LolDba::SqlGenerator.run('all')
       else

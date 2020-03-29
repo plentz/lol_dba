@@ -3,7 +3,8 @@ require 'lol_dba'
 namespace :db do
   desc 'Display a migration for adding/removing all necessary indexes based on associations'
   task find_indexes: :environment do
-    LolDba::IndexFinder.run
+    success = LolDba::IndexFinder.run
+    exit(1) if success
   end
   desc 'Generate .sql files for your migrations inside db/migrate_sql folder'
   task :migrate_sql, [:which] => :environment do |_t, args|
