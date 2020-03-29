@@ -5,9 +5,7 @@ require 'appraisal'
 
 if !ENV['APPRAISAL_INITIALIZED'] && !ENV['TRAVIS']
   desc 'Default: run unit tests with appraisal.'
-  task :default do
-    sh 'appraisal install && rake appraisal spec'
-  end
+  task default: :appraisal
 else
   desc 'Default: run unit tests.'
   task default: :spec

@@ -1,4 +1,8 @@
 ActiveRecord::Schema.define do
+
+  create_table 'schema_migrations', force: true do |t|
+  end
+
   create_table 'users', force: true do |t|
     t.column 'name',  :string
     t.column 'email', :string

@@ -1,8 +1,11 @@
+# frozen_string_literal: true
+
 appraise 'rails_3_2' do
   version = '~> 3.2.21'
   gem 'activerecord', version
   gem 'actionpack', version
   gem 'railties', version
+  gem 'sqlite3', '< 1.4'
 end
 
 appraise 'rails_4_0' do
@@ -10,6 +13,7 @@ appraise 'rails_4_0' do
   gem 'activerecord', version
   gem 'actionpack', version
   gem 'railties', version
+  gem 'sqlite3', '< 1.4'
 end
 
 appraise 'rails_4_1' do
@@ -17,6 +21,7 @@ appraise 'rails_4_1' do
   gem 'activerecord', version
   gem 'actionpack', version
   gem 'railties', version
+  gem 'sqlite3', '< 1.4'
 end
 
 appraise 'rails_4_2' do
@@ -24,6 +29,7 @@ appraise 'rails_4_2' do
   gem 'activerecord', version
   gem 'actionpack', version
   gem 'railties', version
+  gem 'sqlite3', '< 1.4'
 end
 
 appraise 'rails_5_0' do
@@ -31,6 +37,7 @@ appraise 'rails_5_0' do
   gem 'activerecord', version
   gem 'actionpack', version
   gem 'railties', version
+  gem 'sqlite3', '< 1.4'
 end
 
 appraise 'rails_5_1' do
@@ -38,6 +45,7 @@ appraise 'rails_5_1' do
   gem 'activerecord', version
   gem 'actionpack', version
   gem 'railties', version
+  gem 'sqlite3', '< 1.4'
 end
 
 appraise 'rails_5_2' do
@@ -45,4 +53,13 @@ appraise 'rails_5_2' do
   gem 'activerecord', version
   gem 'actionpack', version
   gem 'railties', version
+  gem 'sqlite3', '< 1.4'
+end
+
+appraise 'rails_6' do
+  version = '~> 6.0'
+  gem 'activerecord', version
+  gem 'actionpack', version
+  gem 'railties', version
+  gem 'sqlite3', '~> 1.4'
 end
