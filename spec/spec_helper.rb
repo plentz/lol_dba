@@ -1,7 +1,10 @@
 require 'bundler/setup'
 require 'rails/all'
+require 'active_record/railtie'
 require 'lol_dba'
 require 'simplecov'
+require 'bigdecimal'
+require 'pry'
 
 ENV['RAILS_ENV'] ||= 'test'
 
@@ -14,15 +17,17 @@ ActiveRecord::Base.establish_connection(
 
 module Rails
   def self.root
-    'spec/fixtures'
+    "#{Dir.pwd}/spec/fixtures"
   end
 end
+#binding.pry
 Dir.glob("#{Rails.root}/app/models/*.rb").sort.each { |file| require_dependency file }
+#require_dependency "#{__dir__}/fixtures/app/models/address.rb"
 
 ActiveRecord::Schema.verbose = false
 load 'fixtures/schema.rb'
 
-root_dir = File.dirname(__FILE__)
+#root_dir = File.dirname(__FILE__)
 
 # add current dir to the load path
 $LOAD_PATH.unshift('.')
