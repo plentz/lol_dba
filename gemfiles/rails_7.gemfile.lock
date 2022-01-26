@@ -9,30 +9,29 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    actionpack (6.1.4.4)
-      actionview (= 6.1.4.4)
-      activesupport (= 6.1.4.4)
-      rack (~> 2.0, >= 2.0.9)
+    actionpack (7.0.1)
+      actionview (= 7.0.1)
+      activesupport (= 7.0.1)
+      rack (~> 2.0, >= 2.2.0)
       rack-test (>= 0.6.3)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.0, >= 1.2.0)
-    actionview (6.1.4.4)
-      activesupport (= 6.1.4.4)
+    actionview (7.0.1)
+      activesupport (= 7.0.1)
       builder (~> 3.1)
       erubi (~> 1.4)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.1, >= 1.2.0)
-    activemodel (6.1.4.4)
-      activesupport (= 6.1.4.4)
-    activerecord (6.1.4.4)
-      activemodel (= 6.1.4.4)
-      activesupport (= 6.1.4.4)
-    activesupport (6.1.4.4)
+    activemodel (7.0.1)
+      activesupport (= 7.0.1)
+    activerecord (7.0.1)
+      activemodel (= 7.0.1)
+      activesupport (= 7.0.1)
+    activesupport (7.0.1)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
       tzinfo (~> 2.0)
-      zeitwerk (~> 2.3)
     appraisal (2.4.1)
       bundler
       rake
@@ -49,10 +48,8 @@ GEM
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     method_source (1.0.0)
-    mini_portile2 (2.7.1)
     minitest (5.15.0)
-    nokogiri (1.13.1)
-      mini_portile2 (~> 2.7.0)
+    nokogiri (1.13.1-arm64-darwin)
       racc (~> 1.4)
     racc (1.6.0)
     rack (2.2.3)
@@ -63,12 +60,13 @@ GEM
       nokogiri (>= 1.6)
     rails-html-sanitizer (1.4.2)
       loofah (~> 2.3)
-    railties (6.1.4.4)
-      actionpack (= 6.1.4.4)
-      activesupport (= 6.1.4.4)
+    railties (7.0.1)
+      actionpack (= 7.0.1)
+      activesupport (= 7.0.1)
       method_source
-      rake (>= 0.13)
+      rake (>= 12.2)
       thor (~> 1.0)
+      zeitwerk (~> 2.5)
     rake (13.0.6)
     rspec-core (3.10.1)
       rspec-support (~> 3.10.0)
@@ -100,17 +98,17 @@ GEM
     zeitwerk (2.5.3)
 
 PLATFORMS
-  ruby
+  arm64-darwin-21
 
 DEPENDENCIES
-  actionpack (~> 6.0)
-  activerecord (~> 6.0)
+  actionpack (~> 7.0)
+  activerecord (~> 7.0)
   appraisal
   lol_dba!
-  railties (~> 6.0)
+  railties (~> 7.0)
   rspec-rails
   simplecov
-  sqlite3 (~> 1.4)
+  sqlite3
 
 BUNDLED WITH
    2.3.3

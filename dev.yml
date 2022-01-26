@@ -1,0 +1,20 @@
+name: loldba
+
+type: ruby
+
+up:
+  - ruby: 3.1.0
+  - bundler
+
+commands:
+  console:
+    desc: 'start a console'
+    run: bin/console
+  run:
+    desc: 'start the application'
+    run: bin/run
+  test:
+    syntax:
+      argument: file
+      optional: args...
+    run: bin/testunit
