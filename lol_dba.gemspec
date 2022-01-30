@@ -30,6 +30,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'simplecov'
   s.add_development_dependency 'rexml'
   s.add_development_dependency 'pry'
-  #s.add_development_dependency 'bigdecimal'
-  #s.add_development_dependency 'sqlite3'
+  # s.add_development_dependency 'bigdecimal'
+  # s.add_development_dependency 'sqlite3'
 end
