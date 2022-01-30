@@ -1,5 +1,6 @@
 .bundle
 .rvmrc
 .DS_Store
-.gem
 coverage
+dev.yml
+*.gem

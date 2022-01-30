@@ -63,3 +63,12 @@ appraise 'rails_6' do
   gem 'railties', version
   gem 'sqlite3', '~> 1.4'
 end
+
+appraise 'rails_7' do
+  version = '~> 7.0'
+  gem 'activerecord', version
+  gem 'actionpack', version
+  gem 'railties', version
+  gem 'sqlite3'
+  gem 'bigdecimal', '< 1.5'
+end
