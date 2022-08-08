@@ -2,9 +2,11 @@
 
 source "https://rubygems.org"
 
-gem "sqlite3", "< 1.4"
+ruby ">= 3"
+
 gem "activerecord", "~> 5.2.0"
 gem "actionpack", "~> 5.2.0"
 gem "railties", "~> 5.2.0"
+gem "sqlite3"
 
 gemspec path: "../"
