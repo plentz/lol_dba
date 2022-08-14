@@ -1,7 +1,7 @@
 PATH
   remote: ..
   specs:
-    lol_dba (2.2.0)
+    lol_dba (2.4.0)
       actionpack
       activerecord
       railties
