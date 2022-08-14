@@ -6,6 +6,7 @@ appraise 'rails_3_2' do
   gem 'actionpack', version
   gem 'railties', version
   gem 'sqlite3', '< 1.4'
+  gem 'bigdecimal', '< 2'
 end
 
 appraise 'rails_4_0' do
@@ -14,6 +15,7 @@ appraise 'rails_4_0' do
   gem 'actionpack', version
   gem 'railties', version
   gem 'sqlite3', '< 1.4'
+  gem 'bigdecimal', '< 2'
 end
 
 appraise 'rails_4_1' do
@@ -22,6 +24,7 @@ appraise 'rails_4_1' do
   gem 'actionpack', version
   gem 'railties', version
   gem 'sqlite3', '< 1.4'
+  gem 'bigdecimal', '< 2'
 end
 
 appraise 'rails_4_2' do
@@ -30,6 +33,7 @@ appraise 'rails_4_2' do
   gem 'actionpack', version
   gem 'railties', version
   gem 'sqlite3', '< 1.4'
+  gem 'bigdecimal', '< 2'
 end
 
 appraise 'rails_5_0' do
@@ -38,6 +42,7 @@ appraise 'rails_5_0' do
   gem 'actionpack', version
   gem 'railties', version
   gem 'sqlite3', '< 1.4'
+  gem 'bigdecimal', '< 2'
 end
 
 appraise 'rails_5_1' do
@@ -46,6 +51,7 @@ appraise 'rails_5_1' do
   gem 'actionpack', version
   gem 'railties', version
   gem 'sqlite3', '< 1.4'
+  gem 'bigdecimal', '< 2'
 end
 
 appraise 'rails_5_2' do
@@ -54,6 +60,7 @@ appraise 'rails_5_2' do
   gem 'actionpack', version
   gem 'railties', version
   gem 'sqlite3', '< 1.4'
+  gem 'bigdecimal', '< 2'
 end
 
 appraise 'rails_6' do
@@ -62,4 +69,14 @@ appraise 'rails_6' do
   gem 'actionpack', version
   gem 'railties', version
   gem 'sqlite3', '~> 1.4'
+  gem 'bigdecimal', '< 2'
+end
+
+appraise 'rails_7' do
+  version = '~> 7.0'
+  gem 'activerecord', version
+  gem 'actionpack', version
+  gem 'railties', version
+  gem 'sqlite3'
+  gem 'bigdecimal'
 end

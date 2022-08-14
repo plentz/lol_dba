@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby-version: [2.6]
+        ruby-version: [2.7]
     continue-on-error: ${{ endsWith(matrix.ruby-version, 'head') }}
     env:
       RAILS_ENV: test
