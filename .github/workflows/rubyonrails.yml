@@ -1,0 +1,29 @@
+name: "Ruby on Rails CI"
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby-version: [2.6]
+    continue-on-error: ${{ endsWith(matrix.ruby-version, 'head') }}
+    env:
+      RAILS_ENV: test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install Ruby ${{ matrix.ruby-version }} and gems
+        uses: ruby/setup-ruby@8f312efe1262fb463d906e9bf040319394c18d3e # v1.92
+        with:
+          bundler-cache: true
+          ruby-version: ${{ matrix.ruby-version }}
+      - name: Run tests
+        run: bundle exec appraisal install
+      - name: Run tests
+        run: bundle exec appraisal rake
+
