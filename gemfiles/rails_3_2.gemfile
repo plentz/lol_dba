@@ -5,6 +5,7 @@ source "https://rubygems.org"
 gem "activerecord", "~> 3.2.21"
 gem "actionpack", "~> 3.2.21"
 gem "railties", "~> 3.2.21"
-gem "sqlite3"
+gem "sqlite3", "< 1.4"
+gem "bigdecimal", "< 2"
 
 gemspec path: "../"

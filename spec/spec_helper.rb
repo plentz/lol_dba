@@ -17,7 +17,7 @@ module Rails
     'spec/fixtures'
   end
 end
-Dir.glob("#{Rails.root}/app/models/*.rb").sort.each { |file| require_dependency file }
+Dir.glob("#{Rails.root}/app/models/*.rb").sort.each { |file| load file }
 
 ActiveRecord::Schema.verbose = false
 load 'fixtures/schema.rb'
