@@ -28,6 +28,6 @@ jobs:
       - name: Run tests
         run: bundle exec appraisal rake
       - name: Report code climate
-        uses: paambaati/codeclimate-action@v3.0.0
+        uses: paambaati/codeclimate-action@v3.2.0
         env:
           CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
