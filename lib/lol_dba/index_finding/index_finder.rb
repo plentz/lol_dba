@@ -68,7 +68,7 @@ module LolDba
 
     def self.model_classes
       ActiveRecord::Base.descendants.select do |obj|
-        Class == obj.class && session_store?(obj)
+        Class == obj.class && session_store?(obj) && obj.table_exists?
       end
     end
 
