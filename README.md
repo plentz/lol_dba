@@ -41,7 +41,7 @@ Use it the same way you use other rake commands
 
 ### Compatibility
 
-Compatible with Ruby 2.x, Ruby 3.x and Rails 3.x, 4.x, 5.x, 6.x, and 7.x.
+Compatible with Ruby 2.x, Ruby 3.x and Rails 3.x, 4.x, 5.x, 6.x, 7.x and 8.x.
 
 ### About primary_key
 
