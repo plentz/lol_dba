@@ -20,15 +20,15 @@ RSpec.describe LolDba::IndexFinder do
     context 'with missing indexes' do
       let(:missing_indexes) { { friends: [%i[user_id friend_id]] } }
 
-      it 'returns false' do
+      it 'returns true' do
         expect(described_class.run).to eq true
       end
     end
 
-    context 'with missing indexes' do
+    context 'without missing indexes' do
       let(:missing_indexes) { {} }
 
-      it 'returns true' do
+      it 'returns false' do
         expect(described_class.run).to eq false
       end
     end
