@@ -2,7 +2,7 @@ module LolDba
   class HasAndBelongsToMany < RelationInspector
     def relation_columns
       foreign_key = get_through_foreign_key(model_class, reflection_options)
-      index_name = [association_fk, foreign_key].map(&:to_s).sort
+      [association_fk, foreign_key].map(&:to_s).sort
     end
 
     def table_name
@@ -13,8 +13,7 @@ module LolDba
     private
 
     def association_fk
-      association_fk = reflection_options.options[:association_foreign_key]
-      association_fk || "#{reflection_name.to_s.singularize}_id"
+      reflection_options.options[:association_foreign_key] || "#{reflection_name.to_s.singularize}_id"
     end
   end
 end

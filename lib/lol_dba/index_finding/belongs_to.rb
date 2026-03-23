@@ -21,11 +21,11 @@ module LolDba
     private
 
     def non_polymorphic_fk
-      foreign_key = reflection_options.options[:foreign_key]
-      foreign_key ||= if reflection_options.respond_to?(:primary_key_name)
-                        reflection_options.primary_key_name
-                      else
-                        reflection_options.foreign_key
+      reflection_options.options[:foreign_key] ||
+        if reflection_options.respond_to?(:primary_key_name)
+          reflection_options.primary_key_name
+        else
+          reflection_options.foreign_key
         end
     end
   end
