@@ -6,8 +6,8 @@ module LolDba
     end
 
     def table_name
-      table_name = reflection_options.options[:join_table]
-      table_name || [model_class.table_name, reflection_name.to_s].sort.join('_')
+      join_table = reflection_options.options[:join_table]
+      join_table || [model_class.table_name, reflection_name.to_s].sort.join('_')
     end
 
     private
