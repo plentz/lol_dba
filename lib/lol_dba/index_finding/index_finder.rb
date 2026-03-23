@@ -18,19 +18,17 @@ module LolDba
         end
         reflections = model_class.reflections.stringify_keys
         reflections.each_pair do |reflection_name, reflection_options|
-          begin
-            inspector_class = RelationInspectorFactory.for(reflection_options.macro)
-            next unless inspector_class.present?
-            inspector = inspector_class.new(model_class, reflection_options,
-                                  reflection_name)
-            columns = inspector.relation_columns
+          inspector_class = RelationInspectorFactory.for(reflection_options.macro)
+          next unless inspector_class.present?
+          inspector = inspector_class.new(model_class, reflection_options,
+                                reflection_name)
+          columns = inspector.relation_columns
 
-            unless columns.nil? || reflection_options.options.include?(:class)
-              required_indexes[inspector.table_name.to_s] += [columns]
-            end
-          rescue StandardError => exception
-            LolDba::ErrorLogging.log(model_class, reflection_options, exception)
+          unless columns.nil? || reflection_options.options.include?(:class)
+            required_indexes[inspector.table_name.to_s] += [columns]
           end
+        rescue StandardError => exception
+          LolDba::ErrorLogging.log(model_class, reflection_options, exception)
         end
       end
 
