@@ -2,8 +2,12 @@ module LolDba
   class IndexFinder
     def self.run
       missing_indexes = check_for_indexes
-      MigrationFormatter.new(missing_indexes).puts_migration_content
+      print_results(missing_indexes)
       missing_indexes.any?
+    end
+
+    def self.print_results(missing_indexes)
+      MigrationFormatter.new(missing_indexes).puts_migration_content
     end
 
     def self.check_for_indexes
