@@ -1,5 +1,7 @@
 module LolDba
   class Migration
+    FILENAME_PATTERN = /^(\d+)_(.*)$/
+
     attr_reader :full_name, :writer
 
     def initialize(migration_file)
@@ -9,11 +11,11 @@ module LolDba
     end
 
     def number
-      /^(\d+)_(.*)$/.match(full_name)[1]
+      FILENAME_PATTERN.match(full_name)[1]
     end
 
     def name
-      /^(\d+)_(.*)$/.match(full_name)[2]
+      FILENAME_PATTERN.match(full_name)[2]
     end
 
     def to_s
