@@ -1,7 +1,7 @@
 module LolDba
   class HasMany < RelationInspector
     def relation_columns
-      # has_many tables are threaten by the other side of the relation
+      # has_many tables are handled by the other side of the relation
       return nil unless through && reflections[through.to_s]
 
       # FIXME: currently we don't support :through =>
