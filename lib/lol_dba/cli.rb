@@ -43,8 +43,8 @@ module LolDba
 
     def select_action(arg)
       if arg =~ /db:find_indexes/
-        success = LolDba::IndexFinder.run
-        exit(1) if success
+        missing_indexes_found = LolDba::IndexFinder.run
+        exit(1) if missing_indexes_found
       elsif arg !~ /\[/
         LolDba::SqlGenerator.run('all')
       else
