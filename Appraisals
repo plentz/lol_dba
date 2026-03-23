@@ -84,3 +84,12 @@ appraise 'rails_7' do
   gem 'sqlite3'
   gem 'bigdecimal'
 end
+
+appraise 'rails_8' do
+  version = '~> 8.0'
+  gem 'activerecord', version
+  gem 'actionpack', version
+  gem 'railties', version
+  gem 'sqlite3'
+  gem 'bigdecimal'
+end

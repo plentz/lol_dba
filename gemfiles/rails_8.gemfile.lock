@@ -1,5 +1,5 @@
 PATH
-  remote: .
+  remote: ..
   specs:
     lol_dba (2.4.0)
       actionpack
@@ -73,12 +73,10 @@ GEM
     loofah (2.25.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
-    mini_portile2 (2.8.9)
     minitest (6.0.2)
       drb (~> 2.0)
       prism (~> 1.5)
-    nokogiri (1.19.2)
-      mini_portile2 (~> 2.8.2)
+    nokogiri (1.19.2-arm64-darwin)
       racc (~> 1.4)
     pp (0.6.3)
       prettyprint
@@ -143,6 +141,7 @@ GEM
       simplecov_json_formatter (~> 0.1)
     simplecov-html (0.13.2)
     simplecov_json_formatter (0.1.4)
+    sqlite3 (2.9.2-arm64-darwin)
     stringio (3.2.0)
     thor (1.5.0)
     timeout (0.6.1)
@@ -154,13 +153,18 @@ GEM
     zeitwerk (2.7.5)
 
 PLATFORMS
-  ruby
+  arm64-darwin-22
 
 DEPENDENCIES
+  actionpack (~> 8.0)
+  activerecord (~> 8.0)
   appraisal
+  bigdecimal
   lol_dba!
+  railties (~> 8.0)
   rspec-rails
   simplecov
+  sqlite3
 
 BUNDLED WITH
    2.3.19

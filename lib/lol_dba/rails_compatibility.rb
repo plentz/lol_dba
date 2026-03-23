@@ -3,7 +3,13 @@ module LolDba
     class << self
       def migrator
         if ::ActiveRecord::VERSION::MAJOR >= 6
-          ActiveRecord::Migrator.new(:up, migrations_path, ActiveRecord::SchemaMigration)
+          ar_version = Gem::Version.new(ActiveRecord::VERSION::STRING)
+          if ar_version >= Gem::Version.new('7.2')
+            pool = ActiveRecord::Base.connection_pool
+            ActiveRecord::Migrator.new(:up, migrations_path, ActiveRecord::SchemaMigration.new(pool), ActiveRecord::InternalMetadata.new(pool))
+          else
+            ActiveRecord::Migrator.new(:up, migrations_path, ActiveRecord::SchemaMigration)
+          end
         else
           ActiveRecord::Migrator.new(:up, migrations_path)
         end
