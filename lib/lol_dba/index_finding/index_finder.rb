@@ -19,9 +19,9 @@ module LolDba
         reflections = model_class.reflections.stringify_keys
         reflections.each_pair do |reflection_name, reflection_options|
           begin
-            clazz = RelationInspectorFactory.for(reflection_options.macro)
-            next unless clazz.present?
-            inspector = clazz.new(model_class, reflection_options,
+            inspector_class = RelationInspectorFactory.for(reflection_options.macro)
+            next unless inspector_class.present?
+            inspector = inspector_class.new(model_class, reflection_options,
                                   reflection_name)
             columns = inspector.relation_columns
 
