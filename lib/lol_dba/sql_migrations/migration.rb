@@ -49,6 +49,7 @@ module LolDba
 
       migration_mocker.redefine_migration_methods
       yield
+    ensure
       migration_mocker.reset_methods
     end
   end
