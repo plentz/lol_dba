@@ -13,7 +13,6 @@ module LolDba
       return unless @file_name.present?
       File.open(path, 'a') do |file|
         file << string << ";\n"
-        file.close
       end
     end
 
