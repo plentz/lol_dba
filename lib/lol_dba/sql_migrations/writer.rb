@@ -17,8 +17,6 @@ module LolDba
       end
     end
 
-    private_class_method
-
     def self.output_dir
       File.join(Rails.root, 'db', 'migrate_sql')
     end

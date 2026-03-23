@@ -15,33 +15,31 @@ module LolDba
     def reset_methods
       methods_to_modify.each do |method_name|
         begin
-          connection_class.send(:alias_method, method_name, "orig_#{method_name}".to_sym)
+          connection.class.send(:alias_method, method_name, "orig_#{method_name}".to_sym)
         rescue StandardError
           nil
         end
       end
     end
 
-    private_class_method
-
-    def self.connection
-      ActiveRecord::Base.connection
-    end
-
     def redefine_connection_method(method, &block)
-      self.class.connection.class.send(:define_method, method, block)
+      connection.class.send(:define_method, method, block)
     end
 
     def methods_to_modify
-      %i[execute do_execute rename_column change_column column_for tables indexes select_all] & self.class.connection.methods
+      %i[execute do_execute rename_column change_column column_for tables indexes select_all] & connection.methods
     end
 
     private
 
+    def connection
+      ActiveRecord::Base.connection
+    end
+
     def save_original_methods
       methods_to_modify.each do |method_name|
         orig_name = "orig_#{method_name}".to_sym
-        self.class.connection.class.send(:alias_method, orig_name, method_name)
+        connection.class.send(:alias_method, orig_name, method_name)
       end
     end
 
