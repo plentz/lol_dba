@@ -1,4 +1,16 @@
 RSpec.describe LolDba::IndexFinder do
+  describe '.model_classes' do
+    it 'excludes models without database tables' do
+      model_classes = described_class.model_classes
+      expect(model_classes).not_to include(Wrong)
+    end
+
+    it 'includes models with database tables' do
+      model_classes = described_class.model_classes
+      expect(model_classes).to include(User)
+    end
+  end
+
   describe '.run' do
     before do
       allow(described_class).to receive(:check_for_indexes).and_return(missing_indexes)
