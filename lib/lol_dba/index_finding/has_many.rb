@@ -21,6 +21,7 @@ module LolDba
       if (source = reflection_options.options[:source])
         association_reflection = through_reflections[source.to_s]
         return nil if association_reflection.options[:polymorphic]
+        return association_reflection.foreign_key.to_s if association_reflection.macro == :belongs_to
         get_through_foreign_key(association_reflection.klass, reflection_options)
       elsif belongs_to_reflections = through_reflections[reflection_name.singularize]
         # go to joining model through has_many and find belongs_to

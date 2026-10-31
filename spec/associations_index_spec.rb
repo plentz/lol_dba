@@ -58,6 +58,10 @@ RSpec.describe 'Collect indexes based on associations:' do
     expect(indexes['complex_billable_week']).to include(%w[freelancer_id id_complex_timesheet])
   end
 
+  it 'find indexes for has_many :through with source using the source foreign key' do
+    expect(indexes['complex_billable_week']).to include(%w[approver_id id_complex_timesheet])
+  end
+
   it 'do not include wrong class' do
     expect(indexes['wrongs']).to be_nil
     expect(indexes['addresses_wrongs']).to be_nil
