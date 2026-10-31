@@ -50,6 +50,7 @@ ActiveRecord::Schema.define do
     t.column 'date', :date
     t.column 'id_complex_timesheet', :integer
     t.column 'freelancer_id', :integer
+    t.column 'approver_id', :integer
   end
 
   create_table 'companies_freelancers', id: false, force: true do |t|

@@ -3,4 +3,5 @@ class ComplexTimesheet < ActiveRecord::Base
 
   has_many :complex_billable_weeks, foreign_key: :id_complex_timesheet
   has_many :workers, through: :complex_billable_weeks, source: :slave
+  has_many :approvers, through: :complex_billable_weeks, source: :approver
 end
